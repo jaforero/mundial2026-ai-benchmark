@@ -71,6 +71,10 @@ HTML = r"""<!DOCTYPE html>
 [data-theme="dark"] .scorechips .s{background:var(--soft-lilac);}
 [data-theme="dark"] .mtab td{border-bottom-color:#222c46;}
 [data-theme="dark"] .tabs{background:rgba(10,16,32,.92);}
+/* ===== pie de página ===== */
+.footer{background:var(--grad-hero);color:#fff;padding:28px 20px;text-align:center;font-size:13.5px;margin-top:40px;border-radius:28px 28px 0 0;}
+.footer a{color:#ffd84d;text-decoration:none;font-weight:700;} .footer a:hover{text-decoration:underline;}
+.footer .f-sub{opacity:.72;font-size:12px;margin-top:6px;}
 /* ===== barra de controles (idioma + tema) ===== */
 .topbar{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin:0 0 14px;}
 .seg{display:inline-flex;border:1px solid var(--border);border-radius:999px;overflow:hidden;background:var(--white);}
@@ -81,7 +85,8 @@ font-size:13px;padding:7px 14px;cursor:pointer;transition:.15s;}
 cursor:pointer;font-size:16px;line-height:1;display:inline-flex;align-items:center;justify-content:center;}
 .icon-btn:hover{border-color:var(--purple-light);}
 *{box-sizing:border-box;}
-body{margin:0;background:var(--bg);font-family:'IgraSans',Aptos,Helvetica,Arial,sans-serif;color:var(--text);line-height:1.5;}
+body{margin:0;background:var(--bg);font-family:'IgraSans',Aptos,Helvetica,Arial,sans-serif;color:var(--text);line-height:1.5;
+transition:background .3s,color .3s;}
 .wrap{max-width:1120px;margin:0 auto;padding:24px 20px 70px;}
 .hero{background:var(--grad-hero);color:#fff;border-radius:28px;padding:38px 42px;}
 .hero .eyebrow{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;opacity:.88;margin:0 0 12px;}
@@ -99,10 +104,11 @@ font-size:14.5px;font-weight:800;padding:11px 20px;border-radius:999px;cursor:po
 .section-title{color:var(--deep-blue);text-transform:uppercase;letter-spacing:.12em;font-weight:800;
 font-size:14px;border-left:4px solid var(--purple);padding-left:12px;margin:34px 0 16px;}
 .card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:20px 22px;
-box-shadow:0 12px 32px rgba(4,28,89,.06);margin:14px 0;}
+box-shadow:0 12px 32px rgba(4,28,89,.06);margin:14px 0;transition:background .3s,border-color .3s,transform .2s,box-shadow .2s;}
+.card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(4,28,89,.10);}
 .card h3{margin:0 0 10px;color:var(--deep-blue);font-size:17px;font-weight:800;}
 .insight{background:var(--soft-lilac);border:1px solid var(--border);border-left:5px solid var(--purple);
-border-radius:16px;padding:16px 18px;margin:16px 0;}
+border-radius:16px;padding:16px 18px;margin:16px 0;transition:background .3s,border-color .3s;}
 .insight p{margin:0;color:var(--deep-blue);font-weight:600;font-size:15px;}
 .lead{font-size:16px;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
@@ -130,9 +136,11 @@ border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;margin:2px 4
 .chnums{font-size:12.5px;text-align:right;}
 .chnums .med{font-size:17px;font-weight:800;color:var(--purple);}
 .chnums .mn{color:var(--muted);font-size:11px;}
-.gcard{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin:12px 0;box-shadow:0 10px 28px rgba(4,28,89,.05);}
+.gcard{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin:12px 0;box-shadow:0 10px 28px rgba(4,28,89,.05);transition:background .3s,border-color .3s,transform .2s,box-shadow .2s;}
+.gcard:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(4,28,89,.09);}
 .gh{font-size:16px;font-weight:800;color:var(--deep-blue);margin-bottom:8px;}
 .mtab td{font-size:12.5px;padding:5px 7px;border-bottom:1px solid #f0f3fa;}
+.mtab tbody tr:nth-child(even) td{background:var(--soft-lilac);}
 .mtab .ta{font-weight:700;color:var(--deep-blue);width:30%;} .mtab .tb{font-weight:700;color:var(--deep-blue);text-align:right;width:30%;}
 .mtab .sc{text-align:center;font-weight:800;color:var(--purple);width:56px;}
 .agree{display:inline-flex;gap:3px;}
@@ -159,6 +167,7 @@ font-family:inherit;font-size:14.5px;color:var(--deep-blue);font-weight:700;back
 .methclassic{font-size:14px;color:var(--text);} .methclassic b{color:var(--deep-blue);}
 .reachscroll{max-height:560px;overflow-y:auto;border:1px solid var(--border);border-radius:12px;}
 .reachscroll table{font-size:12.5px;} .reachscroll thead th{position:sticky;top:0;background:#fff;z-index:2;box-shadow:0 1px 0 var(--border);}
+.reachscroll tbody tr:nth-child(even) td{background:var(--soft-lilac);}
 .reachscroll tbody tr:nth-child(-n+3) td.tm{color:var(--purple);}
 details.meth{margin:10px 0 0;border:1px solid var(--border);border-radius:12px;background:#fbfcff;}
 details.meth>summary{cursor:pointer;padding:11px 16px;font-weight:800;color:var(--deep-blue);font-size:13.5px;list-style:none;}
@@ -199,7 +208,7 @@ box-shadow:0 18px 40px rgba(78,0,255,.18);}
 .verdict .vmain b{color:#ffd84d;}
 .podium{display:grid;grid-template-columns:1fr 1.18fr 1fr;gap:14px;align-items:end;margin-top:20px;}
 .pod{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:15px 10px;text-align:center;}
-.pod .rk{font-size:18px;}
+.pod .rk{font-size:26px;line-height:1;}
 .pod .tm{font-size:16px;font-weight:800;margin:3px 0 1px;}
 .pod .pc{font-size:25px;font-weight:900;line-height:1;}
 .pod .pl{font-size:11px;opacity:.8;}
@@ -208,11 +217,12 @@ box-shadow:0 18px 40px rgba(78,0,255,.18);}
 /* ===== UX: tarjetas de hallazgos clave ===== */
 .takeaways{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 6px;}
 .tk{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px 15px;border-top:4px solid var(--purple);
-box-shadow:0 10px 26px rgba(4,28,89,.05);}
+box-shadow:0 10px 26px rgba(4,28,89,.05);transition:background .3s,border-color .3s,transform .2s;}
+.tk:hover{transform:translateY(-2px);}
 .tk .lab{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:800;}
 .tk .big{font-size:18px;font-weight:900;color:var(--deep-blue);margin:5px 0 2px;line-height:1.15;}
 .tk .sub{font-size:12px;color:var(--muted);}
-.tk.green{border-top-color:#1a9e5c;} .tk.red{border-top-color:#c0392b;} .tk.blue{border-top-color:var(--bright-blue);}
+.tk.green{border-top-color:#1a9e5c;} .tk.red{border-top-color:#c0392b;} .tk.blue{border-top-color:var(--vibrant-blue);}
 /* ===== UX: tabs fijas al hacer scroll ===== */
 .tabs{position:sticky;top:0;z-index:45;background:rgba(247,248,252,.92);backdrop-filter:blur(8px);
 padding:10px 0;border-bottom:1px solid var(--border);}
@@ -258,8 +268,12 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 <div id="chatgpt" class="panel"></div>
 <div id="gemini" class="panel"></div>
 
-<div class="foot">Javier Forero <span class="dot">·</span> <a href="https://javierforero.co">javierforero.co</a><br>
-<span style="font-size:11px">Benchmark metodológico de tres IAs. Las probabilidades son estimaciones de modelos, no certezas. Consenso = combinación de las tres herramientas (mediana como cifra principal, media como referencia).</span></div>
+<div class="footer">
+  <div data-en="Javier Forero · Statistician and AI & Analytics Consultant">Javier Forero · Estadístico y consultor en IA y Analítica</div>
+  <div class="f-sub"><a href="https://www.javierforero.com">javierforero.com</a> · <a href="https://www.linkedin.com/in/jforero/">LinkedIn</a> · <a href="https://github.com/jaforero/mundial2026-ai-benchmark">GitHub</a> · <span data-en="June 2026">junio 2026</span></div>
+  <div class="f-sub" style="margin-top:8px;opacity:.58" data-en="The probabilities are model estimates, not certainties. Consensus = combination of the three tools.">Las probabilidades son estimaciones de modelos, no certezas. Consenso = combinación de las tres herramientas.</div>
+</div>
+
 </div>
 
 <script>
@@ -273,6 +287,8 @@ let LANG='es';
 const TEAM_EN={'Alemania':'Germany','Arabia Saudí':'Saudi Arabia','Argelia':'Algeria','Argentina':'Argentina','Australia':'Australia','Austria':'Austria','Bosnia':'Bosnia & H.','Brasil':'Brazil','Bélgica':'Belgium','Cabo Verde':'Cape Verde','Canadá':'Canada','Chequia':'Czechia','Colombia':'Colombia','Corea del Sur':'South Korea','Costa de Marfil':'Ivory Coast','Croacia':'Croatia','Curazao':'Curaçao','Ecuador':'Ecuador','Egipto':'Egypt','Escocia':'Scotland','España':'Spain','Estados Unidos':'United States','Francia':'France','Ghana':'Ghana','Haití':'Haiti','Inglaterra':'England','Iraq':'Iraq','Irán':'Iran','Japón':'Japan','Jordania':'Jordan','Marruecos':'Morocco','México':'Mexico','Noruega':'Norway','Nueva Zelanda':'New Zealand','Panamá':'Panama','Paraguay':'Paraguay','Países Bajos':'Netherlands','Portugal':'Portugal','Qatar':'Qatar','RD Congo':'DR Congo','Senegal':'Senegal','Sudáfrica':'South Africa','Suecia':'Sweden','Suiza':'Switzerland','Túnez':'Tunisia','Türkiye':'Türkiye','Uruguay':'Uruguay','Uzbekistán':'Uzbekistan'};
 function tx(es,en){return LANG==='en'?en:es;}          /* texto UI */
 function tn(n){return LANG==='en'?(TEAM_EN[n]||n):n;}   /* nombre de selección (solo para mostrar) */
+const FLAG={'Alemania':'🇩🇪','Arabia Saudí':'🇸🇦','Argelia':'🇩🇿','Argentina':'🇦🇷','Australia':'🇦🇺','Austria':'🇦🇹','Bosnia':'🇧🇦','Brasil':'🇧🇷','Bélgica':'🇧🇪','Cabo Verde':'🇨🇻','Canadá':'🇨🇦','Chequia':'🇨🇿','Colombia':'🇨🇴','Corea del Sur':'🇰🇷','Costa de Marfil':'🇨🇮','Croacia':'🇭🇷','Curazao':'🇨🇼','Ecuador':'🇪🇨','Egipto':'🇪🇬','Escocia':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','España':'🇪🇸','Estados Unidos':'🇺🇸','Francia':'🇫🇷','Ghana':'🇬🇭','Haití':'🇭🇹','Inglaterra':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Iraq':'🇮🇶','Irán':'🇮🇷','Japón':'🇯🇵','Jordania':'🇯🇴','Marruecos':'🇲🇦','México':'🇲🇽','Noruega':'🇳🇴','Nueva Zelanda':'🇳🇿','Panamá':'🇵🇦','Paraguay':'🇵🇾','Países Bajos':'🇳🇱','Portugal':'🇵🇹','Qatar':'🇶🇦','RD Congo':'🇨🇩','Senegal':'🇸🇳','Sudáfrica':'🇿🇦','Suecia':'🇸🇪','Suiza':'🇨🇭','Túnez':'🇹🇳','Türkiye':'🇹🇷','Uruguay':'🇺🇾','Uzbekistán':'🇺🇿'};
+function tf(n){return (FLAG[n]||'')+'  '+tn(n);}  /* bandera + nombre (tablas/tarjetas) */
 
 function bar(p, max, color){
   const w = Math.max(0, Math.min(100, 100*p/max));
@@ -296,7 +312,7 @@ function champDivergence(){
     const s = st[t]; const cl=DATA.claude.title[t], ch=DATA.chatgpt.title[t], gm=DATA.gemini.title[t];
     const pos = v => (100*v/MAX);
     h += `<div class="chrow">
-      <div class="chteam">${tn(t)}<br><span class="elo">Elo ${ELO[t]||'—'}</span></div>
+      <div class="chteam">${tf(t)}<br><span class="elo">Elo ${ELO[t]||'—'}</span></div>
       <div class="track">
         <div class="range" style="left:${pos(s.min)}%;width:${pos(s.max-s.min)}%"></div>
         <div class="medmark" style="left:${pos(m)}%"></div>
@@ -315,7 +331,7 @@ function reachTable(reach, teams){
   let h = `<div class="reachscroll"><table><thead><tr><th>${tx('Selección','Team')}</th><th>R32</th><th>${tx('Octavos','R16')}</th><th>${tx('Cuartos','QF')}</th><th>${tx('Semis','SF')}</th><th>${tx('Final','Final')}</th><th>${tx('Campeón','Champion')}</th></tr></thead><tbody>`;
   for(const t of teams){
     const r = k => reach[k] && reach[k][t]!=null ? fmt(reach[k][t]) : '—';
-    h += `<tr><td class="tm">${tn(t)}</td><td>${r('R32')}</td><td>${r('R16')}</td><td>${r('QF')}</td><td>${r('SF')}</td><td>${r('FINAL')}</td><td class="hl">${r('CAMPEON')}</td></tr>`;
+    h += `<tr><td class="tm">${tf(t)}</td><td>${r('R32')}</td><td>${r('R16')}</td><td>${r('QF')}</td><td>${r('SF')}</td><td>${r('FINAL')}</td><td class="hl">${r('CAMPEON')}</td></tr>`;
   }
   return h+'</tbody></table></div>';
 }
@@ -336,7 +352,7 @@ function champBars(title, color){
     r++;
     h += `<div style="display:flex;align-items:center;gap:10px;margin:5px 0">
       <span style="width:26px;color:var(--muted);font-size:11px;text-align:right">${r}</span>
-      <span style="width:118px;font-weight:700;color:var(--deep-blue);font-size:12.5px">${tn(t)}</span>
+      <span style="width:118px;font-weight:700;color:var(--deep-blue);font-size:12.5px">${tf(t)}</span>
       ${bar(p,MAX,color)}<span style="font-weight:800;color:var(--deep-blue);font-size:12.5px">${fmt(p)}</span></div>`;
   }
   return h+`<div class="legend" style="margin:6px 2px 2px">${tx('Las 48 selecciones, ordenadas por probabilidad de campeón.','All 48 teams, ranked by title probability.')}</div></div>`;
@@ -354,10 +370,10 @@ function groupProjection(){
     cons.forEach((pair,i)=>{
       const [t,pts]=pair;
       const cls = i<2?'style="background:var(--soft-lilac)"':'';
-      h+=`<tr ${cls}><td style="color:var(--muted);font-weight:800">${i+1}</td><td class="ta">${tn(t)}</td><td>${pts}</td><td></td></tr>`;
+      h+=`<tr ${cls}><td style="color:var(--muted);font-weight:800">${i+1}</td><td class="ta">${tf(t)}</td><td>${pts}</td><td></td></tr>`;
     });
     const same = (w.Claude===w.ChatGPT)&&(w.ChatGPT===w.Gemini);
-    h+=`</tbody></table><div class="legend">${same?(tx('✓ Las 3 IAs coinciden en el 1.º: ','✓ The 3 AIs agree on 1st: ')+'<b>'+tn(w.Claude)+'</b>'):(tx('⚠ Disputa por el 1.º — ','⚠ Dispute for 1st — ')+'Claude: '+tn(w.Claude)+' · ChatGPT: '+tn(w.ChatGPT)+' · Gemini: '+tn(w.Gemini))}</div></div>`;
+    h+=`</tbody></table><div class="legend">${same?(tx('✓ Las 3 IAs coinciden en el 1.º: ','✓ The 3 AIs agree on 1st: ')+'<b>'+tf(w.Claude)+'</b>'):(tx('⚠ Disputa por el 1.º — ','⚠ Dispute for 1st — ')+'Claude: '+tf(w.Claude)+' · ChatGPT: '+tf(w.ChatGPT)+' · Gemini: '+tf(w.Gemini))}</div></div>`;
   }
   return h+'</div>';
 }
@@ -372,7 +388,7 @@ function matchTableByAI(matches, showXg){
     for(let i=0;i<4;i++)for(let j=i+1;j<4;j++){
       const key=[teams[i],teams[j]].sort().join('|'); const m=byKey[key]; if(!m)continue;
       const xg = (showXg && m.xa!=null) ? `<span class="wdltxt" style="margin-left:0">xG ${m.xa}–${m.xb}</span>` : '';
-      h+=`<tr><td class="ta">${tn(m.a)}</td><td class="sc">${m.score}</td><td class="tb">${tn(m.b)}</td>
+      h+=`<tr><td class="ta">${tf(m.a)}</td><td class="sc">${m.score}</td><td class="tb">${tf(m.b)}</td>
         <td>${wdlBar(m.pA,m.pD,m.pB)}<span class="wdltxt">${Math.round(m.pA)}·${Math.round(m.pD)}·${Math.round(m.pB)}</span>${xg?'<br>'+xg:''}</td></tr>`;
     }
     h+='</tbody></table></div>';
@@ -391,7 +407,7 @@ function consensusMatchTable(){
       const dots=`<span class="agree"><i class="${m.agree>=1?'on':''}"></i><i class="${m.agree>=2?'on':''}"></i><i class="${m.agree>=3?'on':''}"></i></span>`;
       const ci=m.conf_idx, ccol = ci>=75?'#1a9e5c':(ci>=55?'#0048ff':(ci>=45?'#b58900':'#c0392b'));
       const chip=`<span class="cchip" style="background:${ccol}" title="${tx('Confianza del pronóstico (0–100)','Forecast confidence (0–100)')}">${ci}</span>`;
-      h+=`<tr><td class="ta">${tn(m.a)}</td><td class="sc">${m.score}</td><td class="tb">${tn(m.b)}</td>
+      h+=`<tr><td class="ta">${tf(m.a)}</td><td class="sc">${m.score}</td><td class="tb">${tf(m.b)}</td>
         <td>${wdlBar(m.pA,m.pD,m.pB)} ${dots}${chip}</td></tr>`;
     }
     h+='</tbody></table></div>';
@@ -402,7 +418,7 @@ function consensusMatchTable(){
 /* ---------- HEAD TO HEAD ---------- */
 function h2hOptions(){
   let opts=''; 
-  DATA.consensus.matches.forEach((m,idx)=>{ opts+=`<option value="${idx}">${m.group} · ${tn(m.a)} vs ${tn(m.b)}</option>`; });
+  DATA.consensus.matches.forEach((m,idx)=>{ opts+=`<option value="${idx}">${m.group} · ${tf(m.a)} vs ${tf(m.b)}</option>`; });
   return opts;
 }
 function renderH2H(idx){
@@ -439,16 +455,16 @@ function renderH2H(idx){
         <div class="m"><div class="v">${f.over25}%</div><div class="l">${tx('+2.5 goles','Over 2.5 goals')}</div></div>
         <div class="m"><div class="v">${f.btts}%</div><div class="l">${tx('Ambos marcan','Both teams score')}</div></div>
         <div class="m"><div class="v">${f.conf}%</div><div class="l">${tx('Confianza (entropía)','Confidence (entropy)')}</div></div>
-        <div class="m"><div class="v">${f.cs_a}%</div><div class="l">${tx('Portería 0','Clean sheet')} · ${tn(f.a)}</div></div>
-        <div class="m"><div class="v">${f.cs_b}%</div><div class="l">${tx('Portería 0','Clean sheet')} · ${tn(f.b)}</div></div>
+        <div class="m"><div class="v">${f.cs_a}%</div><div class="l">${tx('Sin gol en contra','Clean sheet')} · ${tf(f.a)}</div></div>
+        <div class="m"><div class="v">${f.cs_b}%</div><div class="l">${tx('Sin gol en contra','Clean sheet')} · ${tf(f.b)}</div></div>
         <div class="m"><div class="v">${f.xpts_a}/${f.xpts_b}</div><div class="l">${tx('Puntos esperados','Expected points')}</div></div>
       </div></div>`;
   }
   // índice de consenso: cifra + veredicto en lenguaje claro; teoría en tooltip
   const ci=m.conf_idx, col = ci>=75?'#1a9e5c':(ci>=55?'#0048ff':(ci>=45?'#b58900':'#c0392b'));
-  const verdict = ci>=75?tx('Favorito claro · las 3 IAs coinciden','Clear favorite · all 3 AIs agree'):(ci>=55?tx('Favorito moderado','Moderate favorite'):(ci>=45?tx('Partido parejo','Close match'):tx('Muy parejo · difícil de predecir','Very close · hard to call')));
+  const verdict = ci>=75?tx('Favorito claro · las 3 IAs coinciden','Clear favorite · all 3 AIs agree'):(ci>=55?tx('Favorito moderado','Moderate favorite'):(ci>=45?tx('Partido igualado','Close match'):tx('Muy igualado · difícil de predecir','Very close · hard to call')));
   const favName = (m.pA>=m.pD&&m.pA>=m.pB)?m.a:((m.pB>=m.pD&&m.pB>=m.pA)?m.b:null);
-  const favLine = favName?`${tx('Favorito del consenso','Consensus favorite')}: <b>${tn(favName)}</b> (${Math.round(Math.max(m.pA,m.pB))}%)`:tx('El empate es el resultado más probable','A draw is the most likely result');
+  const favLine = favName?`${tx('Favorito del consenso','Consensus favorite')}: <b>${tf(favName)}</b> (${Math.round(Math.max(m.pA,m.pB))}%)`:tx('El empate es el resultado más probable','A draw is the most likely result');
   const tipTxt = tx(`Resume en una cifra cuán claro y consensuado es el resultado. Combina la fuerza del favorito con el acuerdo entre las 3 IAs — acuerdo ${m.agree_idx}/100; probabilidades combinadas (pool logarítmico) ${m.p_log[0]}% · ${m.p_log[1]}% · ${m.p_log[2]}%. Más alto = más claro y consensuado; más bajo = parejo o disputado.`,`A single figure for how clear and agreed the result is. It combines the favorite's strength with the agreement among the 3 AIs — agreement ${m.agree_idx}/100; combined probabilities (logarithmic pool) ${m.p_log[0]}% · ${m.p_log[1]}% · ${m.p_log[2]}%. Higher = clearer and more agreed; lower = close or disputed.`);
   const cidx=`<div class="cidx"><div class="ring" style="background:${col}">${ci}</div>
     <div class="meta">
@@ -457,7 +473,7 @@ function renderH2H(idx){
       <div class="legend" style="margin-top:2px">${favLine}</div>
     </div></div>`;
   document.getElementById('h2h-out').innerHTML =
-    `<div class="h2h-big"><span class="h2h-team">${tn(m.a)}</span><span class="h2h-vs">vs</span><span class="h2h-team">${tn(m.b)}</span></div>
+    `<div class="h2h-big"><span class="h2h-team">${tf(m.a)}</span><span class="h2h-vs">vs</span><span class="h2h-team">${tf(m.b)}</span></div>
      ${rows}<div class="insight" style="margin-top:14px"><p>${agreeTxt}. ${tx(`Barra: azul gana ${tn(m.a)} · gris empate · morado gana ${tn(m.b)}.`,`Bar: blue = ${tn(m.a)} wins · grey = draw · purple = ${tn(m.b)} wins.`)}${drawNote}</p></div>${cidx}${xgline}${rich}`;
 }
 
@@ -469,11 +485,11 @@ function consensusVerdict(){
   // ¿cuán abierto? nº de selecciones con ≥5% de título
   const contenders=Object.values(c.title_median).filter(v=>v>=5).length;
   const verdict=tx(`Las tres IAs coinciden: <b>${tn(t1[0])}</b> es la favorita al título (${fmt(t1[1])}), por delante de ${tn(t2[0])} y ${tn(t3[0])} — pero es un Mundial <b>muy abierto</b>, con ${contenders} selecciones en pelea real por la copa.`,`The three AIs agree: <b>${tn(t1[0])}</b> is the title favorite (${fmt(t1[1])}), ahead of ${tn(t2[0])} and ${tn(t3[0])} — but it is a <b>wide-open</b> World Cup, with ${contenders} teams in genuine contention for the trophy.`);
-  const pod=(rk,t,cls)=>`<div class="pod ${cls}"><div class="rk">${rk}</div><div class="tm">${tn(t[0])}</div><div class="pc">${fmt(t[1])}</div><div class="pl">${tx('campeón','champion')}</div></div>`;
+  const pod=(rk,t,cls)=>`<div class="pod ${cls}"><div class="rk">${rk}</div><div class="tm">${tf(t[0])}</div><div class="pc">${fmt(t[1])}</div><div class="pl">${tx('campeón','champion')}</div></div>`;
   return `<div class="verdict">
     <p class="vlead">${tx('El veredicto del consenso · Mundial 2026','The consensus verdict · World Cup 2026')}</p>
     <p class="vmain">${verdict}</p>
-    <div class="podium">${pod(tx('2.º','2nd'),t2,'p2')}${pod(tx('1.º','1st'),t1,'p1')}${pod(tx('3.º','3rd'),t3,'p3')}</div>
+    <div class="podium">${pod('🥈',t2,'p2')}${pod('🥇',t1,'p1')}${pod('🥉',t3,'p3')}</div>
   </div>`;
 }
 function keyTakeaways(){
@@ -490,10 +506,10 @@ function keyTakeaways(){
     if(!coin||m.conf_idx<coin.conf_idx) coin=m;
   }
   return `<div class="takeaways">
-    <div class="tk blue"><div class="lab">${tx('Favorito del consenso','Consensus favorite')}</div><div class="big">${tn(fav[0])}</div><div class="sub">${fmt(fav[1])} ${tx('de probabilidad de título','title probability')}</div></div>
-    <div class="tk"><div class="lab">${tx('Mayor desacuerdo entre IAs','Biggest disagreement between AIs')}</div><div class="big">${tn(dis.t)}</div><div class="sub">${tx('entre','between')} ${fmt(dis.min)} ${tx('y','and')} ${fmt(dis.max)} ${tx('según el modelo','depending on the model')}</div></div>
-    <div class="tk green"><div class="lab">${tx('Pronóstico más seguro','Safest forecast')}</div><div class="big">${tn(safe.a)} vs ${tn(safe.b)}</div><div class="sub">${tx('confianza','confidence')} ${safe.conf_idx}/100 · ${tx('marcador','score')} ${safe.score}</div></div>
-    <div class="tk red"><div class="lab">${tx('El gran volado','The big coin-flip')}</div><div class="big">${tn(coin.a)} vs ${tn(coin.b)}</div><div class="sub">${tx('confianza','confidence')} ${coin.conf_idx}/100 · ${tx('parejísimo','razor-thin')}</div></div>
+    <div class="tk blue"><div class="lab">${tx('Favorito del consenso','Consensus favorite')}</div><div class="big">${tf(fav[0])}</div><div class="sub">${fmt(fav[1])} ${tx('de probabilidad de título','title probability')}</div></div>
+    <div class="tk"><div class="lab">${tx('Mayor desacuerdo entre IAs','Biggest disagreement between AIs')}</div><div class="big">${tf(dis.t)}</div><div class="sub">${tx('entre','between')} ${fmt(dis.min)} ${tx('y','and')} ${fmt(dis.max)} ${tx('según el modelo','depending on the model')}</div></div>
+    <div class="tk green"><div class="lab">${tx('Pronóstico más seguro','Safest forecast')}</div><div class="big">${tf(safe.a)} vs ${tf(safe.b)}</div><div class="sub">${tx('confianza','confidence')} ${safe.conf_idx}/100 · ${tx('marcador','score')} ${safe.score}</div></div>
+    <div class="tk red"><div class="lab">${tx('Moneda al aire','Coin flip')}</div><div class="big">${tf(coin.a)} vs ${tf(coin.b)}</div><div class="sub">${tx('confianza','confidence')} ${coin.conf_idx}/100 · ${tx('muy igualado','razor-thin')}</div></div>
   </div>`;
 }
 function renderConsenso(){
@@ -571,7 +587,7 @@ function renderChatGPT(){
   document.getElementById('chatgpt').innerHTML = `
   <div class="section-title">${tx('Metodología','Methodology')} · ChatGPT <span style="color:var(--c-chatgpt)">v6</span></div>
   <div class="card methclassic">
-    <p>${tx(`Ensamble <b>calibrado histórico + team-level + player-level + climate-aware</b>. Sobre la fuerza estructural (FIFA-Elo, World Football Elo, talento de plantilla, lectura player-level, forma, clima/altitud, ruta y localía) añade una capa de <b>calibración histórica</b> que aplica <b>shrinkage de favoritos</b>, penaliza rutas difíciles y regulariza el título para que ningún equipo reciba una probabilidad irreal. 60.000–80.000 corridas Monte Carlo.`,`A <b>historically-calibrated + team-level + player-level + climate-aware</b> ensemble. On top of structural strength (FIFA-Elo, World Football Elo, squad talent, player-level reading, form, climate/altitude, route and home advantage) it adds a <b>historical-calibration</b> layer that applies <b>favorite shrinkage</b>, penalizes hard routes and regularizes the title so no team gets an unrealistic probability. 60,000–80,000 Monte Carlo runs.`)}</p>
+    <p>${tx(`Ensamble <b>calibrado histórico + team-level + player-level + climate-aware</b>. Sobre la fuerza estructural (FIFA-Elo, World Football Elo, talento de plantilla, lectura player-level, forma, clima/altitud, ruta y localía) añade una capa de <b>calibración histórica</b> que aplica <b>shrinkage de favoritos</b>, penaliza rutas difíciles y regulariza el título para que ningún equipo reciba una probabilidad irreal. 60.000–80.000 simulaciones Monte Carlo.`,`A <b>historically-calibrated + team-level + player-level + climate-aware</b> ensemble. On top of structural strength (FIFA-Elo, World Football Elo, squad talent, player-level reading, form, climate/altitude, route and home advantage) it adds a <b>historical-calibration</b> layer that applies <b>favorite shrinkage</b>, penalizes hard routes and regularizes the title so no team gets an unrealistic probability. 60,000–80,000 Monte Carlo runs.`)}</p>
     <div style="margin-top:8px"><span class="badge">${tx('Calibración histórica','Historical calibration')}</span><span class="badge">${tx('Shrinkage de favoritos','Favorite shrinkage')}</span><span class="badge">${tx('Ajuste climático por sede','Per-venue climate adjustment')}</span><span class="badge">60k–80k Monte Carlo</span></div>
   </div>
   <div class="insight"><p>${tx(`Rasgo de la v6: es la IA <b>mejor calibrada y más prudente en la cúspide</b> — contiene a España en ${fmt(d.title['España'])} y reparte hacia el bloque perseguidor (Francia ${fmt(d.title['Francia'])}, Inglaterra ${fmt(d.title['Inglaterra'])}, Argentina ${fmt(d.title['Argentina'])}). Encabeza con España, muy cerca de Claude.`,`v6 trait: the <b>best-calibrated and most prudent at the top</b> — it caps Spain at ${fmt(d.title['España'])} and spreads probability to the chasing pack (France ${fmt(d.title['Francia'])}, England ${fmt(d.title['Inglaterra'])}, Argentina ${fmt(d.title['Argentina'])}). It leads with Spain, very close to Claude.`)}</p></div>
