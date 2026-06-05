@@ -235,8 +235,7 @@ probabilidad supera 100%.</p>
 192 partidos OOS</b>. El ML solo y el Dixon-Coles solo quedan parejos (RPS 0.2012 y 0.2016), pero el <b>ensamble</b> de
 ambos los supera a los dos: <b>RPS 0.2002, mejora del 17.0% sobre el azar</b>. Por eso es el modelo v5.</p>
 <p><b>Validación FUERA DE MUESTRA</b> (reajuste solo con datos previos a cada Mundial, predicción de sus 48 partidos
-reales): es la única de las cuatro IAs con desempeño <b>medido con código sobre Mundiales reales</b> — ver el panel de
-backtesting.</p>
+reales): backtesting reproducible con código sobre Mundiales reales — ver el panel de backtesting.</p>
 <p class="methlim"><b>Honestidad sobre ranking y nóminas:</b> el ranking FIFA oficial se publica en una página renderizada por
 JavaScript y no es extraíble de forma fiable; se usó el Elo calculado (mejor predictor y más actual). Las <b>nóminas</b> se
 reflejan vía la <b>forma reciente</b> como aproximación; un verdadero modelo jugador-por-jugador exigiría valores de plantilla
@@ -263,8 +262,7 @@ generation if any probability exceeds 100%.</p>
 192 OOS matches</b>. ML alone and Dixon-Coles alone are roughly tied (RPS 0.2012 and 0.2016), but the <b>ensemble</b> of
 the two beats both: <b>RPS 0.2002, a 17.0% improvement over chance</b>. Hence the v5 model.</p>
 <p><b>OUT-OF-SAMPLE validation</b> (refit using only pre-tournament data for each World Cup, predicting its 48 real
-matches): it is the only one of the four AIs with performance <b>measured with code over real World Cups</b> — see the
-backtesting panel.</p>
+matches): reproducible backtest with code over real World Cups — see the backtesting panel.</p>
 <p class="methlim"><b>Honesty about ranking and squads:</b> the official FIFA ranking is published on a JavaScript-rendered
 page and cannot be scraped reliably; the computed Elo was used (a better and more current predictor). <b>Squads</b> are
 reflected via <b>recent form</b> as a proxy; a true player-by-player model would require audited squad values (e.g.
@@ -356,10 +354,9 @@ BACKTEST = {
  "claude": {
    "title":"Backtesting OOS reproducible · 4 Mundiales (2010–2022)",
    "html":"""
-<p><b>Qué hace.</b> A diferencia de los otros dos —reportes narrativos— este backtest está <b>calculado con código sobre
-resultados reales</b> y es reproducible (<code>src/backtest_claude_v4.py</code>). Para cada Mundial 2010, 2014, 2018 y
-2022 el ensamble se ajusta <b>solo con datos previos al torneo</b> y predice sus 48 partidos de grupos reales:
-<b>192 partidos fuera de muestra</b>.</p>
+<p><b>Qué hace.</b> Backtest <b>calculado con código sobre resultados reales</b> y reproducible
+(<code>models/claude/code/backtest_claude_v4.py</code>). Para cada Mundial 2010, 2014, 2018 y 2022 el ensamble se ajusta
+<b>solo con datos previos al torneo</b> y predice sus 48 partidos de grupos reales: <b>192 partidos fuera de muestra</b>.</p>
 <p><b>Métricas (promedio por partido).</b></p>
 <pre>Modelo                  RPS    Brier  LogLoss  MAE goles  Marcador
 Dixon-Coles solo      0.2016  0.5766  0.9795    1.3320     13.5%
@@ -371,14 +368,13 @@ Baseline uniforme     0.2413  0.6667  1.0986       —          —</pre>
 2010 0.1897 · 2014 0.1905 · 2018 0.1906 · 2022 0.2301 (el más difícil, por sorpresas como Arabia Saudí 2-1 Argentina).</p>
 <p class="methlim"><b>Honestidad metodológica.</b> Mide calibración a <b>nivel de partido de grupos</b>; una validación a
 nivel de <b>campeón</b> (tipo "campeón en Top N") exigiría simular el torneo completo de cada edición —trabajo futuro.
-Brier es multiclase (V/E/D, rango 0–2); las métricas entre IAs <b>solo son comparables si usan la misma convención y los
-mismos datos</b>, algo que únicamente este backtest documenta de forma auditable.</p>""",
+Brier es multiclase (V/E/D, rango 0–2); las métricas entre IAs <b>solo son comparables bajo la misma convención y los
+mismos datos</b>.</p>""",
    "title_en":"Reproducible OOS backtesting · 4 World Cups (2010–2022)",
    "html_en":"""
-<p><b>What it does.</b> Unlike the other two —narrative reports— this backtest is <b>computed with code over real
-results</b> and is reproducible (<code>src/backtest_claude_v4.py</code>). For each World Cup 2010, 2014, 2018 and 2022
-the ensemble is fit <b>using only pre-tournament data</b> and predicts its 48 real group matches: <b>192 out-of-sample
-matches</b>.</p>
+<p><b>What it does.</b> A backtest <b>computed with code over real results</b> and reproducible
+(<code>models/claude/code/backtest_claude_v4.py</code>). For each World Cup 2010, 2014, 2018 and 2022 the ensemble is
+fit <b>using only pre-tournament data</b> and predicts its 48 real group matches: <b>192 out-of-sample matches</b>.</p>
 <p><b>Metrics (per-match average).</b></p>
 <pre>Model                  RPS    Brier  LogLoss  Goals MAE  Scoreline
 Dixon-Coles only      0.2016  0.5766  0.9795    1.3320     13.5%
@@ -390,8 +386,7 @@ Uniform baseline      0.2413  0.6667  1.0986       —          —</pre>
 2010 0.1897 · 2014 0.1905 · 2018 0.1906 · 2022 0.2301 (the hardest, due to upsets like Saudi Arabia 2-1 Argentina).</p>
 <p class="methlim"><b>Methodological honesty.</b> It measures <b>group-stage match-level</b> calibration; a <b>champion</b>-level
 validation ("champion in Top N") would require simulating each full tournament —future work. Brier is multiclass (W/D/L,
-range 0–2); cross-AI metrics <b>are only comparable under the same convention and data</b>, which only this backtest
-documents auditably.</p>"""},
+range 0–2); cross-AI metrics <b>are only comparable under the same convention and data</b>.</p>"""},
  "chatgpt": {
    "title":"Backtesting Nivel 2 · validación del núcleo v6 → v6.2",
    "html":"""

@@ -67,10 +67,11 @@ mundial2026-ia-benchmark/
     │
     └── gemini/                     v7 · Local Pressure Networks
         ├── README.md
+        ├── code/                       motor xG + simulador del cuadro + backtesting engine
         └── forecasts/                  camino al título, 72 partidos + apéndice técnico, backtesting v6
 ```
 
-**Reproducibilidad por IA.** Claude entrega código + datos + reporte. ChatGPT entrega código + reportes. Gemini entrega solo reportes narrativos (sin código fuente). Cada IA tiene su README explicando qué hay y cómo correrlo.
+**Reproducibilidad por IA.** Las tres IAs entregan código fuente reproducible junto a sus reportes: Claude (ensamble v5 + backtest OOS), ChatGPT (scripts del camino al título, los 72 partidos y los backtestings Nivel 1/2) y Gemini (motor xG, simulador del cuadro y backtesting engine v7). Cada IA tiene su README explicando qué hay y cómo correrlo.
 
 ---
 
@@ -100,7 +101,7 @@ Cada IA tiene su propio README con instrucciones específicas:
 
 - **Claude** — ver `models/claude/README.md`. Código completo del ensamble v5 (Dixon-Coles + Machine Learning) y del backtesting OOS sobre 4 Mundiales.
 - **ChatGPT** — ver `models/chatgpt/README.md`. Scripts reproducibles de la tabla camino al título v6.2, los 72 partidos y los backtestings Nivel 1 y Nivel 2.
-- **Gemini** — solo reportes narrativos en `models/gemini/forecasts/` (sin código fuente provisto por el modelo).
+- **Gemini** — ver `models/gemini/README.md`. Motor matemático xG (Poisson bivariada + Dixon-Coles), simulador Monte Carlo del cuadro y backtesting engine v7.
 
 Para regenerar la página del consenso a partir de los pronósticos de las tres IAs:
 

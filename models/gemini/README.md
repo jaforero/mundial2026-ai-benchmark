@@ -30,16 +30,28 @@ Sobre estos vectores se mantiene el motor bio-termodinámico UTCI del v6.
 
 El backtesting reveló un sesgo de supervivencia ("enamorarse de la historia") que originó el Factor de Decaimiento del Campeón del v7.
 
-## Nota sobre reproducibilidad
-
-A diferencia de Claude (código completo en `models/claude/code/`) y ChatGPT (paquete reproducible en `models/chatgpt/code/`), los reportes de Gemini son **narrativos**: describen la metodología, ecuaciones y resultados pero no incluyen el código fuente que los produjo. Si en el futuro Gemini entrega scripts reproducibles, se sumarán en `code/` siguiendo el mismo esquema que las otras dos IAs.
-
 ## Estructura
 
 ```
 gemini/
+├── code/                                                ← código Python del modelo v7
+│   ├── README.md                                          apéndice técnico matemático (ecuaciones LaTeX)
+│   ├── Gemini_V7_Fase_Grupos_Poisson.py                   motor matemático: xG dinámico + Poisson bivariada (Dixon-Coles)
+│   ├── Gemini_V7_CaminoMundial_MonteCarlo.py              simulador del árbol de eliminación directa (10.000 iteraciones)
+│   └── Gemini_V7_Backtesting_Engine.py                    auditoría Brier Score + entropía cruzada vs Mundiales anteriores
 └── forecasts/                                            ← reportes narrativos consolidados
     ├── Gemini_Predictivo_V7_Local_Pressure_Networks.md     camino al título 48 selecciones (v7)
     ├── Gemini_Pronostico_72_Partidos_Fase_Grupo_v7.md      72 partidos + apéndice técnico (v7)
     └── Gemini_Backtesting_y_Validacion_Estadistica_v6.md   reporte de backtesting (v6)
+```
+
+## Reproducir
+
+```bash
+pip install numpy pandas scipy scikit-learn
+
+# Integrar los datos de equipos en un DataFrame estándar antes de instanciar los simuladores
+python code/Gemini_V7_Fase_Grupos_Poisson.py
+python code/Gemini_V7_CaminoMundial_MonteCarlo.py
+python code/Gemini_V7_Backtesting_Engine.py
 ```
