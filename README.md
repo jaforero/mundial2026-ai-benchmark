@@ -25,9 +25,9 @@ Contiene cuatro vistas:
 
 Cada IA aborda el problema con una **filosofía distinta**, y eso es parte de lo interesante:
 
-- **Claude** — Ensamble que promedia un motor estadístico **Dixon-Coles** (fuerzas de ataque/defensa estimadas por máxima verosimilitud sobre miles de partidos internacionales reales) con un modelo de **machine learning** (gradient boosting con pérdida de Poisson sobre Elo, forma reciente e histórico de Mundiales). Es el único modelo **validado fuera de muestra** contra los Mundiales 2018 y 2022.
-- **ChatGPT** — Calibración histórica con ajuste por fase del torneo.
-- **Gemini** — Enfoque "Heritage AI" que pondera el pedigrí histórico de cada selección.
+- **Claude v5** — Ensamble que promedia un motor estadístico **Dixon-Coles** (fuerzas de ataque/defensa estimadas por máxima verosimilitud sobre miles de partidos internacionales reales) con un modelo de **machine learning** (gradient boosting con pérdida de Poisson sobre Elo, forma reciente e histórico de Mundiales). Peso del ensamble afinado por backtesting (0.4 DC / 0.6 ML). Único modelo **validado fuera de muestra con código reproducible** sobre 4 Mundiales (2010–2022, 192 partidos).
+- **ChatGPT v6.2** — Ensamble calibrado históricamente con los ajustes del Backtesting Nivel 2: núcleo FIFA/Elo reforzado (24%) y penalización de sesgo de mercado anti-Europa.
+- **Gemini v7** — Local Pressure Networks: abandona el "pedigrí del escudo" del v6 y mide resiliencia por minutos de élite de la plantilla actual, con factor de decaimiento del campeón vigente (−8% a Argentina) y aura de localía asimétrica.
 
 El **consenso** toma la **mediana** de las tres IAs para la probabilidad de título (robusta frente a un modelo atípico), promedia las probabilidades de cada partido y resuelve el marcador por mayoría. Cada partido lleva además un **índice de confianza (0–100)** que combina la fuerza del favorito con el grado de acuerdo entre las tres IAs (pool logarítmico + divergencia de Jensen-Shannon).
 
@@ -37,63 +37,81 @@ El **consenso** toma la **mediana** de las tres IAs para la probabilidad de tít
 
 ## Estructura del repositorio
 
+Organización **por IA**: cada modelo vive en su propia carpeta, con código (cuando está disponible), datos y reportes. Esto facilita comparar metodologías y reproducir cada uno por separado.
+
 ```
 mundial2026-ia-benchmark/
-├── index.html              ← la página (autocontenida; es lo único necesario para que funcione)
-├── CNAME                   ← dominio personalizado: mundial.javierforero.co
-├── robots.txt              ← SEO + permisos para crawlers de IA (GEO/AIG)
-├── sitemap.xml             ← mapa del sitio para buscadores
-├── 404.html                ← página de error de marca (redirige al inicio)
-├── favicon.svg             ← ícono de marca
-├── og-image.png            ← imagen de previsualización al compartir (1200×630)
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── data/                   ← datos que alimentan la página
-│   ├── consolidated.json       consolidado de las 3 IAs + consenso (lo que consume index.html)
-│   ├── results_v4.json         salida del modelo final de Claude (ensamble)
-│   ├── results_v3.json         salida del modelo Dixon-Coles ajustado
-│   ├── results_v2.json         salida del motor Dixon-Coles base
-│   ├── results.json            grupos, Elo y andamiaje base del torneo
-│   └── strengths_v3.json       fuerzas de ataque/defensa estimadas (48 selecciones)
-├── src/                    ← código de los modelos de Claude y del consolidado
-│   ├── wc2026_model.py         base: grupos, Elo, equipos, rondas
-│   ├── wc2026_model_v2.py      motor de goles Dixon-Coles + simulador del torneo
-│   ├── wc2026_fit_v3.py        ajuste por máxima verosimilitud (+ validación OOS)
-│   ├── wc2026_model_v3.py      simulación con fuerzas ajustadas
-│   ├── wc2026_ml_v4.py         modelo de machine learning (gradient boosting Poisson)
-│   ├── ensemble_v4.py          validación del ensamble Dixon-Coles + ML
-│   ├── wc2026_model_v4.py      modelo final de Claude (ensamble) → results_v4.json
-│   ├── consolidate2.py         combina las 3 IAs → consolidated.json (índice de confianza)
-│   └── build_compare.py        genera index.html a partir de consolidated.json
-└── forecasts/              ← pronósticos fuente de las otras dos IAs (insumos del consenso)
-    ├── ChatGPT_Camino_al_Titulo_v6_Completo.md
-    ├── ChatGPT_Pronostico_72_Partidos_Fase_Grupos_v6.md
-    ├── Gemini_Predictivo_V6_Heritage_AI_y_Apend.md
-    └── Gemini_Pronostico_72_Partidos_Fase_Grupo_v6.md
+├── index.html                  ← la página (autocontenida; es lo único necesario para que funcione)
+├── CNAME, robots.txt, sitemap.xml, 404.html, favicon.svg, og-image.png  ← assets del sitio
+├── IgraSans.woff2, IgraSans.otf  ← tipografía de marca
+├── README.md, requirements.txt, .gitignore
+│
+├── data/
+│   └── consolidated.json       ← datos unificados de las 3 IAs + consenso (alimenta index.html)
+│
+├── site/                       ← pipeline que construye la página
+│   ├── consolidate2.py             combina las 3 IAs → consolidated.json (índice de confianza)
+│   └── build_compare.py            genera index.html a partir de consolidated.json
+│
+└── models/                     ← un subdirectorio por IA, con la misma estructura interna
+    ├── claude/                     v5 · ensamble Dixon-Coles + Machine Learning
+    │   ├── README.md
+    │   ├── code/                       código Python completo y reproducible
+    │   ├── data/                       salidas del modelo (results_v5.json, backtest_*.json)
+    │   └── forecasts/                  reporte de backtesting
+    │
+    ├── chatgpt/                    v6.2 · ensamble calibrado histórico + Nivel 2
+    │   ├── README.md
+    │   ├── code/                       scripts Python reproducibles + README propio
+    │   └── forecasts/                  camino al título, 72 partidos, backtesting Nivel 2
+    │
+    └── gemini/                     v7 · Local Pressure Networks
+        ├── README.md
+        └── forecasts/                  camino al título, 72 partidos + apéndice técnico, backtesting v6
 ```
+
+**Reproducibilidad por IA.** Claude entrega código + datos + reporte. ChatGPT entrega código + reportes. Gemini entrega solo reportes narrativos (sin código fuente). Cada IA tiene su README explicando qué hay y cómo correrlo.
+
+---
+
+## Publicar en `mundial.javierforero.co`
+
+El sitio usa un **subdominio propio**. El archivo `CNAME` ya contiene `mundial.javierforero.co`. Como tu repositorio de usuario `jaforero.github.io` ya está ocupado por otro dominio, este proyecto va en **un repositorio aparte**.
+
+**1. Sube el repositorio** a `https://github.com/jaforero/mundial2026-ia-benchmark` (o el nombre que prefieras).
+
+**2. Configura el DNS** en tu proveedor del dominio `javierforero.co` — añade un registro:
+
+| Tipo  | Nombre / Host | Valor / Apunta a        |
+|-------|---------------|-------------------------|
+| CNAME | `mundial`     | `jaforero.github.io`    |
+
+**3. Activa GitHub Pages:** en el repo → **Settings → Pages** → *Source* = `main` / carpeta `/ (root)`. En **Custom domain** escribe `mundial.javierforero.co` (GitHub lo detecta del archivo `CNAME`) y guarda.
+
+**4. Espera la verificación del DNS** (de minutos a un par de horas) y marca **Enforce HTTPS**. GitHub emite el certificado TLS automáticamente.
+
+Listo: el sitio quedará en `https://mundial.javierforero.co/`.
 
 ---
 
 ## Reproducir los modelos (opcional)
 
-El código de `src/` se incluye con fines de **transparencia y portafolio**. Los scripts usan rutas absolutas del entorno donde se construyeron, así que para ejecutarlos en local hay que ajustar las rutas de lectura/escritura. El flujo es:
+Cada IA tiene su propio README con instrucciones específicas:
+
+- **Claude** — ver `models/claude/README.md`. Código completo del ensamble v5 (Dixon-Coles + Machine Learning) y del backtesting OOS sobre 4 Mundiales.
+- **ChatGPT** — ver `models/chatgpt/README.md`. Scripts reproducibles de la tabla camino al título v6.2, los 72 partidos y los backtestings Nivel 1 y Nivel 2.
+- **Gemini** — solo reportes narrativos en `models/gemini/forecasts/` (sin código fuente provisto por el modelo).
+
+Para regenerar la página del consenso a partir de los pronósticos de las tres IAs:
 
 ```bash
 pip install -r requirements.txt
 
-# 1. Descargar el dataset de partidos internacionales (no se incluye; ver atribución)
-curl -L -o intl_results.csv https://raw.githubusercontent.com/martj42/international_results/master/results.csv
+# 1. Consolidar las 3 IAs (consume las fuentes y genera consolidated.json)
+python site/consolidate2.py
 
-# 2. Estimar fuerzas y validar fuera de muestra
-python src/wc2026_fit_v3.py
-
-# 3. Simular el torneo con el modelo final de Claude
-python src/wc2026_model_v4.py
-
-# 4. Consolidar las 3 IAs y generar la página
-python src/consolidate2.py
-python src/build_compare.py
+# 2. Generar la página final
+python site/build_compare.py
 ```
 
 ---
@@ -101,7 +119,7 @@ python src/build_compare.py
 ## Atribución
 
 - **Datos de partidos internacionales:** [martj42/international_results](https://github.com/martj42/international_results) (resultados de selecciones desde 1872).
-- **Pronósticos:** generados con Claude (Anthropic), ChatGPT (OpenAI) y Gemini (Google). Los archivos en `forecasts/` son las salidas de ChatGPT y Gemini usadas como insumo del consenso.
+- **Pronósticos:** generados con Claude (Anthropic), ChatGPT (OpenAI) y Gemini (Google). Cada IA tiene su carpeta dedicada en `models/`, con su código (cuando lo aporta) y sus reportes.
 - **Análisis, modelado, consolidación y diseño:** Javier Forero.
 
 ---
