@@ -75,26 +75,6 @@ mundial2026-ia-benchmark/
 
 ---
 
-## Publicar en `mundial.javierforero.co`
-
-El sitio usa un **subdominio propio**. El archivo `CNAME` ya contiene `mundial.javierforero.co`. Como tu repositorio de usuario `jaforero.github.io` ya está ocupado por otro dominio, este proyecto va en **un repositorio aparte**.
-
-**1. Sube el repositorio** a `https://github.com/jaforero/mundial2026-ia-benchmark` (o el nombre que prefieras).
-
-**2. Configura el DNS** en tu proveedor del dominio `javierforero.co` — añade un registro:
-
-| Tipo  | Nombre / Host | Valor / Apunta a        |
-|-------|---------------|-------------------------|
-| CNAME | `mundial`     | `jaforero.github.io`    |
-
-**3. Activa GitHub Pages:** en el repo → **Settings → Pages** → *Source* = `main` / carpeta `/ (root)`. En **Custom domain** escribe `mundial.javierforero.co` (GitHub lo detecta del archivo `CNAME`) y guarda.
-
-**4. Espera la verificación del DNS** (de minutos a un par de horas) y marca **Enforce HTTPS**. GitHub emite el certificado TLS automáticamente.
-
-Listo: el sitio quedará en `https://mundial.javierforero.co/`.
-
----
-
 ## Reproducir los modelos (opcional)
 
 El código de `src/` se incluye con fines de **transparencia y portafolio**. Los scripts usan rutas absolutas del entorno donde se construyeron, así que para ejecutarlos en local hay que ajustar las rutas de lectura/escritura. El flujo es:
