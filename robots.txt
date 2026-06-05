@@ -1,0 +1,35 @@
+# robots.txt — https://mundial.javierforero.co/
+# Benchmark IA · Mundial FIFA 2026 — Claude · ChatGPT · Gemini · Javier Forero
+
+User-agent: *
+Allow: /
+
+# Crawlers de IA y motores generativos (GEO/AIG) — acceso permitido
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://mundial.javierforero.co/sitemap.xml
