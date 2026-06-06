@@ -520,20 +520,46 @@ history. That is the origin of the <b>Champion Decay Factor</b> (−8% to the re
 real elite-minutes load instead of crest pedigree.</p>"""},
 }
 
+# ---------- jornadas oficiales (FIFA round-robin estándar) + mejores terceros ----------
+_MD={frozenset({0,1}):1,frozenset({2,3}):1,frozenset({0,2}):2,frozenset({1,3}):2,frozenset({0,3}):3,frozenset({1,2}):3}
+_SLOT={t:i for g,ts in GROUPS.items() for i,t in enumerate(ts)}
+_GRP={t:g for g,ts in GROUPS.items() for t in ts}
+SCHED_DATES={"A":["Jun 11","Jun 18","Jun 24"],"B":["Jun 12","Jun 18","Jun 24"],"C":["Jun 13","Jun 19","Jun 24"],
+ "D":["Jun 12","Jun 19","Jun 25"],"E":["Jun 14","Jun 20","Jun 25"],"F":["Jun 14","Jun 20","Jun 25"],
+ "G":["Jun 15","Jun 21","Jun 26"],"H":["Jun 15","Jun 21","Jun 26"],"I":["Jun 16","Jun 22","Jun 26"],
+ "J":["Jun 16","Jun 22","Jun 27"],"K":["Jun 17","Jun 23","Jun 27"],"L":["Jun 17","Jun 23","Jun 27"]}
+def _inject_md(mlist):
+    for m in mlist:
+        a,b=m.get("a",""),m.get("b","")
+        ga,gb=_GRP.get(a),_GRP.get(b)
+        if ga==gb and ga and a in _SLOT and b in _SLOT:
+            md=_MD.get(frozenset({_SLOT[a],_SLOT[b]}))
+            if md: m["md"]=md; m["date"]=SCHED_DATES[ga][md-1]; m["grp"]=ga
+_inject_md(cons_matches)
+for flist in [cl["fixtures"], list(cg_matches.values()), list(gm_matches.values())]:
+    _inject_md(flist)
+# 8 mejores terceros
+_thirds=[]
+for g in sorted(GROUPS):
+    row=group_proj[g]["Consenso"]
+    if len(row)>=3: _thirds.append((g,row[2][0],row[2][1]))
+_thirds.sort(key=lambda x:-x[2])
+best_thirds=[x[0] for x in _thirds[:8]]
+
 DATA={"groups":GROUPS,"elo":cl_elo,"meth":METH,"backtest":BACKTEST,
  "claude":{"title":claude_title,"reach":claude_reach,"group_win":claude_group,"advance":claude_adv,
            "fixtures":cl["fixtures"],"params":cl["params"],"N":cl["N"],"version":CLAUDE_VERSION,"scorers":cl_scorers},
  "chatgpt":{"title":cg_title,"reach":to_round_keyed(cg_reach),"version":"v7",
-            "matches":[{k:m[k] for k in("a","b","pA","pD","pB","score")} for m in cg_matches.values()],
+            "matches":[{**{k:m[k] for k in("a","b","pA","pD","pB","score")},**{k:m[k] for k in("md","date","grp") if k in m}} for m in cg_matches.values()],
             "scorers":cg_scorers},
  "gemini":{"title":gm_title,"reach":to_round_keyed(gm_reach),"version":"v8",
-           "matches":[{k:m[k] for k in("a","b","pA","pD","pB","score")} for m in gm_matches.values()],
+           "matches":[{**{k:m[k] for k in("a","b","pA","pD","pB","score")},**{k:m[k] for k in("md","date","grp") if k in m}} for m in gm_matches.values()],
            "scorers":gm_scorers},
  "consensus":{"title":consensus_title,"title_median":consensus_title_median,
               "title_stat":{t:{k:round(v[k],2) for k in("mean","median","min","max")} for t,v in title_stat.items()},
               "reach":consensus_reach,"matches":cons_matches,"agree_counter":dict(agree),
               "scorers":scorers_consensus},
- "group_proj":group_proj}
+ "group_proj":group_proj,"best_thirds":best_thirds,"schedule_dates":SCHED_DATES}
 json.dump(DATA, open(f"{HERE}/consolidated.json","w",encoding="utf-8"), ensure_ascii=False)
 
 # diagnóstico

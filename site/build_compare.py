@@ -148,6 +148,13 @@ border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;margin:2px 4
 .agree i.on{background:var(--vibrant-blue);}
 .wdltxt{font-size:10.5px;color:var(--muted);margin-left:7px;}
 .note{font-size:13px;color:var(--muted);line-height:1.5;margin:-2px 0 12px;max-width:820px;}
+/* jornada oficial (separador en tabla de partidos) */
+.md-sep td{border:none!important;padding:6px 0 2px!important;}
+.md-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;}
+/* colores de clasificación en la proyección de grupos */
+.grp-q{background:var(--soft-lilac);}
+.grp-3rd{background:#fff8e1;}
+.grp-out{opacity:.55;}
 /* ===== Bota de Oro · goleadores ===== */
 .scorers{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
 .sk{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:12px;padding:10px 14px;
@@ -430,6 +437,7 @@ function champBars(title, color){
 
 /* ---------- group projection (consensus tab) ---------- */
 function groupProjection(){
+  const bt=DATA.best_thirds||[];
   let h='<div class="grid2">';
   for(const gl of Object.keys(DATA.groups)){
     const row = DATA.group_proj[gl];
@@ -439,24 +447,28 @@ function groupProjection(){
     const w = {Claude:row.Claude[0][0],ChatGPT:row.ChatGPT[0][0],Gemini:row.Gemini[0][0]};
     cons.forEach((pair,i)=>{
       const [t,pts]=pair;
-      const cls = i<2?'style="background:var(--soft-lilac)"':'';
-      h+=`<tr ${cls}><td style="color:var(--muted);font-weight:800">${i+1}</td><td class="ta">${tf(t)}</td><td>${pts}</td><td></td></tr>`;
+      const cls = i<2?'grp-q':(i===2&&bt.includes(gl)?'grp-3rd':'grp-out');
+      const badge = i<2?'✓':(i===2&&bt.includes(gl)?'③':'');
+      h+=`<tr class="${cls}"><td style="font-weight:800">${i+1}</td><td class="ta">${tf(t)}</td><td>${pts}</td><td style="font-size:12px">${badge}</td></tr>`;
     });
     const same = (w.Claude===w.ChatGPT)&&(w.ChatGPT===w.Gemini);
     h+=`</tbody></table><div class="legend">${same?(tx('✓ Las 3 IAs coinciden en el 1.º: ','✓ The 3 AIs agree on 1st: ')+'<b>'+tf(w.Claude)+'</b>'):(tx('⚠ Disputa por el 1.º — ','⚠ Dispute for 1st — ')+'Claude: '+tf(w.Claude)+' · ChatGPT: '+tf(w.ChatGPT)+' · Gemini: '+tf(w.Gemini))}</div></div>`;
   }
-  return h+'</div>';
+  h+=`</div><p class="note" style="margin-top:12px">${tx('🟣 Top 2 clasificados directamente · 🟡 ③ = mejor tercero (8 de 12 pasan) · Atenuado = no clasifica.','🟣 Top 2 qualify directly · 🟡 ③ = best third (8 of 12 advance) · Dimmed = does not qualify.')}</p>`;
+  return h;
 }
 
 /* ---------- match table per AI ---------- */
 function matchTableByAI(matches, showXg){
-  // matches: array {a,b,pA,pD,pB,score,(xa,xb)} ; agrupar por DATA.groups
-  const byKey={}; matches.forEach(m=>byKey[[m.a,m.b].sort().join('|')]=m);
+  // matches: array {a,b,pA,pD,pB,score,(xa,xb),md,date} ; agrupar por grupo, ordenar por jornada oficial
   let h='<div class="grid2">';
   for(const gl of Object.keys(DATA.groups)){
-    const teams=DATA.groups[gl]; h+=`<div class="gcard"><div class="gh">${tx('Grupo','Group')} ${gl}</div><table class="mtab"><tbody>`;
-    for(let i=0;i<4;i++)for(let j=i+1;j<4;j++){
-      const key=[teams[i],teams[j]].sort().join('|'); const m=byKey[key]; if(!m)continue;
+    const teams=DATA.groups[gl];
+    const grp=matches.filter(m=>teams.includes(m.a)&&teams.includes(m.b)).sort((a,b)=>(a.md||0)-(b.md||0));
+    h+=`<div class="gcard"><div class="gh">${tx('Grupo','Group')} ${gl}</div><table class="mtab"><tbody>`;
+    let prevMd=0;
+    for(const m of grp){
+      if(m.md && m.md!==prevMd){ h+=`<tr class="md-sep"><td colspan="4"><span class="md-label">${tx('Jornada','Matchday')} ${m.md} · ${m.date||''}</span></td></tr>`; prevMd=m.md; }
       const xg = (showXg && m.xa!=null) ? `<span class="wdltxt" style="margin-left:0">xG ${m.xa}–${m.xb}</span>` : '';
       h+=`<tr><td class="ta">${tf(m.a)}</td><td class="sc">${m.score}</td><td class="tb">${tf(m.b)}</td>
         <td>${wdlBar(m.pA,m.pD,m.pB)}<span class="wdltxt">${Math.round(m.pA)}·${Math.round(m.pD)}·${Math.round(m.pB)}</span>${xg?'<br>'+xg:''}</td></tr>`;
@@ -468,12 +480,14 @@ function matchTableByAI(matches, showXg){
 
 /* ---------- consensus match table with agreement ---------- */
 function consensusMatchTable(){
-  const byKey={}; DATA.consensus.matches.forEach(m=>byKey[[m.a,m.b].sort().join('|')]=m);
   let h='<div class="grid2">';
   for(const gl of Object.keys(DATA.groups)){
-    const teams=DATA.groups[gl]; h+=`<div class="gcard"><div class="gh">${tx('Grupo','Group')} ${gl}</div><table class="mtab"><tbody>`;
-    for(let i=0;i<4;i++)for(let j=i+1;j<4;j++){
-      const key=[teams[i],teams[j]].sort().join('|'); const m=byKey[key]; if(!m)continue;
+    const teams=DATA.groups[gl];
+    const grp=DATA.consensus.matches.filter(m=>teams.includes(m.a)&&teams.includes(m.b)).sort((a,b)=>(a.md||0)-(b.md||0));
+    h+=`<div class="gcard"><div class="gh">${tx('Grupo','Group')} ${gl}</div><table class="mtab"><tbody>`;
+    let prevMd=0;
+    for(const m of grp){
+      if(m.md && m.md!==prevMd){ h+=`<tr class="md-sep"><td colspan="4"><span class="md-label">${tx('Jornada','Matchday')} ${m.md} · ${m.date||''}</span></td></tr>`; prevMd=m.md; }
       const dots=`<span class="agree"><i class="${m.agree>=1?'on':''}"></i><i class="${m.agree>=2?'on':''}"></i><i class="${m.agree>=3?'on':''}"></i></span>`;
       const ci=m.conf_idx, ccol = ci>=75?'#1a9e5c':(ci>=55?'#0048ff':(ci>=45?'#b58900':'#c0392b'));
       const chip=`<span class="cchip" style="background:${ccol}" title="${tx('Confianza del pronóstico (0–100)','Forecast confidence (0–100)')}">${ci}</span>`;
@@ -656,7 +670,7 @@ function renderClaude(){
 
   <div class="section-title">${tx('Los 72 partidos · Claude v7 (recalibrado, distribución por partido)','The 72 matches · Claude v7 (recalibrated, per-match distribution)')}</div>
   <p class="note">${tx('El marcador y las probabilidades V/E/D salen de la <b>distribución de Poisson completa</b> del modelo, y se muestra además el <b>xG (goles esperados)</b> de cada selección por partido.','The scoreline and W/D/L probabilities come from the model <b>full Poisson distribution</b>, and the <b>xG (expected goals)</b> of each team per match is also shown.')}</p>
-  ${matchTableByAI(d.fixtures.map(f=>({a:f.a,b:f.b,pA:f.pA,pD:f.pD,pB:f.pB,score:f.score,xa:f.eg_a,xb:f.eg_b})), true)}
+  ${matchTableByAI(d.fixtures.map(f=>({a:f.a,b:f.b,pA:f.pA,pD:f.pD,pB:f.pB,score:f.score,xa:f.eg_a,xb:f.eg_b,md:f.md,date:f.date,grp:f.grp})), true)}
 
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — Claude v7','Golden Boot · Top 10 scorers — Claude v7')}</div>
   <p class="note">${tx('Modelo nuevo de jugador montado sobre el de selección. Los goles esperados de cada jugador parten de los <b>goles que su equipo proyecta marcar en el torneo</b> (partidos esperados según su avance × goles por partido del modelo) y se reparten por <b>cuota de rol y penales</b>, ajustados por <b>titularidad</b>, <b>disponibilidad física</b> y <b>forma</b>. La Bota de Oro se estima por simulación. Pasa el cursor sobre la ⓘ para ver el detalle de cada jugador.','New player-level model built on top of the team model. Each player expected goals start from the <b>goals their team is projected to score in the tournament</b> (expected matches from its run × goals per match) and are split by <b>role share and penalties</b>, adjusted for <b>starting probability</b>, <b>physical availability</b> and <b>form</b>. The Golden Boot is estimated by simulation. Hover the ⓘ for the detail of each player.')}</p>
