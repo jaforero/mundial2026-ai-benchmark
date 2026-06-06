@@ -1,0 +1,102 @@
+[
+ {
+  "rank": 1,
+  "player": "Harry Kane",
+  "team": "Inglaterra",
+  "prob": 17.55,
+  "xg": 3.59,
+  "starter": 96,
+  "avail": 95,
+  "note": "Titular fijo y lanzador de penales; forma alta. Leve descuento por gestión de minutos."
+ },
+ {
+  "rank": 2,
+  "player": "Kylian Mbappé",
+  "team": "Francia",
+  "prob": 12.25,
+  "xg": 3.08,
+  "starter": 96,
+  "avail": 85,
+  "note": "Central + penales; riesgo físico medio por fatiga muscular y rotaciones en grupos."
+ },
+ {
+  "rank": 3,
+  "player": "Vinícius Júnior",
+  "team": "Brasil",
+  "prob": 5.74,
+  "xg": 2.3,
+  "starter": 92,
+  "avail": 85,
+  "note": "Extremo explosivo; riesgo de sustitución por carga y calor en Norteamérica."
+ },
+ {
+  "rank": 4,
+  "player": "Erling Haaland",
+  "team": "Noruega",
+  "prob": 5.41,
+  "xg": 2.24,
+  "starter": 98,
+  "avail": 95,
+  "note": "Máxima tasa de gol por 90; su techo lo marca la ruta esperada de Noruega."
+ },
+ {
+  "rank": 5,
+  "player": "Lionel Messi",
+  "team": "Argentina",
+  "prob": 4.97,
+  "xg": 2.16,
+  "starter": 85,
+  "avail": 85,
+  "note": "Penales y balón parado sostienen el upside; se descuenta administración física."
+ },
+ {
+  "rank": 6,
+  "player": "Mikel Oyarzabal",
+  "team": "España",
+  "prob": 4.28,
+  "xg": 2.06,
+  "starter": 75,
+  "avail": 85,
+  "note": "España proyecta muchos partidos; incertidumbre de rol y penales compartidos."
+ },
+ {
+  "rank": 7,
+  "player": "Luis Díaz",
+  "team": "Colombia",
+  "prob": 2.93,
+  "xg": 1.8,
+  "starter": 94,
+  "avail": 92,
+  "note": "Amenaza principal e inamovible; sin penales a favor, lo que limita el techo."
+ },
+ {
+  "rank": 8,
+  "player": "Jamal Musiala",
+  "team": "Alemania",
+  "prob": 2.89,
+  "xg": 1.8,
+  "starter": 88,
+  "avail": 88,
+  "note": "Recuperación física confirmada; comparte cuota de gol con otros atacantes."
+ },
+ {
+  "rank": 9,
+  "player": "Cody Gakpo",
+  "team": "Países Bajos",
+  "prob": 2.88,
+  "xg": 1.79,
+  "starter": 90,
+  "avail": 90,
+  "note": "Absorbe la finalización neerlandesa; titular salvo rotaciones puntuales."
+ },
+ {
+  "rank": 10,
+  "player": "Lamine Yamal",
+  "team": "España",
+  "prob": 2.01,
+  "xg": 1.59,
+  "starter": 85,
+  "avail": 70,
+  "note": "Protocolo de cuidado: difícil que complete partidos; perfil más creador que 9."
+ }
+]

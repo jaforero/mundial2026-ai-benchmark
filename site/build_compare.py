@@ -148,6 +148,24 @@ border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;margin:2px 4
 .agree i.on{background:var(--vibrant-blue);}
 .wdltxt{font-size:10.5px;color:var(--muted);margin-left:7px;}
 .note{font-size:13px;color:var(--muted);line-height:1.5;margin:-2px 0 12px;max-width:820px;}
+/* ===== Bota de Oro · goleadores ===== */
+.scorers{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
+.sk{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:12px;padding:10px 14px;
+border:1px solid var(--border);border-radius:14px;background:var(--card);transition:transform .15s,box-shadow .15s;}
+.sk:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(78,0,255,.10);}
+.sk-rank{font-weight:800;font-size:16px;color:var(--purple);text-align:center;}
+.sk-rank.gold{color:#d4a017;}.sk-rank.sil{color:#9aa3b2;}.sk-rank.bro{color:#b06a3b;}
+.sk-main{min-width:0;}
+.sk-name{font-weight:700;color:var(--deep-blue);font-size:15px;}
+.sk-team{font-size:12.5px;color:var(--muted);margin-left:2px;}
+.sk-bar{height:7px;border-radius:5px;background:var(--soft-lilac);margin-top:6px;overflow:hidden;}
+.sk-bar>span{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#7c4dff,#0048ff);}
+.sk-right{text-align:right;white-space:nowrap;}
+.sk-prob{font-weight:800;color:var(--deep-blue);font-size:16px;}
+.sk-chips{margin-top:3px;font-size:10.5px;color:var(--muted);}
+.sk-chip{display:inline-block;padding:1px 6px;border-radius:7px;background:var(--soft-lilac);margin-left:4px;font-weight:700;}
+.sk-agree{display:inline-block;font-size:10px;font-weight:800;padding:1px 7px;border-radius:8px;margin-left:6px;}
+.sk-agree.three{background:#dcfce7;color:#15803d;}.sk-agree.two{background:#e6f7ee;color:#1a9e5c;}.sk-agree.one{background:#fff3da;color:#b58900;}
 .dotleg{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 10px;vertical-align:middle;}
 /* head to head */
 .h2h-sel{width:100%;max-width:480px;padding:11px 14px;border:1px solid var(--border);border-radius:12px;
@@ -260,8 +278,8 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 <div class="hero">
   <p class="eyebrow" data-en="Artificial Intelligence Benchmark · Sports Analytics">Benchmark de Inteligencia Artificial · Sports Analytics</p>
   <h1 data-en="FIFA World Cup 2026 — Three AIs, one consensus">Mundial FIFA 2026 — Tres IAs, un consenso</h1>
-  <p class="sub" data-en="Three artificial intelligences —<b>Claude</b>, <b>ChatGPT</b> and <b>Gemini</b>— forecast the 2026 World Cup: who will lift the trophy, how each group will end and the road to the final. A fourth forecast, the <b>consensus</b>, combines all three. Each AI reaches its numbers in a different way; in every tab you can open its full explanation.">Tres inteligencias artificiales —<b>Claude</b>, <b>ChatGPT</b> y <b>Gemini</b>— pronostican el Mundial 2026:
-  quién levantará la copa, cómo terminará cada grupo y el camino hasta la final. Un cuarto pronóstico, el <b>consenso</b>,
+  <p class="sub" data-en="Three artificial intelligences —<b>Claude</b>, <b>ChatGPT</b> and <b>Gemini</b>— forecast the 2026 World Cup: who will lift the trophy, how each group will end, the road to the final and who wins the Golden Boot. A fourth forecast, the <b>consensus</b>, combines all three. Each AI reaches its numbers in a different way; in every tab you can open its full explanation.">Tres inteligencias artificiales —<b>Claude</b>, <b>ChatGPT</b> y <b>Gemini</b>— pronostican el Mundial 2026:
+  quién levantará la copa, cómo terminará cada grupo, el camino hasta la final y quién ganará la Bota de Oro. Un cuarto pronóstico, el <b>consenso</b>,
   combina los tres. Cada IA llega a sus números de una forma distinta; en cada pestaña puedes abrir su explicación completa.</p>
   <p class="meta" data-en="Quantitative analysis · June 2026 · full data from the three tools">Análisis cuantitativo · junio de 2026 · datos completos de las tres herramientas</p>
 </div>
@@ -335,6 +353,43 @@ function champDivergence(){
     </div>`;
   }
   return h;
+}
+
+/* ---------- Bota de Oro: goleadores ---------- */
+function medalCls(i){return i===0?'gold':(i===1?'sil':(i===2?'bro':''));}
+function scorersConsensus(){
+  const list=(DATA.consensus&&DATA.consensus.scorers)||[]; if(!list.length) return '';
+  const MAX=Math.max.apply(null,list.map(s=>s.prob))*1.08;
+  let h='<ol class="scorers">';
+  list.forEach((s,i)=>{
+    const chips=[s.cl!=null?`<span class="sk-chip">Claude ${s.cl}%</span>`:'',
+                 s.cg!=null?`<span class="sk-chip">ChatGPT ${s.cg}%</span>`:'',
+                 s.gm!=null?`<span class="sk-chip">Gemini ${s.gm}%</span>`:''].join('');
+    const agcls=s.models>=3?'three':(s.models===2?'two':'one');
+    const agtip=s.models>=3?tx('Las tres IAs lo incluyen en su Top 10','All three AIs list him in their Top 10')
+              :(s.models===2?tx('Dos de las tres IAs lo incluyen','Two of the three AIs list him')
+                            :tx('Solo una IA lo incluye','Only one AI lists him'));
+    const agree=`<span class="sk-agree ${agcls}" tabindex="0" data-tip="${agtip}">${s.models} IA</span>`;
+    h+=`<li class="sk"><span class="sk-rank ${medalCls(i)}">${i+1}</span>
+      <div class="sk-main"><span class="sk-name">${s.player}</span> <span class="sk-team">${tf(s.team)}</span>${agree}
+        <div class="sk-bar"><span style="width:${100*s.prob/MAX}%"></span></div></div>
+      <div class="sk-right"><div class="sk-prob">${fmt(s.prob)}</div><div class="sk-chips">${chips}</div></div></li>`;
+  });
+  return h+'</ol>';
+}
+function scorersAI(aiKey){
+  const list=(DATA[aiKey]&&DATA[aiKey].scorers)||[]; if(!list.length) return '';
+  const MAX=Math.max.apply(null,list.map(s=>s.prob))*1.08;
+  let h='<ol class="scorers">';
+  list.forEach((s,i)=>{
+    const note=s.note?` <span class="term" tabindex="0" role="note" aria-label="${s.note}" data-tip="${s.note}">ⓘ</span>`:'';
+    const extra=(s.xg!=null)?`<div class="sk-chips">${tx('goles esperados','expected goals')} ${s.xg}</div>`:'';
+    h+=`<li class="sk"><span class="sk-rank ${medalCls(i)}">${s.rank||i+1}</span>
+      <div class="sk-main"><span class="sk-name">${s.player}</span> <span class="sk-team">${tf(s.team)}</span>${note}
+        <div class="sk-bar"><span style="width:${100*s.prob/MAX}%"></span></div></div>
+      <div class="sk-right"><div class="sk-prob">${fmt(s.prob)}</div>${extra}</div></li>`;
+  });
+  return h+'</ol>';
 }
 
 /* ---------- reach table ---------- */
@@ -548,6 +603,10 @@ function renderConsenso(){
   </div>
   <div class="insight"><p>${tx(`Por qué difieren: cada IA cree que un Mundial lo decide algo distinto. <b>Gemini</b> mira el ${term('estado físico actual','Minutos de alta exigencia jugados en clubes esta temporada (Champions, Libertadores) como señal de desgaste y rodaje de cada plantilla')} de los jugadores y penaliza al campeón vigente: baja a Argentina y sube a Francia. <b>ChatGPT</b> confía en la ${term('historia y los rankings','Posición en el ranking FIFA, valor de las plantillas y resultados de Mundiales anteriores')} y encabeza con España. <b>Claude</b> combina el ${term('rendimiento real de goles','Goles marcados y recibidos en partidos internacionales reales, analizados partido a partido')} con el ${term('nivel actualizado de cada equipo','Una medida de fuerza que se recalcula tras cada partido, parecida a un ranking dinámico. Técnicamente se llama sistema Elo.')}, y realza a Brasil, Inglaterra y Colombia. El <b>consenso</b> toma el punto medio de las tres y modera los extremos.`,`Why they differ: each AI believes a World Cup is decided by something different. <b>Gemini</b> looks at the players' ${term('current physical state','High-intensity minutes played at clubs this season (Champions League, Libertadores) as a sign of each squads wear and match sharpness')} and penalizes the reigning champion: Argentina drops, France rises. <b>ChatGPT</b> trusts ${term('history and the rankings','FIFA ranking position, squad market value and results from previous World Cups')} and leads with Spain. <b>Claude</b> combines ${term('real goal performance','Goals scored and conceded in real international matches, analyzed game by game')} with an ${term('up-to-date team strength','A strength measure recomputed after every match, like a dynamic ranking. Technically it is called an Elo system.')}, raising Brazil, England and Colombia. The <b>consensus</b> takes the middle ground of the three and tempers the extremes.`)}</p></div>
 
+  <div class="section-title">🥇 ${tx('Bota de Oro — Top 10 goleadores (consenso)','Golden Boot — Top 10 scorers (consensus)')}</div>
+  <p class="note">${tx('Una dimensión nueva: ya no solo qué selección gana, sino qué jugador marca más. Ahora las <b>tres IAs</b> pronostican goleadores —incluido el <b>nuevo modelo de jugador de Claude</b>, que parte de los goles que su modelo de selección proyecta para cada equipo—. El consenso promedia las probabilidades e indica en cuántas IAs coincide cada nombre.','A new dimension: not just which team wins, but which player scores most. Now <b>all three AIs</b> forecast scorers —including <b>the new Claude player-level model</b>, built on the goals its team model projects for each side—. The consensus averages the probabilities and shows how many AIs agree on each name.')}</p>
+  <div class="card">${scorersConsensus()}</div>
+
   <div class="section-title">${tx('Comparador cara a cara — partido por partido','Head-to-head comparator — match by match')}</div>
   <div class="card">
     <p class="legend" style="margin-bottom:10px">${tx('Elige cualquiera de los 72 partidos y compara cómo lo ve cada IA y el consenso. Cada partido trae su <b>confianza del pronóstico</b> en lenguaje claro.','Pick any of the 72 matches and compare how each AI and the consensus see it. Every match shows its <b>forecast confidence</b> in plain language.')}</p>
@@ -575,7 +634,8 @@ function renderClaude(){
   const d=DATA.claude;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('claude').innerHTML = `
-  <div class="section-title">${tx('Metodología','Methodology')} · Claude <span style="color:var(--c-claude)">v5</span></div>
+  <div class="insight"><p>${tx(`<b>Recalibración v7 (Fase 7).</b> Capa de calibración sobre v5/v6, sin reentrenar: corrige el <b>exceso de confianza</b> encogiendo las probabilidades hacia la tasa base de cada ronda (el campeón más probable baja de ${fmt(18.23)} a ${fmt(d.title[sortByTitle(d.title)[0][0]])} y sube la cola), <b>infla el empate</b> en partidos parejos, marca los <b>partidos de alta incertidumbre</b> y ajusta su marcador, y recalibra los goleadores con un desglose de riesgos. Todo se expresa como probabilidad, no como certeza.`,`<b>Recalibration v7 (Phase 7).</b> A calibration layer over v5/v6, without retraining: it corrects <b>overconfidence</b> by shrinking probabilities toward each round base rate (the most likely champion drops from ${fmt(18.23)} to ${fmt(d.title[sortByTitle(d.title)[0][0]])} and the tail rises), <b>inflates draws</b> in close matches, flags <b>high-uncertainty matches</b> and tempers their scoreline, and recalibrates scorers with a risk breakdown. Everything is expressed as probability, not certainty.`)}</p></div>
+  <div class="section-title">${tx('Metodología','Methodology')} · Claude <span style="color:var(--c-claude)">v7</span></div>
   <div class="card methclassic">
     <p>${tx(`Motor de <b>ensamble</b> que promedia un <b>Dixon-Coles data-driven</b> (ataque/defensa por equipo estimados de miles de partidos reales) con un <b>modelo de Machine Learning</b> (gradient boosting con pérdida de Poisson) que integra <b>Elo actual a junio-2026, forma reciente e histórico de Mundiales</b>. El ensamble es el que mejor valida.`,`An <b>ensemble</b> engine that averages a <b>data-driven Dixon-Coles</b> model (per-team attack/defense estimated from thousands of real matches) with a <b>Machine Learning model</b> (gradient boosting with Poisson loss) integrating <b>current Elo as of June 2026, recent form and World Cup history</b>. The ensemble validates best.`)}</p>
     <p>${tx(`Desempeño medido fuera de muestra con código sobre <b>4 Mundiales reales (2010–2022, 192 partidos)</b>: ensamble RPS 0.2002 vs 0.2413 (azar), <b>mejora del 17.0%</b> — supera al ML solo (0.2012) y al Dixon-Coles solo (0.2016). Detalle en el panel de backtesting.`,`Out-of-sample performance measured with code over <b>4 real World Cups (2010–2022, 192 matches)</b>: ensemble RPS 0.2002 vs 0.2413 (chance), a <b>17.0% improvement</b> — beating ML alone (0.2012) and Dixon-Coles alone (0.2016). Detail in the backtesting panel.`)}</p>
@@ -594,16 +654,21 @@ function renderClaude(){
   <div class="section-title">${tx('Camino al título · Claude · las 48 selecciones','Road to the title · Claude · all 48 teams')}</div>
   <div class="card">${reachTable(d.reach, all48(d.title))}</div>
 
-  <div class="section-title">${tx('Los 72 partidos · Claude v5 (distribución completa por partido)','The 72 matches · Claude v5 (full per-match distribution)')}</div>
+  <div class="section-title">${tx('Los 72 partidos · Claude v7 (recalibrado, distribución por partido)','The 72 matches · Claude v7 (recalibrated, per-match distribution)')}</div>
   <p class="note">${tx('El marcador y las probabilidades V/E/D salen de la <b>distribución de Poisson completa</b> del modelo, y se muestra además el <b>xG (goles esperados)</b> de cada selección por partido.','The scoreline and W/D/L probabilities come from the model <b>full Poisson distribution</b>, and the <b>xG (expected goals)</b> of each team per match is also shown.')}</p>
-  ${matchTableByAI(d.fixtures.map(f=>({a:f.a,b:f.b,pA:f.pA,pD:f.pD,pB:f.pB,score:f.score,xa:f.eg_a,xb:f.eg_b})), true)}`;
+  ${matchTableByAI(d.fixtures.map(f=>({a:f.a,b:f.b,pA:f.pA,pD:f.pD,pB:f.pB,score:f.score,xa:f.eg_a,xb:f.eg_b})), true)}
+
+  <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — Claude v7','Golden Boot · Top 10 scorers — Claude v7')}</div>
+  <p class="note">${tx('Modelo nuevo de jugador montado sobre el de selección. Los goles esperados de cada jugador parten de los <b>goles que su equipo proyecta marcar en el torneo</b> (partidos esperados según su avance × goles por partido del modelo) y se reparten por <b>cuota de rol y penales</b>, ajustados por <b>titularidad</b>, <b>disponibilidad física</b> y <b>forma</b>. La Bota de Oro se estima por simulación. Pasa el cursor sobre la ⓘ para ver el detalle de cada jugador.','New player-level model built on top of the team model. Each player expected goals start from the <b>goals their team is projected to score in the tournament</b> (expected matches from its run × goals per match) and are split by <b>role share and penalties</b>, adjusted for <b>starting probability</b>, <b>physical availability</b> and <b>form</b>. The Golden Boot is estimated by simulation. Hover the ⓘ for the detail of each player.')}</p>
+  <div class="insight"><p>${tx(`Por qué <b>riesgo físico</b> y <b>forma</b> son factores <b>separados</b>: el ${term('riesgo físico','Lesiones recientes, carga y edad: afecta cuántos minutos juega y si lo reservan para fases finales.')} ajusta los <b>minutos</b> (cuánto juega), mientras que la ${term('forma','Racha goleadora y afinación: afecta su eficacia por minuto cuando sí está en cancha.')} ajusta la <b>tasa</b> de gol por minuto. Un jugador puede estar fino pero con riesgo de rotación, o sano pero frío; mezclarlos en una sola variable perdería esa diferencia.`,`Why <b>physical risk</b> and <b>form</b> are <b>separate</b> factors: ${term('physical risk','Recent injuries, load and age: it affects how many minutes he plays and whether he is rested for later rounds.')} adjusts the <b>minutes</b> (how much he plays), while ${term('form','Scoring streak and sharpness: it affects his efficiency per minute when he is on the pitch.')} adjusts the <b>scoring rate</b> per minute. A player can be sharp but at rotation risk, or fit but cold; merging them into one variable would lose that distinction.`)}</p></div>
+  <div class="card">${scorersAI("claude")}</div>`;
 }
 
 function renderChatGPT(){
   const d=DATA.chatgpt;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('chatgpt').innerHTML = `
-  <div class="section-title">${tx('Metodología','Methodology')} · ChatGPT <span style="color:var(--c-chatgpt)">v6.2</span></div>
+  <div class="section-title">${tx('Metodología','Methodology')} · ChatGPT <span style="color:var(--c-chatgpt)">v7</span></div>
   <div class="card methclassic">
     <p>${tx(`Ensamble <b>calibrado histórico</b> con los ajustes del <b>Backtesting Nivel 2</b>: refuerza el núcleo <b>FIFA/Elo</b> (sube a 24%), reduce el clima a contextual (4%) y añade una <b>penalización de sesgo de mercado</b> para no sobrevalorar a las ligas europeas más líquidas. Plantilla, player-level, forma y experiencia entran como capas de ajuste, no como dominantes.`,`A <b>historically-calibrated</b> ensemble with the <b>Level 2 Backtesting</b> adjustments: it reinforces the <b>FIFA/Elo</b> core (up to 24%), reduces climate to contextual (4%) and adds a <b>market-bias penalty</b> so the most liquid European leagues are not overvalued. Squad, player-level, form and experience enter as adjustment layers, not as dominant ones.`)}</p>
     <div style="margin-top:8px"><span class="badge">${tx('Núcleo FIFA/Elo reforzado','Reinforced FIFA/Elo core')}</span><span class="badge">${tx('Anti-sesgo de mercado','Anti-market-bias')}</span><span class="badge">${tx('Calibración histórica','Historical calibration')}</span><span class="badge">${tx('Outsiders tácticos corregidos','Tactical outsiders corrected')}</span></div>
@@ -618,15 +683,19 @@ function renderChatGPT(){
   <div class="section-title">${tx('Camino al título · ChatGPT · las 48 selecciones','Road to the title · ChatGPT · all 48 teams')}</div>
   <div class="card">${reachTable(d.reach, all48(d.title))}</div>
 
-  <div class="section-title">${tx('Los 72 partidos · ChatGPT v6.2 (calibrado + clima)','The 72 matches · ChatGPT v6.2 (calibrated + climate)')}</div>
-  ${matchTableByAI(d.matches)}`;
+  <div class="section-title">${tx('Los 72 partidos · ChatGPT v7 (recalibrado Fase 7)','The 72 matches · ChatGPT v7 (Phase 7 recalibration)')}</div>
+  ${matchTableByAI(d.matches)}
+
+  <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — ChatGPT','Golden Boot · Top 10 scorers — ChatGPT')}</div>
+  <p class="note">${tx('Probabilidad de ganar la Bota de Oro por jugador, con sus goles esperados. Pasa el cursor sobre la ⓘ para ver la justificación de cada caso.','Probability of winning the Golden Boot per player, with expected goals. Hover the ⓘ for the rationale of each pick.')}</p>
+  <div class="card">${scorersAI("chatgpt")}</div>`;
 }
 
 function renderGemini(){
   const d=DATA.gemini;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('gemini').innerHTML = `
-  <div class="section-title">${tx('Metodología','Methodology')} · Gemini <span style="color:var(--c-gemini)">v7 · Local Pressure Networks</span></div>
+  <div class="section-title">${tx('Metodología','Methodology')} · Gemini <span style="color:var(--c-gemini)">v8</span></div>
   <div class="card methclassic">
     <p>${tx(`Ensamble físico-estadístico que <b>abandona la "memoria histórica de los escudos"</b> del v6. Mide la resiliencia por la <b>carga de estrés cognitivo actual</b> de las plantillas (minutos de eliminación directa en Champions/Libertadores = <b>Redes de Presión Local</b>), aplica un <b>Factor de Decaimiento</b> al campeón defensor y reconfigura el <b>Aura de Localía</b> de forma asimétrica, sobre el motor bio-termodinámico UTCI.`,`A physics-statistical ensemble that <b>abandons the v6 "crest historical memory"</b>. It measures resilience via each squad's <b>current cognitive stress load</b> (knockout minutes in the Champions League/Libertadores = <b>Local Pressure Networks</b>), applies a <b>Champion Decay Factor</b> to the defending champion and reshapes the <b>Home Aura</b> asymmetrically, on top of the UTCI bio-thermodynamic engine.`)}</p>
     <div style="margin-top:8px"><span class="badge">${tx('Redes de Presión Local','Local Pressure Networks')}</span><span class="badge">${tx('Decaimiento del campeón (−8%)','Champion decay (−8%)')}</span><span class="badge">${tx('Aura de localía asimétrica','Asymmetric home aura')}</span><span class="badge">${tx('Motor bio-termodinámico UTCI','UTCI bio-thermodynamic engine')}</span></div>
@@ -641,8 +710,12 @@ function renderGemini(){
   <div class="section-title">${tx('Camino al título · Gemini · las 48 selecciones','Road to the title · Gemini · all 48 teams')}</div>
   <div class="card">${reachTable(d.reach, all48(d.title))}</div>
 
-  <div class="section-title">${tx('Los 72 partidos · Gemini v7 (Redes de Presión Local + termodinámico)','The 72 matches · Gemini v7 (Local Pressure Networks + thermodynamic)')}</div>
-  ${matchTableByAI(d.matches)}`;
+  <div class="section-title">${tx('Los 72 partidos · Gemini v8 (recalibrado Fase 8)','The 72 matches · Gemini v8 (Phase 8 recalibration)')}</div>
+  ${matchTableByAI(d.matches)}
+
+  <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — Gemini','Golden Boot · Top 10 scorers — Gemini')}</div>
+  <p class="note">${tx('Probabilidad de Bota de Oro con ajuste por estado de forma y riesgo de titularidad. Pasa el cursor sobre la ⓘ para ver el análisis de cada jugador.','Golden Boot probability adjusted for form and starting-role risk. Hover the ⓘ for the analysis of each player.')}</p>
+  <div class="card">${scorersAI("gemini")}</div>`;
 }
 
 /* ============ TABS ============ */

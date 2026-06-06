@@ -1,0 +1,11 @@
+﻿Ranking,Jugador,Selección,Rol ofensivo,Partidos esperados selección,Prob. titularidad,Minutos esperados / partido,Riesgo rotación,Disponibilidad médica,Estado de forma,Ritmo competitivo,Penales,Goles esperados v7-G,P(4+ goles),P(5+ goles),Prob. Bota de Oro,Justificación
+1,Kylian Mbappé,Francia,Finalizador principal + penales,6.05,96%,82,Bajo-Medio,Alta,Muy alto,Alto,Sí,4.6,67.4,48.7,13.1,"Ruta francesa fuerte, penales y rol central; se aplica shrinkage por posible gestión de minutos en calor."
+2,Harry Kane,Inglaterra,9 principal + penales,5.82,94%,82,Bajo-Medio,Alta,Muy alto,Muy alto,Sí,4.35,63.2,43.9,11.5,Penales y cuota de xG muy alta; se reduce levemente por gestión de minutos y calor.
+3,Erling Haaland,Noruega,"9 principal, máxima cuota de xG",4.62,98%,88,Bajo,Alta,Muy alto,Muy alto,Probable,4.15,59.5,40.0,9.5,Mayor tasa goleadora por 90; principal límite es la ruta esperada de Noruega.
+4,Lionel Messi,Argentina,Creador-finalizador + balón parado/penales,5.52,85%,74,Medio-Alto,Media-Alta,Alto,Alto,Sí,3.5,46.3,27.5,6.5,Penales y balón parado sostienen upside; se descuenta administración física.
+5,Mikel Oyarzabal,España,Delantero / falso 9,5.9,73%,66,Medio-Alto,Media-Alta,Alto,Medio-Alto,Compartido/posible,3.25,40.9,22.8,5.6,España proyecta muchos partidos; incertidumbre de rol y penales limita su probabilidad.
+6,Vinícius Júnior,Brasil,Extremo finalizador,5.46,91%,79,Medio,Alta,Alto,Alto,No/compartido,3.2,39.7,21.9,5.1,Brasil mejora marginalmente en v7; riesgo de reparto ofensivo mantiene techo controlado.
+7,Julián Álvarez,Argentina,Delantero móvil / presión / definición,5.52,77%,69,Medio,Alta,Alto,Alto,No/ocasional,3.1,37.5,20.2,4.9,"Buen rol ofensivo, pero competencia interna por cuota de gol lo limita."
+8,Lamine Yamal,España,Extremo creador-finalizador,5.9,88%,74,Medio,Media-Alta,Muy alto,Alto,No/ocasional,2.9,33.0,16.8,4.1,"Alto impacto, pero perfil más creador que 9 y posible protección física."
+9,Luis Díaz,Colombia,Principal amenaza ofensiva,4.9,94%,82,Bajo,Alta,Alto,Alto,No/ocasional,2.85,31.9,16.0,3.5,Alta centralidad ofensiva; menor ruta esperada que los favoritos limita la probabilidad.
+10,Cristiano Ronaldo,Portugal,9 de área + penales,5.6,68%,61,Alto,Media,Medio-Alto,Medio,Sí/compartido,2.6,26.4,12.3,3.1,"Penales sostienen upside; riesgo de minutos, edad y rol reducen expectativa."

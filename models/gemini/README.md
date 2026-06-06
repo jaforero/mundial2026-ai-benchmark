@@ -1,4 +1,4 @@
-# Gemini · modelo v7 · Local Pressure Networks
+# Gemini · modelo v8 (recalibración Fase 8 · Local Pressure Networks)
 
 Ensamble físico-estadístico que **abandona la memoria histórica de los escudos** del v6 y mide la resiliencia por la carga de estrés cognitivo actual de la plantilla.
 
@@ -21,6 +21,8 @@ Tres vectores contemporáneos:
 
 Sobre estos vectores se mantiene el motor bio-termodinámico UTCI del v6.
 
+**Recalibración Fase 8 (v8):** regresión isotónica anti-sobreconfianza, parámetro de empates ρ dinámico, matriz bayesiana de inactividad para el nuevo **Top 10 de goleadores** (Bota de Oro), y reversión al promedio de confederación donde faltan datos (sin inventar parámetros).
+
 ## Backtesting reportado (v6, Mundiales 2010–2022)
 
 | Métrica | v6 | Casas de apuestas |
@@ -34,14 +36,14 @@ El backtesting reveló un sesgo de supervivencia ("enamorarse de la historia") q
 
 ```
 gemini/
-├── code/                                                ← código Python del modelo v7
+├── code/                                                ← código Python del modelo
 │   ├── README.md                                          apéndice técnico matemático (ecuaciones LaTeX)
-│   ├── Gemini_V7_Fase_Grupos_Poisson.py                   motor matemático: xG dinámico + Poisson bivariada (Dixon-Coles)
-│   ├── Gemini_V7_CaminoMundial_MonteCarlo.py              simulador del árbol de eliminación directa (10.000 iteraciones)
-│   └── Gemini_V7_Backtesting_Engine.py                    auditoría Brier Score + entropía cruzada vs Mundiales anteriores
-└── forecasts/                                            ← reportes narrativos consolidados
-    ├── Gemini_Predictivo_V7_Local_Pressure_Networks.md     camino al título 48 selecciones (v7)
-    ├── Gemini_Pronostico_72_Partidos_Fase_Grupo_v7.md      72 partidos + apéndice técnico (v7)
+│   ├── Gemini_V8_Recalibracion_Fase8.py                   código v8: selecciones, partidos, goleadores y calibración
+│   ├── Gemini_V7_Fase_Grupos_Poisson.py                   motor xG dinámico + Poisson bivariada (Dixon-Coles)
+│   ├── Gemini_V7_CaminoMundial_MonteCarlo.py              simulador del árbol de eliminación directa
+│   └── Gemini_V7_Backtesting_Engine.py                    auditoría Brier Score + entropía cruzada
+└── forecasts/                                            ← reporte consolidado v8
+    ├── Gemini_Pronostico_Completo_v8.md                   48 selecciones + 72 partidos + Top 10 goleadores + apéndice + código
     └── Gemini_Backtesting_y_Validacion_Estadistica_v6.md   reporte de backtesting (v6)
 ```
 

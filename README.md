@@ -25,9 +25,11 @@ Contiene cuatro vistas:
 
 Cada IA aborda el problema con una **filosofía distinta**, y eso es parte de lo interesante:
 
-- **Claude v5** — Ensamble que promedia un motor estadístico **Dixon-Coles** (fuerzas de ataque/defensa estimadas por máxima verosimilitud sobre miles de partidos internacionales reales) con un modelo de **machine learning** (gradient boosting con pérdida de Poisson sobre Elo, forma reciente e histórico de Mundiales). Peso del ensamble afinado por backtesting (0.4 DC / 0.6 ML). Único modelo **validado fuera de muestra con código reproducible** sobre 4 Mundiales (2010–2022, 192 partidos).
-- **ChatGPT v6.2** — Ensamble calibrado históricamente con los ajustes del Backtesting Nivel 2: núcleo FIFA/Elo reforzado (24%) y penalización de sesgo de mercado anti-Europa.
-- **Gemini v7** — Local Pressure Networks: abandona el "pedigrí del escudo" del v6 y mide resiliencia por minutos de élite de la plantilla actual, con factor de decaimiento del campeón vigente (−8% a Argentina) y aura de localía asimétrica.
+- **Nueva dimensión — Bota de Oro:** además de qué selección gana, el análisis pronostica el **Top 10 de goleadores** (probabilidad de Bota de Oro). Las **tres IAs** aportan su lista, incluido el **nuevo modelo de jugador de Claude (v6)**, que parte de los goles que su modelo de selección proyecta por equipo y separa el **riesgo físico** (minutos) de la **forma** (tasa de gol). El consenso promedia las tres.
+
+- **Claude v7** (recalibración Fase 7 sobre v5/v6) — Ensamble que promedia un motor estadístico **Dixon-Coles** (fuerzas de ataque/defensa estimadas por máxima verosimilitud sobre miles de partidos internacionales reales) con un modelo de **machine learning** (gradient boosting con pérdida de Poisson sobre Elo, forma reciente e histórico de Mundiales). Peso del ensamble afinado por backtesting (0.4 DC / 0.6 ML). Único modelo **validado fuera de muestra con código reproducible** sobre 4 Mundiales (2010–2022, 192 partidos).
+- **ChatGPT v7** — Recalibración (Fase 7) del ensamble calibrado histórico: reajusta probabilidades y añade el Top 10 de goleadores con goles esperados por jugador.
+- **Gemini v8** — Recalibración (Fase 8) de Local Pressure Networks: regresión isotónica anti-sobreconfianza, parámetro de empates dinámico y matriz bayesiana de inactividad para el Top 10 de goleadores.
 
 El **consenso** toma la **mediana** de las tres IAs para la probabilidad de título (robusta frente a un modelo atípico), promedia las probabilidades de cada partido y resuelve el marcador por mayoría. Cada partido lleva además un **índice de confianza (0–100)** que combina la fuerza del favorito con el grado de acuerdo entre las tres IAs (pool logarítmico + divergencia de Jensen-Shannon).
 

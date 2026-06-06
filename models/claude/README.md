@@ -1,6 +1,6 @@
-# Claude · modelo v5
+# Claude · modelo v5 (selección) + v6 (goleadores) + v7 (recalibración)
 
-Ensamble estadístico + machine learning para el Mundial 2026. **El único de las tres IAs con backtesting computado con código sobre resultados reales.**
+Ensamble estadístico + machine learning para el Mundial 2026, con backtesting fuera de muestra computado con código sobre resultados reales (2010–2022).
 
 ## Qué es
 
@@ -28,6 +28,34 @@ Ensamble estadístico + machine learning para el Mundial 2026. **El único de la
 | Baseline uniforme | 0.2413 | 0.6667 | 1.0986 | — | — |
 
 **Mejora del ensamble vs azar: 17.02%** en RPS. Supera a cada componente por separado. Detalle reproducible en `forecasts/Claude_Backtesting_OOS_Reproducible_v4.md`.
+
+
+
+## Recalibración v7 (Fase 7)
+
+Capa de **calibración** sobre v5/v6 (no reentrena): corrige exceso de confianza y trata la incertidumbre. Código: `code/wc2026_recalibrate_v7.py` · salidas: `data/results_v7.json`, `data/claude_scorers_v7.json` · reporte: `forecasts/Claude_FASE_7_Recalibracion_v7.md`.
+
+1. **Selecciones — anti-sobreconfianza:** encogimiento hacia la tasa base de cada ronda, `p' = b + (p−b)·s` (s de 0.97 en R32 a 0.86 en campeón), con renormalización y monotonía por equipo. El campeón más probable baja de 18.23% a 15.97%; la cola (<1%) sube ~4.2 pp.
+2. **Partidos — empate e incertidumbre:** inflación de empate proporcional a la paridad e índice de entropía; 31/72 partidos quedan en alta incertidumbre y su marcador se modera (empate o margen de un gol).
+3. **Goleadores — temperatura + riesgos:** recalibración por temperatura (T=1.12) y desglose por jugador de minutos, rol, dificultad de grupo, dependencia del equipo e incertidumbre de titularidad.
+4. **Incertidumbre/calibración:** diagnósticos de variables sobre/infravaloradas y de señales contradictorias.
+
+No incorpora datos nuevos: solo recalibra. Donde falta información, mantiene la estimación base y la señala en lugar de fabricarla.
+
+## Modelo de goleadores v6 (Bota de Oro)
+
+Capa de **jugador** montada sobre el modelo de selección. No inventa datos: ancla la oportunidad de gol en la salida real del motor de equipo y descompone el resto en factores explícitos.
+
+```
+E_goles(jugador) = G_equipo(T) × cuota_rol × penales × titularidad × disponibilidad × forma
+```
+
+- **G_equipo(T)** = partidos esperados (3 de grupo + Σ probabilidad de alcanzar cada ronda, de `reach`) × goles esperados por partido (λ del motor Dixon-Coles, de `fixtures`). Es la aportación propia de Claude.
+- **Riesgo físico y forma son factores SEPARADOS** (decisión metodológica): la **disponibilidad** (lesiones, carga, edad) actúa sobre los *minutos*; la **forma** (racha, afinación) actúa sobre la *tasa* de gol por minuto. Mezclarlos perdería la diferencia entre "juega menos" y "juega peor".
+- **Titularidad** descuenta minutos por probabilidad de ser titular y rotación.
+- **Bota de Oro** estimada por **simulación Monte Carlo** (binomial negativa, sobredispersa, con un "campo" de goleadores fuera del pool), de modo que las probabilidades no suman 100% y dejan margen a la sorpresa.
+
+Código: `code/wc2026_scorers_v6.py` · salida: `data/claude_scorers_v6.json`. Los atributos por jugador (rol, penales, titularidad, disponibilidad, forma) son las entradas editables del modelo, derivadas del pool de candidatos élite documentado en el proyecto y de priores futbolísticos estándar.
 
 ## Estructura
 

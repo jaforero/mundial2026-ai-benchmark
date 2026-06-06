@@ -1,6 +1,6 @@
-# ChatGPT · modelo v6.2
+# ChatGPT · modelo v7 (recalibración Fase 7)
 
-Ensamble calibrado históricamente con los ajustes del **Backtesting Nivel 2** (núcleo FIFA/Elo reforzado + penalización de sesgo de mercado).
+Ensamble calibrado históricamente. La **Fase 7** reajusta las probabilidades del v6.2 y añade un **Top 10 de goleadores** (Bota de Oro) con goles esperados por jugador.
 
 ## Qué es
 
@@ -42,15 +42,20 @@ El propio reporte advierte que el Nivel 2 **no es un backtesting player-level co
 
 ```
 chatgpt/
-├── code/                                              ← scripts Python reproducibles (paquete de ChatGPT)
-│   ├── README.md                                        instrucciones de ejecución
-│   ├── ChatGPT_v6_2_Camino_Titulo_48_Selecciones.py    reproduce la tabla camino al título (48)
-│   ├── ChatGPT_v6_2_Pronostico_72_Partidos_Fase_Grupos.py  reproduce los 72 partidos
-│   ├── ChatGPT_v6_Backtesting_Nivel_1.py                reproduce el backtest Nivel 1
-│   └── ChatGPT_v6_Backtesting_Nivel_2_Metodologico.py   reproduce el reporte Nivel 2
-└── forecasts/                                          ← reportes narrativos consolidados
-    ├── ChatGPT_Camino_al_Titulo_v6_2_Completo.md
-    ├── ChatGPT_Pronostico_72_Partidos_Fase_Grupos_v6_2.md
+├── code/                                          ← scripts Python reproducibles (Fase 7)
+│   ├── README.md
+│   ├── ChatGPT_v7_simulacion_selecciones.py         ranking de las 48 selecciones (Monte Carlo)
+│   ├── ChatGPT_v7_simulacion_partidos.py            72 partidos de fase de grupos
+│   ├── ChatGPT_v7_top_goleadores.py                 Top 10 goleadores (Bota de Oro)
+│   ├── ChatGPT_v7_calibracion_incertidumbre.py      calibración de incertidumbre
+│   ├── ChatGPT_v6_Backtesting_Nivel_1.py            backtest Nivel 1
+│   └── ChatGPT_v6_Backtesting_Nivel_2_Metodologico.py  backtest Nivel 2
+├── data/                                          ← salidas en CSV
+│   ├── FASE_7_Ranking_48_Selecciones.csv
+│   ├── FASE_7_Pronostico_72_Partidos.csv
+│   └── FASE_7_Top_10_Goleadores.csv
+└── forecasts/
+    ├── ChatGPT_FASE_7_Recalibracion_Pronostico.md
     └── ChatGPT_Backtesting_Nivel_2_Reporte_Final_Modelo_v6.md
 ```
 

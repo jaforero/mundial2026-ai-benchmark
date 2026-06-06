@@ -7,10 +7,10 @@ Consolidación FINAL de las 3 IAs en sus versiones definitivas + consenso.
 Consenso: campeón por media + mediana (renorm), rondas por media (las 3 completas),
 grupos por puntos esperados homogéneos, 72 partidos por promedio + pluralidad de marcador.
 """
-import json, re, statistics, math
+import json, re, statistics, math, csv
 from collections import defaultdict, Counter
 
-HERE = "/home/claude/wc2026"; UP = "/mnt/user-data/uploads"
+HERE = "/home/claude/wc2026"; UP = "/mnt/user-data/uploads"; CG = f"{HERE}/src_fase7"
 
 # ---------- canonicalización de nombres ----------
 CANON = {
@@ -38,6 +38,20 @@ _v1 = json.load(open(f"{HERE}/results.json", encoding="utf-8"))
 GROUPS = _v1["groups"]; cl_elo = _v1["elo"]; ALL = [t for g in GROUPS.values() for t in g]
 claude_title = cl["title"]; claude_reach = cl["reach"]; claude_group = cl["group_win"]; claude_adv = cl["advance"]
 claude_fix2 = {frozenset((f["a"],f["b"])): f for f in cl["fixtures"]}
+# --- FASE 7: capa de recalibración v7 (sobre v5/v6). Sobrescribe campeón/reach y
+#     los marcadores/probabilidades de partido (manteniendo xG y grupo de v5). ---
+try:
+    V7 = json.load(open(f"{HERE}/results_v7.json", encoding="utf-8"))
+    claude_title = V7["title"]; claude_reach = V7["reach"]
+    _m7 = {frozenset((m["a"],m["b"])): m for m in V7["matches"]}
+    for key, f in claude_fix2.items():
+        m = _m7.get(key)
+        if m:
+            f["pA"], f["pD"], f["pB"], f["score"] = m["pA"], m["pD"], m["pB"], m["score"]
+            f["high_unc"] = m["high_unc"]; f["unc"] = m["unc"]
+    CLAUDE_VERSION = "v7"
+except FileNotFoundError:
+    CLAUDE_VERSION = "v5"
 ROUNDS = ["R32","R16","QF","SF","FINAL","CAMPEON"]
 
 # ---------- parser genérico de tabla "camino al título" ----------
@@ -60,33 +74,33 @@ def parse_reach(path):
         reach[name] = dict(zip(ROUNDS, vals))
     return reach
 
-# ChatGPT v6 (camino) y Gemini v6 Heritage AI (camino)
-cg_reach = parse_reach(f"{UP}/ChatGPT_Camino_al_Titulo_v6_2_Completo.md")
-gm_reach = parse_reach(f"{UP}/Gemini_Predictivo_V7_Local_Pressure_Networks.md")
+# ChatGPT v7 (Fase 7, CSV) y Gemini v8 (camino al título)
+cg_reach = {}
+with open(f"{CG}/FASE_7_Ranking_48_Selecciones.csv", encoding="utf-8-sig") as f:
+    for row in csv.DictReader(f):
+        t = cn(row["Selección"])
+        if t in ALL:
+            cg_reach[t] = {r: round(float(row[c]),4) for r,c in
+                [("R32","R32"),("R16","Octavos"),("QF","Cuartos"),("SF","Semis"),("FINAL","Final"),("CAMPEON","Campeón")]}
+gm_reach = parse_reach(f"{UP}/Gemini_Pronostico_Completo_v8.md")
 cg_title = {t: cg_reach[t]["CAMPEON"] for t in cg_reach}
 gm_title = {t: gm_reach[t]["CAMPEON"] for t in gm_reach}
-# rellenar equipos faltantes con 0 (tablas vienen completas, por seguridad)
 for t in ALL:
     cg_title.setdefault(t,0.0); gm_title.setdefault(t,0.0)
 
-# ---------- ChatGPT v5: 72 partidos ----------
+# ---------- ChatGPT v7: 72 partidos (CSV) ----------
 cg_matches = {}
-ctxt = open(f"{UP}/ChatGPT_Pronostico_72_Partidos_Fase_Grupos_v6_2.md", encoding="utf-8").read()
-for line in ctxt.splitlines():
-    if not line.strip().startswith("|"): continue
-    cells = [c.strip() for c in line.strip().strip("|").split("|")]
-    if len(cells) < 9: continue
-    if cells[0] in ("M","---") or not cells[0].isdigit(): continue
-    a, b = cn(cells[4]), cn(cells[6])
-    sc = cells[5].replace(" ","")
-    pm = re.match(r"(\d+)-(\d+)-(\d+)", cells[7].replace(" ",""))
-    if not pm: continue
-    pA,pD,pB = float(pm.group(1)),float(pm.group(2)),float(pm.group(3))
-    cg_matches[frozenset((a,b))] = {"a":a,"b":b,"pA":pA,"pD":pD,"pB":pB,"score":sc}
+with open(f"{CG}/FASE_7_Pronostico_72_Partidos.csv", encoding="utf-8-sig") as f:
+    for row in csv.DictReader(f):
+        a, b = cn(row["Equipo A"]), cn(row["Equipo B"])
+        sc = row["Marcador v7-M"].replace(" ","")
+        pm = re.match(r"(\d+)-(\d+)-(\d+)", row["Prob. A-E-B"].replace(" ",""))
+        if not pm: continue
+        cg_matches[frozenset((a,b))] = {"a":a,"b":b,"pA":float(pm.group(1)),"pD":float(pm.group(2)),"pB":float(pm.group(3)),"score":sc}
 
-# ---------- Gemini v6: 72 partidos ----------
+# ---------- Gemini v8: 72 partidos ----------
 gm_matches = {}
-gtxt = open(f"{UP}/Gemini_Pronostico_72_Partidos_Fase_Grupo_v7.md", encoding="utf-8").read()
+gtxt = open(f"{UP}/Gemini_Pronostico_Completo_v8.md", encoding="utf-8").read()
 for line in gtxt.splitlines():
     if "vs" not in line or "**" not in line or not line.strip().startswith("|"): continue
     cells = [c.strip() for c in line.strip().strip("|").split("|")]
@@ -94,11 +108,52 @@ for line in gtxt.splitlines():
     if not mvs or len(cells) < 5: continue
     a, b = cn(mvs.group(1)), cn(mvs.group(2))
     sc = cells[1].replace(" ", "")
-    try:
-        pA, pD, pB = num(cells[2]), num(cells[3]), num(cells[4])
+    try: pA, pD, pB = num(cells[2]), num(cells[3]), num(cells[4])
     except: continue
     if pA == 0 and pD == 0 and pB == 0: continue
     gm_matches[frozenset((a, b))] = {"a":a,"b":b,"pA":pA,"pD":pD,"pB":pB,"score":sc}
+
+# ---------- Top 10 goleadores (Bota de Oro) ----------
+def _clean_note(s): return s.replace('"',"'").replace("**","").strip()
+# ChatGPT (CSV)
+cg_scorers = []
+with open(f"{CG}/FASE_7_Top_10_Goleadores.csv", encoding="utf-8-sig") as f:
+    for row in csv.DictReader(f):
+        cg_scorers.append({"rank":int(row["Ranking"]),"player":row["Jugador"].strip(),"team":cn(row["Selección"]),
+                           "prob":round(float(row["Prob. Bota de Oro"]),2),"xg":round(float(row["Goles esperados v7-G"]),2),
+                           "note":_clean_note(row.get("Justificación",""))})
+# Gemini (tabla MD dentro del archivo v8)
+GCODE={"ING":"Inglaterra","PBA":"Países Bajos","FRA":"Francia","BRA":"Brasil","ALE":"Alemania","COL":"Colombia",
+       "ARG":"Argentina","ESP":"España","URU":"Uruguay","POR":"Portugal","NOR":"Noruega","ESC":"Escocia"}
+gm_scorers = []; _insec=False
+for line in gtxt.splitlines():
+    if "Top 10 Goleadores" in line: _insec=True; continue
+    if _insec and line.startswith("## "): break
+    if _insec and line.strip().startswith("|"):
+        c=[x.strip() for x in line.strip().strip("|").split("|")]
+        if len(c)<4 or not c[0].replace("*","").strip().isdigit(): continue
+        m=re.match(r"\*\*(.+?)\*\*\s*\(([A-Z]{3})\)", c[1])
+        if not m: continue
+        gm_scorers.append({"rank":int(c[0].replace("*","")),"player":m.group(1).strip(),
+                           "team":GCODE.get(m.group(2),m.group(2)),"prob":num(c[2]),"note":_clean_note(c[4]) if len(c)>4 else ""})
+# Claude v6 (capa de goleadores sobre el modelo de selección)
+try:
+    cl_scorers = json.load(open(f"{HERE}/claude_scorers_v7.json", encoding="utf-8"))
+except FileNotFoundError:
+    cl_scorers = []
+# Consenso de goleadores: media de las IAs que listan al jugador + nº de IAs (ahora hasta 3)
+_allp={}
+for s in cl_scorers: _allp.setdefault(s["player"],{})["cl"]=s
+for s in cg_scorers: _allp.setdefault(s["player"],{})["cg"]=s
+for s in gm_scorers: _allp.setdefault(s["player"],{})["gm"]=s
+scorers_consensus=[]
+for p,d in _allp.items():
+    probs=[d[k]["prob"] for k in ("cl","cg","gm") if k in d]
+    team=(d.get("cl") or d.get("cg") or d.get("gm"))["team"]
+    scorers_consensus.append({"player":p,"team":team,"prob":round(sum(probs)/len(probs),2),"models":len(probs),
+                              "cl":d.get("cl",{}).get("prob"),"cg":d.get("cg",{}).get("prob"),"gm":d.get("gm",{}).get("prob")})
+scorers_consensus.sort(key=lambda x:(-x["prob"]))
+scorers_consensus=scorers_consensus[:10]
 
 # ---------- consenso: campeón ----------
 def stat(dC,dG,dCh):
@@ -268,9 +323,10 @@ page and cannot be scraped reliably; the computed Elo was used (a better and mor
 reflected via <b>recent form</b> as a proxy; a true player-by-player model would require audited squad values (e.g.
 Transfermarkt) that I do not have — I will not invent them (ChatGPT also used call-ups only as an aggregate signal).</p>"""},
  "chatgpt": {
-   "version":"v6.2","mc":"Monte Carlo + calibración histórica",
+   "version":"v7","mc":"Monte Carlo + calibración histórica + recalibración Fase 7",
    "title":"Ensamble calibrado histórico + Nivel 2 (núcleo FIFA/Elo reforzado + anti-sesgo de mercado)",
    "html":"""
+<p><b>Recalibración Fase 7.</b> Mantiene la arquitectura v6.2 y reajusta las probabilidades; añade además un <b>Top 10 de goleadores</b> (Bota de Oro) con goles esperados por jugador.</p>
 <p><b>Qué es.</b> Evolución del v6 con los hallazgos del <b>Backtesting Nivel 2</b>: refuerza el núcleo estructural
 <b>FIFA/Elo</b>, mantiene plantilla, player-level, forma y experiencia como <b>capas de ajuste</b> (no dominantes), y
 añade una <b>penalización de sesgo de mercado</b> para no sobrevalorar a las ligas europeas más líquidas.</p>
@@ -289,6 +345,7 @@ outsiders tácticos (Marruecos, Colombia, Senegal, Uruguay, Japón); regularizac
 ruta, edad o knockout. España sigue 1ª, sin ventaja excesiva; Francia, Inglaterra y Argentina forman el bloque de élite.</p>""",
    "title_en":"Historically-calibrated ensemble + Level 2 (reinforced FIFA/Elo core + anti-market-bias)",
    "html_en":"""
+<p><b>Phase 7 recalibration.</b> It keeps the v6.2 architecture and re-tunes the probabilities; it also adds a <b>Top 10 of scorers</b> (Golden Boot) with expected goals per player.</p>
 <p><b>What it is.</b> An evolution of v6 with the <b>Level 2 Backtesting</b> findings: it reinforces the structural
 <b>FIFA/Elo</b> core, keeps squad, player-level, form and experience as <b>adjustment layers</b> (not dominant), and
 adds a <b>market-bias penalty</b> so the most liquid European leagues are not overvalued.</p>
@@ -306,7 +363,7 @@ variance) then historical calibration with a new anti-market-bias term:</p>
 correction for tactical outsiders (Morocco, Colombia, Senegal, Uruguay, Japan); prudent regularization of favorites with
 route, age or knockout doubts. Spain stays #1 without an excessive edge; France, England and Argentina form the elite block.</p>"""},
  "gemini": {
-   "version":"v7 · Local Pressure Networks","mc":"Ensamble físico-estadístico",
+   "version":"v8","mc":"Ensamble físico-estadístico + calibración bayesiana",
    "title":"Redes de Presión Local + Decaimiento del Campeón + UTCI + Penalización Contrafáctica",
    "html":"""
 <p><b>Qué es.</b> Ensamble físico-estadístico que <b>abandona la "memoria histórica estática" de los escudos</b> (el
@@ -321,6 +378,7 @@ P(x,y) = Poisson(xG_V7_A) · Poisson(xG_V7_B)</pre>
 Champions/Libertadores; <b>δ_campeón</b> = penalización de hasta 8% al campeón vigente (Argentina); <b>ω_local</b> =
 aura de localía asimétrica (castiga a México, premia a EE.UU./Canadá). Datos forenses de minutos bajo presión (Opta,
 StatsBomb) sustituyen los priors históricos del v6.</p>
+<p><b>Recalibración Fase 8 (v8).</b> Añade <b>regresión isotónica</b> (corrige el exceso de confianza en favoritos y colistas), un parámetro de empates <b>ρ dinámico</b> (más empates en partidos parejos) y una <b>matriz bayesiana de inactividad</b> para el nuevo <b>Top 10 de goleadores</b>. Donde faltan datos, revierte al promedio de la confederación en vez de inventar parámetros.</p>
 <p><b>Efecto en v7.</b> La cúspide cambia: <b>Francia toma el nº 1 (19.5%)</b> por el volumen puro de minutos KO de su
 plantilla; <b>Argentina cae al 3º (13.5%)</b> por el decaimiento del campeón; y <b>Brasil y Alemania bajan</b> al
 neutralizar su "gravedad de escudo". España se sostiene 2ª (16%) por el efecto Premier/LaLiga.</p>
@@ -341,6 +399,7 @@ P(x,y) = Poisson(xG_V7_A) · Poisson(xG_V7_B)</pre>
 knockout stages; <b>δ_champion</b> = up to 8% penalty on the reigning champion (Argentina); <b>ω_home</b> = asymmetric
 home aura (penalizes Mexico, rewards USA/Canada). Forensic under-pressure minute data (Opta, StatsBomb) replaces the v6
 historical priors.</p>
+<p><b>Phase 8 recalibration (v8).</b> It adds <b>isotonic regression</b> (correcting overconfidence in favorites and minnows), a <b>dynamic draw parameter ρ</b> (more draws in close matches) and a <b>Bayesian inactivity matrix</b> for the new <b>Top 10 of scorers</b>. Where data is missing, it reverts to the confederation average instead of fabricating parameters.</p>
 <p><b>Effect in v7.</b> The top tier shifts: <b>France takes #1 (19.5%)</b> on the sheer volume of its squad's KO
 minutes; <b>Argentina drops to 3rd (13.5%)</b> due to champion decay; and <b>Brazil and Germany fall</b> as their
 "crest gravity" is neutralized. Spain holds 2nd (16%) on the Premier/LaLiga effect.</p>
@@ -463,14 +522,17 @@ real elite-minutes load instead of crest pedigree.</p>"""},
 
 DATA={"groups":GROUPS,"elo":cl_elo,"meth":METH,"backtest":BACKTEST,
  "claude":{"title":claude_title,"reach":claude_reach,"group_win":claude_group,"advance":claude_adv,
-           "fixtures":cl["fixtures"],"params":cl["params"],"N":cl["N"],"version":"v5"},
- "chatgpt":{"title":cg_title,"reach":to_round_keyed(cg_reach),"version":"v6.2",
-            "matches":[{k:m[k] for k in("a","b","pA","pD","pB","score")} for m in cg_matches.values()]},
- "gemini":{"title":gm_title,"reach":to_round_keyed(gm_reach),"version":"v7 · Local Pressure Networks",
-           "matches":[{k:m[k] for k in("a","b","pA","pD","pB","score")} for m in gm_matches.values()]},
+           "fixtures":cl["fixtures"],"params":cl["params"],"N":cl["N"],"version":CLAUDE_VERSION,"scorers":cl_scorers},
+ "chatgpt":{"title":cg_title,"reach":to_round_keyed(cg_reach),"version":"v7",
+            "matches":[{k:m[k] for k in("a","b","pA","pD","pB","score")} for m in cg_matches.values()],
+            "scorers":cg_scorers},
+ "gemini":{"title":gm_title,"reach":to_round_keyed(gm_reach),"version":"v8",
+           "matches":[{k:m[k] for k in("a","b","pA","pD","pB","score")} for m in gm_matches.values()],
+           "scorers":gm_scorers},
  "consensus":{"title":consensus_title,"title_median":consensus_title_median,
               "title_stat":{t:{k:round(v[k],2) for k in("mean","median","min","max")} for t,v in title_stat.items()},
-              "reach":consensus_reach,"matches":cons_matches,"agree_counter":dict(agree)},
+              "reach":consensus_reach,"matches":cons_matches,"agree_counter":dict(agree),
+              "scorers":scorers_consensus},
  "group_proj":group_proj}
 json.dump(DATA, open(f"{HERE}/consolidated.json","w",encoding="utf-8"), ensure_ascii=False)
 
