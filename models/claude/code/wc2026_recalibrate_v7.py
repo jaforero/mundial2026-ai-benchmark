@@ -33,7 +33,7 @@ TEAMS = list(V5["title"].keys())
 #   luego se renormaliza cada ronda a su total (nº de equipos) y se
 #   impone monotonía p(R32) >= p(R16) >= ... >= p(CAMPEON) por equipo.
 # =====================================================================
-SHRINK = {"R32":0.97,"R16":0.95,"QF":0.92,"SF":0.90,"FINAL":0.88,"CAMPEON":0.86}
+SHRINK = {"R32":1.0,"R16":1.0,"QF":1.0,"SF":1.0,"FINAL":1.0,"CAMPEON":1.0}  # v7.1: backtest -> sin encogimiento (motor ya calibrado)
 
 def recalibrate_reach(reach5):
     out = {r: {} for r in ROUND_ORDER}
@@ -61,7 +61,7 @@ s = sum(title7.values()); title7 = {t: round(v*100.0/s, 4) for t, v in title7.it
 # BLOQUE 2 — PARTIDOS: inflación de empate en partidos parejos +
 #   índice de incertidumbre (entropía normalizada) + ajuste de marcador.
 # =====================================================================
-BETA_DRAW = 0.22   # cuánto se infla el empate en función de la paridad
+BETA_DRAW = 0.0    # v7.1: backtest -> inflar empates empeora el RPS; se elimina
 
 def shannon(ps):
     return -sum(p*math.log(p) for p in ps if p > 0) / math.log(3)  # 0..1
@@ -81,21 +81,9 @@ def recalibrate_match(f):
     ps = [pA2/100, pD2/100, pB2/100]
     unc = shannon(ps)                                          # índice de incertidumbre
     high = (max(ps) < 0.45) or (unc > 0.93)
-    # ajuste de marcador: solo si alta incertidumbre
-    score = f["score"]
-    la, lb = f.get("la", 1.2), f.get("lb", 1.0)
-    adj = False
-    if high:
-        if pD2 >= max(pA2, pB2) - 3:                          # empate manda o casi
-            score = modal_draw(la, lb); adj = True
-        else:                                                  # acotar margen a 1
-            try:
-                ga, gb = map(int, f["score"].split("-"))
-                if abs(ga-gb) >= 2:
-                    if ga > gb: score = f"{gb+1}-{gb}"
-                    else:       score = f"{ga}-{ga+1}"
-                    adj = True
-            except: pass
+    # v7.1: la bandera de incertidumbre se conserva (informativa), pero el marcador
+    # NO se altera: el backtest mostró que el sesgo hacia el empate no está respaldado.
+    score = f["score"]; adj = False
     return {"a":f["a"],"b":f["b"],"pA":round(pA2,1),"pD":round(pD2,1),"pB":round(pB2,1),
             "score":score,"unc":round(unc,3),"high_unc":high,"adj":adj,
             "pA5":pA,"pD5":pD,"pB5":pB,"score5":f["score"]}
@@ -162,11 +150,11 @@ goals+=rng.uniform(0,.01,goals.shape); field+=rng.uniform(0,.01,field.shape)
 best=goals.max(axis=1); win=(goals==best[:,None])&(best>=field)[:,None]
 ties=win.sum(axis=1); m=ties>=1; raw=np.array([ (win[m,j]/ties[m]).sum() for j in range(len(cands))])/N*100
 # temperatura T>1 aplana la parte alta (reduce sobreconfianza del favorito)
-T=1.12
-tempd=raw**(1/T); tempd=tempd/ tempd.sum()*raw.sum()   # conserva masa de candidatos
+T=1.0   # v7.1: sin encogimiento de goleadores (no validable; se mantiene neutro)
+tempd=raw**(1/T); tempd=tempd/ tempd.sum()*raw.sum()
 for c,p0,p1 in zip(cands,raw,tempd):
     c["prob5"]=round(float(p0),2); c["prob"]=round(float(p1),2)
-    c["xg"]=round(c["eg"]*0.97,2)   # leve encogimiento de xG (sobreconfianza)
+    c["xg"]=round(c["eg"],2)   # v7.1: sin encogimiento de xG
 
 # riesgos
 for c in cands:

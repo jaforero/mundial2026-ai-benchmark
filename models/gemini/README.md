@@ -1,4 +1,4 @@
-# Gemini · modelo v8 (recalibración Fase 8 · Local Pressure Networks)
+# Gemini · modelo v10 (Fase 10 · ancla empírica 21.88% · Local Pressure Networks)
 
 Ensamble físico-estadístico que **abandona la memoria histórica de los escudos** del v6 y mide la resiliencia por la carga de estrés cognitivo actual de la plantilla.
 
@@ -23,6 +23,10 @@ Sobre estos vectores se mantiene el motor bio-termodinámico UTCI del v6.
 
 **Recalibración Fase 8 (v8):** regresión isotónica anti-sobreconfianza, parámetro de empates ρ dinámico, matriz bayesiana de inactividad para el nuevo **Top 10 de goleadores** (Bota de Oro), y reversión al promedio de confederación donde faltan datos (sin inventar parámetros).
 
+**Recalibración empírica Fase 9 (v9):** calibración por *Temperature Scaling* (T=1.12) que aplana las probabilidades (ningún equipo supera ~17% de título y mejora el RPS fuera de muestra); parámetro de empates ρ anclado a la **tasa empírica de empates de los Mundiales 1998–2022 (~25.4%)**; minutos de goleadores por **distribución Beta** con cortes de reportes clínicos a junio de 2026.
+
+**Recalibración Fase 10 (v10):** auditoría de muestreo. Revisa la ventana de empates y adopta el **ancla del 21.88%** (tasa real de la fase de grupos 2010–2022, alineada con el backtest de Claude). En lugar de inflar empates como v9, los **desinfla**, premiando marginalmente a las potencias tácticas. Aplica filtros de inactividad clínica en goleadores (excluye a Darwin Núñez por desacondicionamiento).
+
 ## Backtesting reportado (v6, Mundiales 2010–2022)
 
 | Métrica | v6 | Casas de apuestas |
@@ -38,12 +42,12 @@ El backtesting reveló un sesgo de supervivencia ("enamorarse de la historia") q
 gemini/
 ├── code/                                                ← código Python del modelo
 │   ├── README.md                                          apéndice técnico matemático (ecuaciones LaTeX)
-│   ├── Gemini_V8_Recalibracion_Fase8.py                   código v8: selecciones, partidos, goleadores y calibración
+│   ├── Gemini_v10_Simulador_Selecciones.py / _Partidos.py / _Goleadores.py / _Auditoria_Incertidumbre.py                   código v8: selecciones, partidos, goleadores y calibración
 │   ├── Gemini_V7_Fase_Grupos_Poisson.py                   motor xG dinámico + Poisson bivariada (Dixon-Coles)
 │   ├── Gemini_V7_CaminoMundial_MonteCarlo.py              simulador del árbol de eliminación directa
 │   └── Gemini_V7_Backtesting_Engine.py                    auditoría Brier Score + entropía cruzada
 └── forecasts/                                            ← reporte consolidado v8
-    ├── Gemini_Pronostico_Completo_v8.md                   48 selecciones + 72 partidos + Top 10 goleadores + apéndice + código
+    ├── Gemini_Pronostico_Completo_v10.md                   48 selecciones + 72 partidos + Top 10 goleadores + apéndice + código
     └── Gemini_Backtesting_y_Validacion_Estadistica_v6.md   reporte de backtesting (v6)
 ```
 

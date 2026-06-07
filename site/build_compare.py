@@ -155,6 +155,22 @@ border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;margin:2px 4
 .grp-q{background:var(--soft-lilac);}
 .grp-3rd{background:#fff8e1;}
 .grp-out{opacity:.55;}
+/* ancla de tasa de empates · histórico vs proyección */
+.anchor-card{background:var(--card);padding:14px 16px;border-radius:14px;border:1px solid var(--border);margin:0 0 14px 0;}
+.anchor-title{font-weight:800;color:var(--deep-blue);font-size:14px;margin-bottom:6px;}
+.anchor-band-text{font-size:12.5px;color:var(--muted);margin-bottom:10px;line-height:1.55;}
+.anchor-band-text b{color:var(--deep-blue);font-weight:700;}
+.anchor-row{display:grid;grid-template-columns:80px 1fr 56px 96px;align-items:center;gap:10px;padding:5px 0;font-size:13px;}
+.anchor-row .ai{font-weight:700;}
+.anchor-bar{position:relative;height:10px;background:var(--soft-lilac);border-radius:5px;}
+.anchor-bar .band{position:absolute;top:0;bottom:0;background:rgba(26,158,92,0.32);border-radius:5px;}
+.anchor-bar .marker{position:absolute;top:-3px;width:6px;height:16px;border-radius:2px;transform:translateX(-50%);box-shadow:0 0 0 2px var(--card);}
+.anchor-row .val{text-align:right;font-weight:800;color:var(--deep-blue);}
+.anchor-row .stat{font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;text-align:center;}
+.anchor-row .stat.in{background:#e6f7ee;color:#1a9e5c;}
+.anchor-row .stat.hi{background:#fff3da;color:#b58900;}
+.anchor-row .stat.lo{background:#e6efff;color:#0048ff;}
+@media(max-width:640px){.anchor-row{grid-template-columns:70px 1fr 50px;}.anchor-row .stat{display:none;}}
 /* ===== Bota de Oro · goleadores ===== */
 .scorers{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
 .sk{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:12px;padding:10px 14px;
@@ -459,6 +475,48 @@ function groupProjection(){
 }
 
 /* ---------- match table per AI ---------- */
+/* ---------- ANCLA: tasa de empates histórica vs proyección ---------- */
+function drawRateAnchor(){
+  const meanD = arr => arr.reduce((s,m)=>s+m.pD,0)/arr.length;
+  const items = [
+    {name:'Claude',  v: meanD(DATA.claude.fixtures), c:'var(--c-claude)'},
+    {name:'ChatGPT', v: meanD(DATA.chatgpt.matches), c:'var(--c-chatgpt)'},
+    {name:'Gemini',  v: meanD(DATA.gemini.matches),  c:'var(--c-gemini)'},
+    {name: tx('Consenso','Consensus'), v: meanD(DATA.consensus.matches), c:'var(--purple)'},
+  ];
+  const MIN=15, MAX=32, BLO=19.44, BHI=24.10;
+  const pct = v => Math.max(0,Math.min(100, 100*(v-MIN)/(MAX-MIN)));
+  const status = v => v>=BLO && v<=BHI ? ['in', tx('en banda','in band')]
+                    : v>BHI ? ['hi', tx('sobre banda','above band')]
+                            : ['lo', tx('bajo banda','below band')];
+  const rows = items.map(it=>{
+    const [cls,lbl] = status(it.v);
+    return `<div class="anchor-row">
+      <span class="ai" style="color:${it.c}">${it.name}</span>
+      <div class="anchor-bar">
+        <div class="band" style="left:${pct(BLO)}%;right:${100-pct(BHI)}%"></div>
+        <div class="marker" style="left:${pct(it.v)}%;background:${it.c}"></div>
+      </div>
+      <span class="val">${it.v.toFixed(1)}%</span>
+      <span class="stat ${cls}">${lbl}</span>
+    </div>`;
+  }).join('');
+  return `<div class="anchor-card">
+    <div class="anchor-title">🎯 ${tx('Tasa de empates · ancla histórica de los Mundiales','Draw rate · historical anchor of the World Cups')}</div>
+    <div class="anchor-band-text">${tx(
+      'Fase de grupos · era moderna 1998–2022 (336 partidos, 81 empates): <b>banda empírica 19.4 % – 24.1 %</b>. La tendencia contemporánea (2014–2022) está en 19.4 % y la del periodo completo en 24.1 %. La franja verde de cada fila marca ese rango; el marcador muestra cuántos empates proyecta cada modelo en los 72 partidos.',
+      'Group stage · modern era 1998–2022 (336 matches, 81 draws): <b>empirical band 19.4 % – 24.1 %</b>. The contemporary trend (2014–2022) sits at 19.4 % and the full-period one at 24.1 %. The green band on each row marks that range; the marker shows how many draws each model projects across the 72 matches.'
+    )}</div>
+    ${rows}
+    <details style="margin-top:10px"><summary style="cursor:pointer;font-size:12px;color:var(--muted)">${tx('Desglose por Mundial · 1998–2022','Breakdown by World Cup · 1998–2022')}</summary>
+      <div style="margin-top:6px;font-size:12px;color:var(--muted);line-height:1.7">
+        Francia 1998 — 33.33 % (16/48) · ${tx('Corea–Japón','Korea–Japan')} 2002 — 25.00 % (12/48) · ${tx('Alemania','Germany')} 2006 — 25.00 % (12/48) · ${tx('Sudáfrica','South Africa')} 2010 — 27.08 % (13/48) · ${tx('Brasil','Brazil')} 2014 — 18.75 % (9/48) · ${tx('Rusia','Russia')} 2018 — 18.75 % (9/48) · Qatar 2022 — 20.83 % (10/48).
+        <br><br>${tx('Subconjuntos relevantes: contemporáneo 2014–2022 = 19.4 % (28/144); siglo XXI sin 1998 = 22.6 % (65/288); global 1930–2022 (incluye eliminación a 90′) = 22.0 % (198/900).','Relevant subsets: contemporary 2014–2022 = 19.4 % (28/144); 21st century without 1998 = 22.6 % (65/288); historical global 1930–2022 (includes knockouts at 90′) = 22.0 % (198/900).')}
+      </div>
+    </details>
+  </div>`;
+}
+
 function matchTableByAI(matches, showXg){
   // matches: array {a,b,pA,pD,pB,score,(xa,xb),md,date} ; agrupar por grupo, ordenar por jornada oficial
   let h='<div class="grid2">';
@@ -628,6 +686,7 @@ function renderConsenso(){
     <div id="h2h-out" style="margin-top:18px"></div>
   </div>
 
+  ${drawRateAnchor()}
   <div class="section-title">${tx('Los 72 partidos — consenso y confianza','The 72 matches — consensus and confidence')}</div>
   <p class="legend" style="margin-bottom:6px">${tx(`El <b>chip de color</b> resume la confianza del pronóstico: verde = favorito claro y las IAs de acuerdo · azul = favorito moderado · ámbar = parejo · rojo = muy parejo. Los tres puntos: en cuántas IAs coincide el favorito. En partidos muy parejos el marcador de consenso puede ser 1-1 aunque la barra incline a un equipo (la barra es quién gana; el marcador es el resultado exacto más probable).`,`The <b>colored chip</b> sums up forecast confidence: green = clear favorite and AIs agree · blue = moderate favorite · amber = close · red = very close. The three dots: how many AIs agree on the favorite. In very tight matches the consensus score can be 1-1 even if the bar leans to one team (the bar is who wins; the score is the single most likely exact result).`)}</p>
   ${consensusMatchTable()}
@@ -648,7 +707,7 @@ function renderClaude(){
   const d=DATA.claude;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('claude').innerHTML = `
-  <div class="insight"><p>${tx(`<b>Recalibración v7 (Fase 7).</b> Capa de calibración sobre v5/v6, sin reentrenar: corrige el <b>exceso de confianza</b> encogiendo las probabilidades hacia la tasa base de cada ronda (el campeón más probable baja de ${fmt(18.23)} a ${fmt(d.title[sortByTitle(d.title)[0][0]])} y sube la cola), <b>infla el empate</b> en partidos parejos, marca los <b>partidos de alta incertidumbre</b> y ajusta su marcador, y recalibra los goleadores con un desglose de riesgos. Todo se expresa como probabilidad, no como certeza.`,`<b>Recalibration v7 (Phase 7).</b> A calibration layer over v5/v6, without retraining: it corrects <b>overconfidence</b> by shrinking probabilities toward each round base rate (the most likely champion drops from ${fmt(18.23)} to ${fmt(d.title[sortByTitle(d.title)[0][0]])} and the tail rises), <b>inflates draws</b> in close matches, flags <b>high-uncertainty matches</b> and tempers their scoreline, and recalibrates scorers with a risk breakdown. Everything is expressed as probability, not certainty.`)}</p></div>
+  <div class="insight"><p>${tx(`<b>Recalibración v7 (Fase 7), auditada con datos.</b> Probamos las transformaciones contra <b>192 partidos reales</b> de Mundiales pasados (2010–2022, validación fuera de muestra). El resultado fue revelador: el motor base <b>ya está bien calibrado</b> (RPS 0.2002, 17% mejor que el azar) y los ajustes por criterio <b>no se sostenían</b> —inflar el empate empeoraba el acierto (el modelo ya sobre-predice empates) y el encogimiento no mejoraba nada—. Así que los <b>retiramos</b>: las probabilidades que ves son las del motor validado, sin maquillaje. Lo que sí aporta valor y se conserva: la <b>bandera de incertidumbre</b> por partido y el <b>desglose de riesgos</b> por goleador. Todo se expresa como probabilidad, no como certeza.`,`<b>Recalibration v7 (Phase 7), data-audited.</b> We tested the transformations against <b>192 real matches</b> from past World Cups (2010–2022, out-of-sample). The result was telling: the base engine is <b>already well-calibrated</b> (RPS 0.2002, 17% better than chance) and the criterion-based tweaks <b>did not hold up</b> —inflating draws made accuracy worse (the model already over-predicts draws) and shrinking helped nothing—. So we <b>removed them</b>: the probabilities you see come straight from the validated engine, unembellished. What does add value and stays: the per-match <b>uncertainty flag</b> and the per-scorer <b>risk breakdown</b>. Everything is expressed as probability, not certainty.`)}</p></div>
   <div class="section-title">${tx('Metodología','Methodology')} · Claude <span style="color:var(--c-claude)">v7</span></div>
   <div class="card methclassic">
     <p>${tx(`Motor de <b>ensamble</b> que promedia un <b>Dixon-Coles data-driven</b> (ataque/defensa por equipo estimados de miles de partidos reales) con un <b>modelo de Machine Learning</b> (gradient boosting con pérdida de Poisson) que integra <b>Elo actual a junio-2026, forma reciente e histórico de Mundiales</b>. El ensamble es el que mejor valida.`,`An <b>ensemble</b> engine that averages a <b>data-driven Dixon-Coles</b> model (per-team attack/defense estimated from thousands of real matches) with a <b>Machine Learning model</b> (gradient boosting with Poisson loss) integrating <b>current Elo as of June 2026, recent form and World Cup history</b>. The ensemble validates best.`)}</p>
@@ -668,6 +727,7 @@ function renderClaude(){
   <div class="section-title">${tx('Camino al título · Claude · las 48 selecciones','Road to the title · Claude · all 48 teams')}</div>
   <div class="card">${reachTable(d.reach, all48(d.title))}</div>
 
+  ${drawRateAnchor()}
   <div class="section-title">${tx('Los 72 partidos · Claude v7 (recalibrado, distribución por partido)','The 72 matches · Claude v7 (recalibrated, per-match distribution)')}</div>
   <p class="note">${tx('El marcador y las probabilidades V/E/D salen de la <b>distribución de Poisson completa</b> del modelo, y se muestra además el <b>xG (goles esperados)</b> de cada selección por partido.','The scoreline and W/D/L probabilities come from the model <b>full Poisson distribution</b>, and the <b>xG (expected goals)</b> of each team per match is also shown.')}</p>
   ${matchTableByAI(d.fixtures.map(f=>({a:f.a,b:f.b,pA:f.pA,pD:f.pD,pB:f.pB,score:f.score,xa:f.eg_a,xb:f.eg_b,md:f.md,date:f.date,grp:f.grp})), true)}
@@ -697,6 +757,7 @@ function renderChatGPT(){
   <div class="section-title">${tx('Camino al título · ChatGPT · las 48 selecciones','Road to the title · ChatGPT · all 48 teams')}</div>
   <div class="card">${reachTable(d.reach, all48(d.title))}</div>
 
+  ${drawRateAnchor()}
   <div class="section-title">${tx('Los 72 partidos · ChatGPT v7 (recalibrado Fase 7)','The 72 matches · ChatGPT v7 (Phase 7 recalibration)')}</div>
   ${matchTableByAI(d.matches)}
 
@@ -709,7 +770,7 @@ function renderGemini(){
   const d=DATA.gemini;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('gemini').innerHTML = `
-  <div class="section-title">${tx('Metodología','Methodology')} · Gemini <span style="color:var(--c-gemini)">v8</span></div>
+  <div class="section-title">${tx('Metodología','Methodology')} · Gemini <span style="color:var(--c-gemini)">v10</span></div>
   <div class="card methclassic">
     <p>${tx(`Ensamble físico-estadístico que <b>abandona la "memoria histórica de los escudos"</b> del v6. Mide la resiliencia por la <b>carga de estrés cognitivo actual</b> de las plantillas (minutos de eliminación directa en Champions/Libertadores = <b>Redes de Presión Local</b>), aplica un <b>Factor de Decaimiento</b> al campeón defensor y reconfigura el <b>Aura de Localía</b> de forma asimétrica, sobre el motor bio-termodinámico UTCI.`,`A physics-statistical ensemble that <b>abandons the v6 "crest historical memory"</b>. It measures resilience via each squad's <b>current cognitive stress load</b> (knockout minutes in the Champions League/Libertadores = <b>Local Pressure Networks</b>), applies a <b>Champion Decay Factor</b> to the defending champion and reshapes the <b>Home Aura</b> asymmetrically, on top of the UTCI bio-thermodynamic engine.`)}</p>
     <div style="margin-top:8px"><span class="badge">${tx('Redes de Presión Local','Local Pressure Networks')}</span><span class="badge">${tx('Decaimiento del campeón (−8%)','Champion decay (−8%)')}</span><span class="badge">${tx('Aura de localía asimétrica','Asymmetric home aura')}</span><span class="badge">${tx('Motor bio-termodinámico UTCI','UTCI bio-thermodynamic engine')}</span></div>
@@ -724,7 +785,8 @@ function renderGemini(){
   <div class="section-title">${tx('Camino al título · Gemini · las 48 selecciones','Road to the title · Gemini · all 48 teams')}</div>
   <div class="card">${reachTable(d.reach, all48(d.title))}</div>
 
-  <div class="section-title">${tx('Los 72 partidos · Gemini v8 (recalibrado Fase 8)','The 72 matches · Gemini v8 (Phase 8 recalibration)')}</div>
+  ${drawRateAnchor()}
+  <div class="section-title">${tx('Los 72 partidos · Gemini v10 (Fase 10, ancla 21.88%)','The 72 matches · Gemini v10 (Phase 10, 21.88% anchor)')}</div>
   ${matchTableByAI(d.matches)}
 
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — Gemini','Golden Boot · Top 10 scorers — Gemini')}</div>

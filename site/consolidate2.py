@@ -82,7 +82,7 @@ with open(f"{CG}/FASE_7_Ranking_48_Selecciones.csv", encoding="utf-8-sig") as f:
         if t in ALL:
             cg_reach[t] = {r: round(float(row[c]),4) for r,c in
                 [("R32","R32"),("R16","Octavos"),("QF","Cuartos"),("SF","Semis"),("FINAL","Final"),("CAMPEON","Campeón")]}
-gm_reach = parse_reach(f"{UP}/Gemini_Pronostico_Completo_v8.md")
+gm_reach = parse_reach(f"{UP}/Gemini_Pronostico_Completo_v10.md")
 cg_title = {t: cg_reach[t]["CAMPEON"] for t in cg_reach}
 gm_title = {t: gm_reach[t]["CAMPEON"] for t in gm_reach}
 for t in ALL:
@@ -100,7 +100,7 @@ with open(f"{CG}/FASE_7_Pronostico_72_Partidos.csv", encoding="utf-8-sig") as f:
 
 # ---------- Gemini v8: 72 partidos ----------
 gm_matches = {}
-gtxt = open(f"{UP}/Gemini_Pronostico_Completo_v8.md", encoding="utf-8").read()
+gtxt = open(f"{UP}/Gemini_Pronostico_Completo_v10.md", encoding="utf-8").read()
 for line in gtxt.splitlines():
     if "vs" not in line or "**" not in line or not line.strip().startswith("|"): continue
     cells = [c.strip() for c in line.strip().strip("|").split("|")]
@@ -363,7 +363,7 @@ variance) then historical calibration with a new anti-market-bias term:</p>
 correction for tactical outsiders (Morocco, Colombia, Senegal, Uruguay, Japan); prudent regularization of favorites with
 route, age or knockout doubts. Spain stays #1 without an excessive edge; France, England and Argentina form the elite block.</p>"""},
  "gemini": {
-   "version":"v8","mc":"Ensamble físico-estadístico + calibración bayesiana",
+   "version":"v10","mc":"Ensamble físico-estadístico + ancla empírica de empates",
    "title":"Redes de Presión Local + Decaimiento del Campeón + UTCI + Penalización Contrafáctica",
    "html":"""
 <p><b>Qué es.</b> Ensamble físico-estadístico que <b>abandona la "memoria histórica estática" de los escudos</b> (el
@@ -379,6 +379,8 @@ Champions/Libertadores; <b>δ_campeón</b> = penalización de hasta 8% al campe�
 aura de localía asimétrica (castiga a México, premia a EE.UU./Canadá). Datos forenses de minutos bajo presión (Opta,
 StatsBomb) sustituyen los priors históricos del v6.</p>
 <p><b>Recalibración Fase 8 (v8).</b> Añade <b>regresión isotónica</b> (corrige el exceso de confianza en favoritos y colistas), un parámetro de empates <b>ρ dinámico</b> (más empates en partidos parejos) y una <b>matriz bayesiana de inactividad</b> para el nuevo <b>Top 10 de goleadores</b>. Donde faltan datos, revierte al promedio de la confederación en vez de inventar parámetros.</p>
+<p><b>Recalibración empírica Fase 9 (v9).</b> Calibración por <b>Temperature Scaling</b> (T=1.12): aplana las probabilidades para que ningún equipo supere ~17% de título, mejorando el RPS fuera de muestra. El parámetro de empates <b>ρ</b> se ancla en la <b>tasa empírica de empates de los Mundiales 1998–2022 (~25.4%)</b>, y los minutos de los goleadores usan una <b>distribución Beta</b> con cortes de reportes clínicos a junio de 2026.</p>
+<p><b>Recalibración Fase 10 (v10).</b> Auditoría de muestreo: revisa la ventana de empates y adopta el <b>ancla del 21.88%</b> (tasa real de la fase de grupos 2010–2022, alineada con el backtest de Claude). En vez de inflar empates como en v9, los <b>desinfla</b>, lo que premia marginalmente a las potencias tácticas. Aplica filtros de inactividad clínica en goleadores (excluye a Darwin Núñez por desacondicionamiento).</p>
 <p><b>Efecto en v7.</b> La cúspide cambia: <b>Francia toma el nº 1 (19.5%)</b> por el volumen puro de minutos KO de su
 plantilla; <b>Argentina cae al 3º (13.5%)</b> por el decaimiento del campeón; y <b>Brasil y Alemania bajan</b> al
 neutralizar su "gravedad de escudo". España se sostiene 2ª (16%) por el efecto Premier/LaLiga.</p>
@@ -400,6 +402,8 @@ knockout stages; <b>δ_champion</b> = up to 8% penalty on the reigning champion 
 home aura (penalizes Mexico, rewards USA/Canada). Forensic under-pressure minute data (Opta, StatsBomb) replaces the v6
 historical priors.</p>
 <p><b>Phase 8 recalibration (v8).</b> It adds <b>isotonic regression</b> (correcting overconfidence in favorites and minnows), a <b>dynamic draw parameter ρ</b> (more draws in close matches) and a <b>Bayesian inactivity matrix</b> for the new <b>Top 10 of scorers</b>. Where data is missing, it reverts to the confederation average instead of fabricating parameters.</p>
+<p><b>Empirical recalibration Phase 9 (v9).</b> <b>Temperature scaling</b> (T=1.12) flattens probabilities so no team exceeds ~17% title chance, improving out-of-sample RPS. The draw parameter <b>ρ</b> is anchored to the <b>empirical draw rate of the 1998–2022 World Cups (~25.4%)</b>, and scorer minutes use a <b>Beta distribution</b> with clinical-report cutoffs as of June 2026.</p>
+<p><b>Phase 10 recalibration (v10).</b> Sampling audit: revisits the draw window and adopts the <b>21.88% anchor</b> (real group-stage rate for 2010–2022, aligned with the Claude backtest). Instead of inflating draws as in v9, it <b>deflates</b> them, marginally favoring tactical powers. Adds clinical-inactivity filters to scorers (excludes Darwin Núñez due to deconditioning).</p>
 <p><b>Effect in v7.</b> The top tier shifts: <b>France takes #1 (19.5%)</b> on the sheer volume of its squad's KO
 minutes; <b>Argentina drops to 3rd (13.5%)</b> due to champion decay; and <b>Brazil and Germany fall</b> as their
 "crest gravity" is neutralized. Spain holds 2nd (16%) on the Premier/LaLiga effect.</p>
@@ -552,7 +556,7 @@ DATA={"groups":GROUPS,"elo":cl_elo,"meth":METH,"backtest":BACKTEST,
  "chatgpt":{"title":cg_title,"reach":to_round_keyed(cg_reach),"version":"v7",
             "matches":[{**{k:m[k] for k in("a","b","pA","pD","pB","score")},**{k:m[k] for k in("md","date","grp") if k in m}} for m in cg_matches.values()],
             "scorers":cg_scorers},
- "gemini":{"title":gm_title,"reach":to_round_keyed(gm_reach),"version":"v8",
+ "gemini":{"title":gm_title,"reach":to_round_keyed(gm_reach),"version":"v10",
            "matches":[{**{k:m[k] for k in("a","b","pA","pD","pB","score")},**{k:m[k] for k in("md","date","grp") if k in m}} for m in gm_matches.values()],
            "scorers":gm_scorers},
  "consensus":{"title":consensus_title,"title_median":consensus_title_median,

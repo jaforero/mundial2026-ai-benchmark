@@ -31,16 +31,18 @@ Ensamble estadístico + machine learning para el Mundial 2026, con backtesting f
 
 
 
-## Recalibración v7 (Fase 7)
+## Recalibración v7.1 (Fase 7, auditada con datos)
 
-Capa de **calibración** sobre v5/v6 (no reentrena): corrige exceso de confianza y trata la incertidumbre. Código: `code/wc2026_recalibrate_v7.py` · salidas: `data/results_v7.json`, `data/claude_scorers_v7.json` · reporte: `forecasts/Claude_FASE_7_Recalibracion_v7.md`.
+La recalibración se **probó contra datos reales** antes de adoptarla: backtest fuera de muestra sobre **192 partidos** de grupos (Mundiales 2010–2022; ajuste solo con datos previos). Código: `code/backtest_recalibration_v7.py` · resultados: `data/backtest_recalibration_v7_results.json` · reporte: `forecasts/Claude_Backtest_Recalibracion_v7.md`.
 
-1. **Selecciones — anti-sobreconfianza:** encogimiento hacia la tasa base de cada ronda, `p' = b + (p−b)·s` (s de 0.97 en R32 a 0.86 en campeón), con renormalización y monotonía por equipo. El campeón más probable baja de 18.23% a 15.97%; la cola (<1%) sube ~4.2 pp.
-2. **Partidos — empate e incertidumbre:** inflación de empate proporcional a la paridad e índice de entropía; 31/72 partidos quedan en alta incertidumbre y su marcador se modera (empate o margen de un gol).
-3. **Goleadores — temperatura + riesgos:** recalibración por temperatura (T=1.12) y desglose por jugador de minutos, rol, dificultad de grupo, dependencia del equipo e incertidumbre de titularidad.
-4. **Incertidumbre/calibración:** diagnósticos de variables sobre/infravaloradas y de señales contradictorias.
+**Hallazgos:**
+- El motor base ya está **bien calibrado** (RPS 0.2002, ~17% mejor que el azar; temperatura óptima ≈ 1).
+- **Inflar empates empeora** el acierto: el modelo ya los sobre-predice (27.7% proy. vs 21.9% real). β óptimo = 0.
+- **Encoger** (anti-sobreconfianza) no mejora nada a nivel de partido.
 
-No incorpora datos nuevos: solo recalibra. Donde falta información, mantiene la estimación base y la señala en lugar de fabricarla.
+**Decisión (v7.1):** se **retiran** la inflación de empate y el encogimiento (de selecciones y goleadores); las probabilidades vuelven a las del motor validado. Se **conservan** los aportes informativos: la bandera de incertidumbre por partido y el desglose de riesgos por goleador (minutos, rol, dificultad de grupo, dependencia, titularidad). Código de la capa: `code/wc2026_recalibrate_v7.py` · reporte: `forecasts/Claude_FASE_7_Recalibracion_v7.md`.
+
+Calibrar contra datos, no contra criterio: la mejora fue **quitar** lo que la evidencia no respalda.
 
 ## Modelo de goleadores v6 (Bota de Oro)
 
