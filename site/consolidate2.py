@@ -74,27 +74,32 @@ def parse_reach(path):
         reach[name] = dict(zip(ROUNDS, vals))
     return reach
 
-# ChatGPT v7 (Fase 7, CSV) y Gemini v8 (camino al título)
+# ChatGPT v8.5 (CSV: 8.4A-TM selecciones + 8.4B-Consensus probabilidades) y Gemini v10
+CG85 = "/home/claude/wc2026/cg85"   # CSVs extraídos del paquete v8.5
+
+# --- Ranking 48 (v8.4A-TM) ---
 cg_reach = {}
-with open(f"{CG}/FASE_7_Ranking_48_Selecciones.csv", encoding="utf-8-sig") as f:
+with open(f"{CG85}/ChatGPT_v8_5_Ranking_48_Selecciones.csv", encoding="utf-8-sig") as f:
     for row in csv.DictReader(f):
         t = cn(row["Selección"])
         if t in ALL:
             cg_reach[t] = {r: round(float(row[c]),4) for r,c in
                 [("R32","R32"),("R16","Octavos"),("QF","Cuartos"),("SF","Semis"),("FINAL","Final"),("CAMPEON","Campeón")]}
+
 gm_reach = parse_reach(f"{UP}/Gemini_Pronostico_Completo_v10.md")
 cg_title = {t: cg_reach[t]["CAMPEON"] for t in cg_reach}
 gm_title = {t: gm_reach[t]["CAMPEON"] for t in gm_reach}
 for t in ALL:
     cg_title.setdefault(t,0.0); gm_title.setdefault(t,0.0)
 
-# ---------- ChatGPT v7: 72 partidos (CSV) ----------
+# --- 72 partidos v8.5 (probabilidades 8.4B-Consensus = Odds API + SofaScore + modelo) ---
 cg_matches = {}
-with open(f"{CG}/FASE_7_Pronostico_72_Partidos.csv", encoding="utf-8-sig") as f:
+with open(f"{CG85}/ChatGPT_v8_5_72_Partidos.csv", encoding="utf-8-sig") as f:
     for row in csv.DictReader(f):
         a, b = cn(row["Equipo A"]), cn(row["Equipo B"])
-        sc = row["Marcador v7-M"].replace(" ","")
-        pm = re.match(r"(\d+)-(\d+)-(\d+)", row["Prob. A-E-B"].replace(" ",""))
+        sc = (row.get("Marcador 8.4B-Consensus") or row.get("Marcador 8.4A-TM","")).replace(" ","")
+        prob = row.get("Prob. A-E-B 8.4B-Consensus") or row.get("Prob. A-E-B 8.3B-Odds","")
+        pm = re.match(r"(\d+)-(\d+)-(\d+)", prob.replace(" ",""))
         if not pm: continue
         cg_matches[frozenset((a,b))] = {"a":a,"b":b,"pA":float(pm.group(1)),"pD":float(pm.group(2)),"pB":float(pm.group(3)),"score":sc}
 
@@ -115,12 +120,13 @@ for line in gtxt.splitlines():
 
 # ---------- Top 10 goleadores (Bota de Oro) ----------
 def _clean_note(s): return s.replace('"',"'").replace("**","").strip()
-# ChatGPT (CSV)
+# ChatGPT goleadores (CSV v8.5 — 8.4A-TM: Bota de Oro congelada, xG ajustado por Transfermarkt)
 cg_scorers = []
-with open(f"{CG}/FASE_7_Top_10_Goleadores.csv", encoding="utf-8-sig") as f:
+with open(f"{CG85}/ChatGPT_v8_5_Top10_Goleadores.csv", encoding="utf-8-sig") as f:
     for row in csv.DictReader(f):
+        xg = row.get("Goles esperados 8.4A-TM") or row.get("Goles esperados v7-G","0")
         cg_scorers.append({"rank":int(row["Ranking"]),"player":row["Jugador"].strip(),"team":cn(row["Selección"]),
-                           "prob":round(float(row["Prob. Bota de Oro"]),2),"xg":round(float(row["Goles esperados v7-G"]),2),
+                           "prob":round(float(row["Prob. Bota de Oro"]),2),"xg":round(float(xg),2),
                            "note":_clean_note(row.get("Justificación",""))})
 # Gemini (tabla MD dentro del archivo v8)
 GCODE={"ING":"Inglaterra","PBA":"Países Bajos","FRA":"Francia","BRA":"Brasil","ALE":"Alemania","COL":"Colombia",
@@ -323,10 +329,12 @@ page and cannot be scraped reliably; the computed Elo was used (a better and mor
 reflected via <b>recent form</b> as a proxy; a true player-by-player model would require audited squad values (e.g.
 Transfermarkt) that I do not have — I will not invent them (ChatGPT also used call-ups only as an aggregate signal).</p>"""},
  "chatgpt": {
-   "version":"v7","mc":"Monte Carlo + calibración histórica + recalibración Fase 7",
+   "version":"v8.5","mc":"Elo + Transfermarkt (8.4A-TM) · probabilidades por consenso de mercado (Odds API + SofaScore, 8.4B-Consensus)",
    "title":"Ensamble calibrado histórico + Nivel 2 (núcleo FIFA/Elo reforzado + anti-sesgo de mercado)",
    "html":"""
 <p><b>Recalibración Fase 7.</b> Mantiene la arquitectura v6.2 y reajusta las probabilidades; añade además un <b>Top 10 de goleadores</b> (Bota de Oro) con goles esperados por jugador.</p>
+<p><b>Recalibración Fase 8 (v8).</b> Integra <b>The Odds API</b>: las probabilidades 1X2 son ahora una mezcla del 40% del modelo vigente y 60% del mercado sin margen de casa. Los marcadores (<b>Scoreline Lite</b>) se ajustan al <b>ancla histórica de empates</b> (~22%) y la tasa proyectada cae de 25% (Fase 7) a 22.2%, dentro del rango defendible. Los goleadores quedan congelados desde v6.4-G por falta de datos player-level/xG.</p>
+<p><b>Recalibración Fase 8.5 (8.4A-TM + 8.4B-Consensus).</b> Selecciones combinan Elo 2026 con una capa <b>Transfermarkt</b> de talento, profundidad y edad. Las probabilidades 1X2 pasan a un <b>consenso de mercado</b>: The Odds API (1.502 filas) como señal principal y <b>SofaScore/datafc</b> como validación secundaria, con bandera de consenso cuando ambas fuentes coinciden. Marcadores y goleadores se conservan (8.4A-TM); xG y datos player-level siguen pendientes por falta de suscripción activa.</p>
 <p><b>Qué es.</b> Evolución del v6 con los hallazgos del <b>Backtesting Nivel 2</b>: refuerza el núcleo estructural
 <b>FIFA/Elo</b>, mantiene plantilla, player-level, forma y experiencia como <b>capas de ajuste</b> (no dominantes), y
 añade una <b>penalización de sesgo de mercado</b> para no sobrevalorar a las ligas europeas más líquidas.</p>
@@ -346,6 +354,8 @@ ruta, edad o knockout. España sigue 1ª, sin ventaja excesiva; Francia, Inglate
    "title_en":"Historically-calibrated ensemble + Level 2 (reinforced FIFA/Elo core + anti-market-bias)",
    "html_en":"""
 <p><b>Phase 7 recalibration.</b> It keeps the v6.2 architecture and re-tunes the probabilities; it also adds a <b>Top 10 of scorers</b> (Golden Boot) with expected goals per player.</p>
+<p><b>Phase 8 recalibration (v8).</b> Integrates <b>The Odds API</b>: 1X2 probabilities are now a blend of 40% current model and 60% market without house margin. Scorelines (<b>Scoreline Lite</b>) are anchored to the <b>historical draw rate</b> (~22%) and the projected rate drops from 25% (Phase 7) to 22.2%, within the defensible range. Scorers stay frozen from v6.4-G due to lack of player-level / xG data.</p>
+<p><b>Phase 8.5 recalibration (8.4A-TM + 8.4B-Consensus).</b> Selections combine 2026 Elo with a <b>Transfermarkt</b> layer of talent, depth and age. 1X2 probabilities move to a <b>market consensus</b>: The Odds API (1,502 rows) as the main signal and <b>SofaScore/datafc</b> as secondary validation, with a consensus flag when both sources agree. Scorelines and scorers are kept (8.4A-TM); xG and player-level data remain pending due to no active subscription.</p>
 <p><b>What it is.</b> An evolution of v6 with the <b>Level 2 Backtesting</b> findings: it reinforces the structural
 <b>FIFA/Elo</b> core, keeps squad, player-level, form and experience as <b>adjustment layers</b> (not dominant), and
 adds a <b>market-bias penalty</b> so the most liquid European leagues are not overvalued.</p>
@@ -553,7 +563,7 @@ best_thirds=[x[0] for x in _thirds[:8]]
 DATA={"groups":GROUPS,"elo":cl_elo,"meth":METH,"backtest":BACKTEST,
  "claude":{"title":claude_title,"reach":claude_reach,"group_win":claude_group,"advance":claude_adv,
            "fixtures":cl["fixtures"],"params":cl["params"],"N":cl["N"],"version":CLAUDE_VERSION,"scorers":cl_scorers},
- "chatgpt":{"title":cg_title,"reach":to_round_keyed(cg_reach),"version":"v7",
+ "chatgpt":{"title":cg_title,"reach":to_round_keyed(cg_reach),"version":"v8.5",
             "matches":[{**{k:m[k] for k in("a","b","pA","pD","pB","score")},**{k:m[k] for k in("md","date","grp") if k in m}} for m in cg_matches.values()],
             "scorers":cg_scorers},
  "gemini":{"title":gm_title,"reach":to_round_keyed(gm_reach),"version":"v10",

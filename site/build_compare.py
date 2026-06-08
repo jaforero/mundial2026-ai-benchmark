@@ -742,7 +742,7 @@ function renderChatGPT(){
   const d=DATA.chatgpt;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('chatgpt').innerHTML = `
-  <div class="section-title">${tx('Metodología','Methodology')} · ChatGPT <span style="color:var(--c-chatgpt)">v7</span></div>
+  <div class="section-title">${tx('Metodología','Methodology')} · ChatGPT <span style="color:var(--c-chatgpt)">v8.5</span></div>
   <div class="card methclassic">
     <p>${tx(`Ensamble <b>calibrado histórico</b> con los ajustes del <b>Backtesting Nivel 2</b>: refuerza el núcleo <b>FIFA/Elo</b> (sube a 24%), reduce el clima a contextual (4%) y añade una <b>penalización de sesgo de mercado</b> para no sobrevalorar a las ligas europeas más líquidas. Plantilla, player-level, forma y experiencia entran como capas de ajuste, no como dominantes.`,`A <b>historically-calibrated</b> ensemble with the <b>Level 2 Backtesting</b> adjustments: it reinforces the <b>FIFA/Elo</b> core (up to 24%), reduces climate to contextual (4%) and adds a <b>market-bias penalty</b> so the most liquid European leagues are not overvalued. Squad, player-level, form and experience enter as adjustment layers, not as dominant ones.`)}</p>
     <div style="margin-top:8px"><span class="badge">${tx('Núcleo FIFA/Elo reforzado','Reinforced FIFA/Elo core')}</span><span class="badge">${tx('Anti-sesgo de mercado','Anti-market-bias')}</span><span class="badge">${tx('Calibración histórica','Historical calibration')}</span><span class="badge">${tx('Outsiders tácticos corregidos','Tactical outsiders corrected')}</span></div>
@@ -758,7 +758,7 @@ function renderChatGPT(){
   <div class="card">${reachTable(d.reach, all48(d.title))}</div>
 
   ${drawRateAnchor()}
-  <div class="section-title">${tx('Los 72 partidos · ChatGPT v7 (recalibrado Fase 7)','The 72 matches · ChatGPT v7 (Phase 7 recalibration)')}</div>
+  <div class="section-title">${tx('Los 72 partidos · ChatGPT v8.5 (8.4B-Consensus · Odds API + SofaScore)','The 72 matches · ChatGPT v8.5 (8.4B-Consensus · Odds API + SofaScore)')}</div>
   ${matchTableByAI(d.matches)}
 
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — ChatGPT','Golden Boot · Top 10 scorers — ChatGPT')}</div>

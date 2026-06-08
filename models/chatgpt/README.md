@@ -1,4 +1,4 @@
-# ChatGPT · modelo v7 (recalibración Fase 7)
+# ChatGPT · modelo v8.5 (8.4A-TM selecciones · 8.4B-Consensus probabilidades · Odds API + SofaScore)
 
 Ensamble calibrado históricamente. La **Fase 7** reajusta las probabilidades del v6.2 y añade un **Top 10 de goleadores** (Bota de Oro) con goles esperados por jugador.
 
@@ -51,11 +51,11 @@ chatgpt/
 │   ├── ChatGPT_v6_Backtesting_Nivel_1.py            backtest Nivel 1
 │   └── ChatGPT_v6_Backtesting_Nivel_2_Metodologico.py  backtest Nivel 2
 ├── data/                                          ← salidas en CSV
-│   ├── FASE_7_Ranking_48_Selecciones.csv
-│   ├── FASE_7_Pronostico_72_Partidos.csv
-│   └── FASE_7_Top_10_Goleadores.csv
+│   ├── integrado en el .md v8
+│   ├── integrado en el .md v8
+│   └── integrado en el .md v8
 └── forecasts/
-    ├── ChatGPT_FASE_7_Recalibracion_Pronostico.md
+    ├── ChatGPT_Mundial_2026_Modelo_v8_5_Integrado.md
     └── ChatGPT_Backtesting_Nivel_2_Reporte_Final_Modelo_v6.md
 ```
 
