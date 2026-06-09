@@ -2,6 +2,14 @@
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Benchmark IA · Pronósticos Mundial FIFA 2026 — Claude · ChatGPT · Gemini</title>
+<!-- Google tag (gtag.js) — GA4 propiedad G-MQ3K8EVKV0 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MQ3K8EVKV0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-MQ3K8EVKV0');
+</script>
 
 <!-- ============ SEO ============ -->
 <meta name="description" content="Claude, ChatGPT y Gemini pronostican el Mundial FIFA 2026 y un consenso las combina: 48 selecciones, 72 partidos y modelos de ciencia de datos comparados.">
@@ -670,7 +678,7 @@ function renderConsenso(){
 
   <div class="section-title">🥇 ${tx('Bota de Oro — Top 10 goleadores (consenso)','Golden Boot — Top 10 scorers (consensus)')}</div>
   <p class="note">${tx('Una dimensión nueva: ya no solo qué selección gana, sino qué jugador marca más. Ahora las <b>tres IAs</b> pronostican goleadores —incluido el <b>nuevo modelo de jugador de Claude</b>, que parte de los goles que su modelo de selección proyecta para cada equipo—. El consenso promedia las probabilidades e indica en cuántas IAs coincide cada nombre.','A new dimension: not just which team wins, but which player scores most. Now <b>all three AIs</b> forecast scorers —including <b>the new Claude player-level model</b>, built on the goals its team model projects for each side—. The consensus averages the probabilities and shows how many AIs agree on each name.')}</p>
-  <div class="card">${scorersConsensus()}</div>
+  <div class="card scorers-track" data-scorers-src="consenso">${scorersConsensus()}</div>
 
   <div class="section-title">${tx('Comparador cara a cara — partido por partido','Head-to-head comparator — match by match')}</div>
   <div class="card">
@@ -728,7 +736,7 @@ function renderClaude(){
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — Claude v7','Golden Boot · Top 10 scorers — Claude v7')}</div>
   <p class="note">${tx('Modelo nuevo de jugador montado sobre el de selección. Los goles esperados de cada jugador parten de los <b>goles que su equipo proyecta marcar en el torneo</b> (partidos esperados según su avance × goles por partido del modelo) y se reparten por <b>cuota de rol y penales</b>, ajustados por <b>titularidad</b>, <b>disponibilidad física</b> y <b>forma</b>. La Bota de Oro se estima por simulación. Pasa el cursor sobre la ⓘ para ver el detalle de cada jugador.','New player-level model built on top of the team model. Each player expected goals start from the <b>goals their team is projected to score in the tournament</b> (expected matches from its run × goals per match) and are split by <b>role share and penalties</b>, adjusted for <b>starting probability</b>, <b>physical availability</b> and <b>form</b>. The Golden Boot is estimated by simulation. Hover the ⓘ for the detail of each player.')}</p>
   <div class="insight"><p>${tx(`Por qué <b>riesgo físico</b> y <b>forma</b> son factores <b>separados</b>: el ${term('riesgo físico','Lesiones recientes, carga y edad: afecta cuántos minutos juega y si lo reservan para fases finales.')} ajusta los <b>minutos</b> (cuánto juega), mientras que la ${term('forma','Racha goleadora y afinación: afecta su eficacia por minuto cuando sí está en cancha.')} ajusta la <b>tasa</b> de gol por minuto. Un jugador puede estar fino pero con riesgo de rotación, o sano pero frío; mezclarlos en una sola variable perdería esa diferencia.`,`Why <b>physical risk</b> and <b>form</b> are <b>separate</b> factors: ${term('physical risk','Recent injuries, load and age: it affects how many minutes he plays and whether he is rested for later rounds.')} adjusts the <b>minutes</b> (how much he plays), while ${term('form','Scoring streak and sharpness: it affects his efficiency per minute when he is on the pitch.')} adjusts the <b>scoring rate</b> per minute. A player can be sharp but at rotation risk, or fit but cold; merging them into one variable would lose that distinction.`)}</p></div>
-  <div class="card">${scorersAI("claude")}</div>`;
+  <div class="card scorers-track" data-scorers-src="claude">${scorersAI("claude")}</div>`;
 }
 
 function renderChatGPT(){
@@ -756,7 +764,7 @@ function renderChatGPT(){
 
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — ChatGPT','Golden Boot · Top 10 scorers — ChatGPT')}</div>
   <p class="note">${tx('Probabilidad de ganar la Bota de Oro por jugador, con sus goles esperados. Pasa el cursor sobre la ⓘ para ver la justificación de cada caso.','Probability of winning the Golden Boot per player, with expected goals. Hover the ⓘ for the rationale of each pick.')}</p>
-  <div class="card">${scorersAI("chatgpt")}</div>`;
+  <div class="card scorers-track" data-scorers-src="chatgpt">${scorersAI("chatgpt")}</div>`;
 }
 
 function renderGemini(){
@@ -784,7 +792,39 @@ function renderGemini(){
 
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — Gemini','Golden Boot · Top 10 scorers — Gemini')}</div>
   <p class="note">${tx('Probabilidad de Bota de Oro con ajuste por estado de forma y riesgo de titularidad. Pasa el cursor sobre la ⓘ para ver el análisis de cada jugador.','Golden Boot probability adjusted for form and starting-role risk. Hover the ⓘ for the analysis of each player.')}</p>
-  <div class="card">${scorersAI("gemini")}</div>`;
+  <div class="card scorers-track" data-scorers-src="gemini">${scorersAI("gemini")}</div>`;
+}
+
+/* ============ ANALÍTICA (GA4) ============ */
+function gaEvent(name, params){ try{ if(typeof gtag==='function') gtag('event', name, params||{}); }catch(e){} }
+const AI_LABELS={consenso:'Consenso',claude:'Claude',chatgpt:'ChatGPT',gemini:'Gemini'};
+function trackTab(tabId){
+  gaEvent('select_tab', {
+    ai_tab: tabId,                                                   // consenso|claude|chatgpt|gemini
+    ai_name: AI_LABELS[tabId]||tabId,
+    tab_type: tabId==='consenso' ? 'consensus' : 'individual_model'  // consenso vs modelo individual
+  });
+}
+/* goleadores: dispara una vez por fuente y sesión cuando el panel se ve */
+const _scorersSeen={};
+let _scorersObs=null;
+function setupScorersTracking(){
+  if(!('IntersectionObserver' in window)) return;
+  if(!_scorersObs){
+    _scorersObs=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          const src=en.target.getAttribute('data-scorers-src')||'desconocido';
+          if(!_scorersSeen[src]){ _scorersSeen[src]=true;
+            gaEvent('view_scorers', {scorers_source:src, ai_name:AI_LABELS[src]||src}); }
+          _scorersObs.unobserve(en.target);
+        }
+      });
+    }, {threshold:0.35});
+  }
+  document.querySelectorAll('.scorers-track').forEach(function(el){
+    if(!el._obs){ el._obs=true; _scorersObs.observe(el); }
+  });
 }
 
 /* ============ TABS ============ */
@@ -793,6 +833,8 @@ document.getElementById('tabs').addEventListener('click', e=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
   b.classList.add('active'); document.getElementById(b.dataset.t).classList.add('active');
+  trackTab(b.dataset.t);
+  setupScorersTracking();
 });
 
 /* ============ IDIOMA + TEMA ============ */
@@ -806,7 +848,7 @@ function applyLang(lang){
   renderConsenso(); renderClaude(); renderChatGPT(); renderGemini();
   try{localStorage.setItem('jf_lang',lang)}catch(e){}
 }
-document.querySelectorAll('#langSeg .seg-btn').forEach(b=>b.addEventListener('click',()=>applyLang(b.dataset.lang)));
+document.querySelectorAll('#langSeg .seg-btn').forEach(b=>b.addEventListener('click',()=>{applyLang(b.dataset.lang); gaEvent('toggle_language',{language:b.dataset.lang}); setupScorersTracking();}));
 
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme',t);
@@ -816,9 +858,16 @@ function applyTheme(t){
 }
 const savedTheme=(function(){try{return localStorage.getItem('jf_theme')}catch(e){return null}})()||((window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');
 applyTheme(savedTheme);
-document.getElementById('themeBtn').addEventListener('click',()=>{applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');});
+document.getElementById('themeBtn').addEventListener('click',()=>{const nt=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; applyTheme(nt); gaEvent('toggle_theme',{theme:nt});});
 
 const savedLang=(function(){try{return localStorage.getItem('jf_lang')}catch(e){return null}})()||'es';
 applyLang(savedLang);
+
+/* analítica: registrar la pestaña activa inicial y activar el seguimiento de goleadores */
+(function(){
+  const act=document.querySelector('.tab.active');
+  trackTab(act && act.dataset.t ? act.dataset.t : 'consenso');
+  setupScorersTracking();
+})();
 </script>
 </body></html>
