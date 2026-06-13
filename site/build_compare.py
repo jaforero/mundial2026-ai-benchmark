@@ -4,6 +4,10 @@ import json
 
 DATA = json.load(open("/home/claude/wc2026/consolidated.json", encoding="utf-8"))
 BLOB = json.dumps(DATA, ensure_ascii=False)
+try:
+    RESULTS_FB = json.dumps(json.load(open("/home/claude/wc2026/results.json", encoding="utf-8")), ensure_ascii=False)
+except Exception:
+    RESULTS_FB = '{"results":[]}'
 
 HTML = r"""<!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8">
@@ -179,6 +183,50 @@ border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;margin:2px 4
 .anchor-row .stat.hi{background:#fff3da;color:#b58900;}
 .anchor-row .stat.lo{background:#e6efff;color:#0048ff;}
 @media(max-width:640px){.anchor-row{grid-template-columns:70px 1fr 50px;}.anchor-row .stat{display:none;}}
+/* ===== panel de precisión (predicción vs realidad) ===== */
+.acc-hero{background:linear-gradient(135deg,var(--purple),var(--deep-blue));color:#fff;border-radius:18px;padding:20px 22px;margin-bottom:16px;}
+.acc-hero h2{margin:0 0 4px;font-size:20px;font-weight:800;}
+.acc-hero p{margin:0;font-size:13px;opacity:.92;line-height:1.5;}
+.acc-progress{margin-top:14px;}
+.acc-progress .track{height:9px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden;}
+.acc-progress .fill{height:100%;background:#ffd84d;border-radius:5px;transition:width .6s ease;}
+.acc-progress .lbl{font-size:12px;margin-top:6px;opacity:.95;}
+.lb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px;}
+.lb-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;position:relative;overflow:hidden;}
+.lb-card.lead{border-color:var(--purple);box-shadow:0 6px 22px rgba(78,0,255,.18);}
+.lb-card .rank{position:absolute;top:12px;right:14px;font-size:22px;}
+.lb-card .who{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;color:var(--deep-blue);}
+.lb-card .who .dotc{width:11px;height:11px;border-radius:50%;display:inline-block;}
+.lb-card .pts{font-size:34px;font-weight:800;line-height:1.1;margin:8px 0 2px;}
+.lb-card .pts small{font-size:13px;font-weight:600;color:var(--muted);}
+.lb-card .mini{display:flex;gap:12px;margin-top:8px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
+.lb-card .mini b{color:var(--deep-blue);font-size:14px;display:block;}
+.acc-md{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin:16px 0 8px;}
+.acc-match{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 13px;margin-bottom:9px;}
+.acc-match .top{display:flex;align-items:center;justify-content:center;gap:12px;font-weight:700;font-size:15px;margin-bottom:9px;}
+.acc-match .top .sc{background:var(--deep-blue);color:#fff;border-radius:8px;padding:3px 11px;font-weight:800;letter-spacing:.5px;}
+.acc-match .top .nm{flex:1;}
+.acc-match .top .nm.r{text-align:left;}
+.acc-match .top .nm.l{text-align:right;}
+.acc-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.acc-chip{border-radius:9px;padding:6px 4px;text-align:center;font-size:11px;border:1px solid var(--border);}
+.acc-chip .cn{font-weight:700;display:block;margin-bottom:2px;font-size:10.5px;}
+.acc-chip .cs{font-weight:800;font-size:13px;}
+.acc-chip.exact{background:#e6f7ee;border-color:#1a9e5c;}
+.acc-chip.exact .cs{color:#1a9e5c;}
+.acc-chip.out{background:#fff8e1;border-color:#e0b400;}
+.acc-chip.out .cs{color:#b58900;}
+.acc-chip.miss{background:#fdecea;border-color:#d9534f;}
+.acc-chip.miss .cs{color:#c0392b;}
+.acc-chip .ico{font-size:11px;}
+.acc-legend{font-size:12px;color:var(--muted);margin:6px 0 16px;line-height:1.7;}
+.acc-legend span{white-space:nowrap;margin-right:14px;}
+.acc-empty{text-align:center;padding:40px 20px;color:var(--muted);}
+.acc-empty .big{font-size:42px;margin-bottom:10px;}
+[data-theme="dark"] .acc-chip.exact{background:rgba(26,158,92,.16);}
+[data-theme="dark"] .acc-chip.out{background:rgba(224,180,0,.14);}
+[data-theme="dark"] .acc-chip.miss{background:rgba(217,83,79,.16);}
+@media(max-width:640px){.acc-chips{grid-template-columns:repeat(2,1fr);}.lb-card .pts{font-size:28px;}}
 /* ===== Bota de Oro · goleadores ===== */
 .scorers{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
 .sk{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:12px;padding:10px 14px;
@@ -320,12 +368,14 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
   <button class="tab" data-t="claude"><span class="dotc" style="background:var(--c-claude)"></span>Claude</button>
   <button class="tab" data-t="chatgpt"><span class="dotc" style="background:var(--c-chatgpt)"></span>ChatGPT</button>
   <button class="tab" data-t="gemini"><span class="dotc" style="background:var(--c-gemini)"></span>Gemini</button>
+  <button class="tab" data-t="precision"><span data-en="📊 Live accuracy">📊 Precisión en vivo</span></button>
 </div>
 
 <div id="consenso" class="panel active"></div>
 <div id="claude" class="panel"></div>
 <div id="chatgpt" class="panel"></div>
 <div id="gemini" class="panel"></div>
+<div id="precision" class="panel"></div>
 
 <div class="footer">
   <div data-en="Javier Forero · Statistician and AI & Analytics Consultant">Javier Forero · Estadístico y consultor en IA y Analítica</div>
@@ -802,14 +852,120 @@ function renderGemini(){
   <div class="card scorers-track" data-scorers-src="gemini">${scorersAI("gemini")}</div>`;
 }
 
+/* ============ PRECISIÓN: predicción vs resultado real ============ */
+let REAL_RESULTS = null;   // se carga desde results.json
+const ACC_MODELS = [
+  {key:'consenso', name:'Consenso', color:'var(--c-cons)',    get:()=>DATA.consensus.matches},
+  {key:'claude',   name:'Claude',   color:'var(--c-claude)',  get:()=>DATA.claude.fixtures},
+  {key:'chatgpt',  name:'ChatGPT',  color:'var(--c-chatgpt)', get:()=>DATA.chatgpt.matches},
+  {key:'gemini',   name:'Gemini',   color:'var(--c-gemini)',  get:()=>DATA.gemini.matches},
+];
+function _ocFromScore(x,y){ return x>y?'A':(x<y?'B':'D'); }
+function _rps(pA,pD,pB,oc){
+  const p=[pA/100,pD/100,pB/100], o=[oc==='A'?1:0, oc==='D'?1:0, oc==='B'?1:0];
+  let c=0,cp=0,co=0; for(let k=0;k<3;k++){cp+=p[k];co+=o[k];c+=(cp-co)*(cp-co);} return 0.5*c;
+}
+// predicción de un modelo para el par (a,b), reorientada para que A=a, B=b
+function _predFor(getArr,a,b){
+  const m=getArr().find(x=>(x.a===a&&x.b===b)||(x.a===b&&x.b===a)); if(!m)return null;
+  if(m.a===a) return {score:m.score,pA:m.pA,pD:m.pD,pB:m.pB};
+  const pr=(m.score||'').split('-'); return {score:(pr[1]||'?')+'-'+(pr[0]||'?'),pA:m.pB,pD:m.pD,pB:m.pA};
+}
+function _evalPred(pred, ga, gb){
+  if(!pred) return null;
+  const pr=pred.score.split('-'), px=parseInt(pr[0],10), py=parseInt(pr[1],10);
+  const realOC=_ocFromScore(ga,gb), predOC=isNaN(px)?null:_ocFromScore(px,py);
+  const exact = !isNaN(px)&&px===ga&&py===gb;
+  const outHit = predOC===realOC;
+  return {score:pred.score, exact, outHit, pts: exact?3:(outHit?1:0),
+          rps:_rps(pred.pA,pred.pD,pred.pB,realOC), cls: exact?'exact':(outHit?'out':'miss')};
+}
+function computeAccuracy(){
+  const played=(REAL_RESULTS||[]).filter(r=>r.ga!=null&&r.gb!=null);
+  const agg={}; ACC_MODELS.forEach(m=>agg[m.key]={n:0,exact:0,out:0,pts:0,rps:0});
+  const rows=[];
+  played.forEach(r=>{
+    const cells={};
+    ACC_MODELS.forEach(m=>{
+      const ev=_evalPred(_predFor(m.get,r.a,r.b), r.ga, r.gb);
+      cells[m.key]=ev;
+      if(ev){const A=agg[m.key]; A.n++; A.exact+=ev.exact?1:0; A.out+=ev.outHit?1:0; A.pts+=ev.pts; A.rps+=ev.rps;}
+    });
+    rows.push({r,cells});
+  });
+  return {played, agg, rows, total:(REAL_RESULTS||[]).length};
+}
+function renderAccuracy(){
+  const host=document.getElementById('precision'); if(!host) return;
+  if(REAL_RESULTS===null){ host.innerHTML=`<div class="acc-empty"><div class="big">⏳</div>${tx('Cargando resultados oficiales…','Loading official results…')}</div>`; return; }
+  const {played,agg,rows,total}=computeAccuracy();
+  if(played.length===0){
+    host.innerHTML=`<div class="acc-hero"><h2>📊 ${tx('Precisión en vivo · predicción vs realidad','Live accuracy · prediction vs reality')}</h2>
+      <p>${tx('Aquí se comparará cada pronóstico con el resultado oficial de la FIFA a medida que terminen los partidos.','Each forecast will be compared against the official FIFA result as matches finish.')}</p></div>
+      <div class="acc-empty"><div class="big">⚽</div>${tx('Aún no hay partidos jugados. Esta sección se actualiza sola cuando se publican los resultados oficiales.','No matches played yet. This section updates itself once official results are published.')}</div>`;
+    return;
+  }
+  // leaderboard ordenado por puntos, desempate por RPS
+  const board=ACC_MODELS.map(m=>{const A=agg[m.key];return{...m,...A,
+      accPct:A.n?100*A.out/A.n:0, exPct:A.n?100*A.exact/A.n:0, avgRps:A.n?A.rps/A.n:0};})
+    .filter(x=>x.n>0).sort((a,b)=> b.pts-a.pts || a.avgRps-b.avgRps);
+  const medals=['🥇','🥈','🥉',''];
+  const cards=board.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}">
+      <div class="rank">${medals[i]||''}</div>
+      <div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div>
+      <div class="pts">${x.pts}<small> ${tx('pts','pts')}</small></div>
+      <div class="mini">
+        <span><b>${x.accPct.toFixed(0)}%</b>${tx('resultado','outcome')}</span>
+        <span><b>${x.exPct.toFixed(0)}%</b>${tx('marcador','exact')}</span>
+        <span><b>${x.avgRps.toFixed(3)}</b>RPS</span>
+      </div></div>`).join('');
+  const pctPlayed=100*played.length/Math.max(total,1);
+  // partidos por jornada
+  let prev='', matchHtml='';
+  rows.forEach(({r,cells})=>{
+    const md=`${r.fecha||''} · ${tx('Jornada','Matchday')} ${r.jornada||''}`;
+    if(md!==prev){ matchHtml+=`<div class="acc-md">${md}</div>`; prev=md; }
+    const chips=ACC_MODELS.map(m=>{const ev=cells[m.key]; if(!ev)return `<div class="acc-chip"><span class="cn">${m.name}</span><span class="cs">—</span></div>`;
+      const ico=ev.exact?'✓':(ev.outHit?'◐':'✗');
+      return `<div class="acc-chip ${ev.cls}"><span class="cn">${m.name}</span><span class="cs">${ev.score}</span><span class="ico">${ico}</span></div>`;}).join('');
+    matchHtml+=`<div class="acc-match">
+      <div class="top"><span class="nm l">${tf(r.a)}</span><span class="sc">${r.ga}–${r.gb}</span><span class="nm r">${tf(r.b)}</span></div>
+      <div class="acc-chips">${chips}</div></div>`;
+  });
+  host.innerHTML=`
+    <div class="acc-hero">
+      <h2>📊 ${tx('Precisión en vivo · predicción vs realidad','Live accuracy · prediction vs reality')}</h2>
+      <p>${tx('Cada modelo y el consenso se comparan con el resultado oficial de la FIFA. Se premia tanto acertar el <b>marcador exacto</b> (3 pts) como acertar solo el <b>resultado</b> —ganar, empatar o perder— aunque falle el marcador (1 pt).','Each model and the consensus are compared against the official FIFA result. Points reward both the <b>exact score</b> (3 pts) and getting just the <b>outcome</b> —win, draw or loss— even if the score is wrong (1 pt).')}</p>
+      <div class="acc-progress"><div class="track"><div class="fill" style="width:${pctPlayed}%"></div></div>
+        <div class="lbl">${played.length} / ${total} ${tx('partidos jugados','matches played')}</div></div>
+    </div>
+    <div class="lb-grid">${cards}</div>
+    <div class="acc-legend">
+      <span>✓ <b style="color:#1a9e5c">${tx('marcador exacto','exact score')}</b> (3 pts)</span>
+      <span>◐ <b style="color:#b58900">${tx('resultado acertado','outcome correct')}</b> (1 pt)</span>
+      <span>✗ <b style="color:#c0392b">${tx('fallo','miss')}</b> (0)</span>
+      <span>RPS = ${tx('error probabilístico (menor es mejor)','probabilistic error (lower is better)')}</span>
+    </div>
+    ${matchHtml}`;
+}
+const RESULTS_FALLBACK = __RESULTS_FALLBACK__;
+function _normResults(j){ return Array.isArray(j) ? j : (j && j.results ? j.results : []); }
+function loadResults(){
+  fetch('./results.json?ts='+Date.now())
+    .then(r=>r.ok?r.json():Promise.reject())
+    .then(j=>{ REAL_RESULTS=_normResults(j); renderAccuracy(); })
+    .catch(()=>{ REAL_RESULTS=_normResults(RESULTS_FALLBACK); renderAccuracy(); });  // respaldo embebido (vista local/preview)
+}
+
+
 /* ============ ANALÍTICA (GA4) ============ */
 function gaEvent(name, params){ try{ if(typeof gtag==='function') gtag('event', name, params||{}); }catch(e){} }
-const AI_LABELS={consenso:'Consenso',claude:'Claude',chatgpt:'ChatGPT',gemini:'Gemini'};
+const AI_LABELS={consenso:'Consenso',claude:'Claude',chatgpt:'ChatGPT',gemini:'Gemini',precision:'Precisión'};
 function trackTab(tabId){
   gaEvent('select_tab', {
     ai_tab: tabId,                                                   // consenso|claude|chatgpt|gemini
     ai_name: AI_LABELS[tabId]||tabId,
-    tab_type: tabId==='consenso' ? 'consensus' : 'individual_model'  // consenso vs modelo individual
+    tab_type: tabId==='precision' ? 'results' : (tabId==='consenso' ? 'consensus' : 'individual_model')
   });
 }
 /* goleadores: dispara una vez por fuente y sesión cuando el panel se ve */
@@ -852,7 +1008,7 @@ function applyLang(lang){
     el.innerHTML = lang==='en' ? el.getAttribute('data-en') : el._es;
   });
   document.querySelectorAll('#langSeg .seg-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
-  renderConsenso(); renderClaude(); renderChatGPT(); renderGemini();
+  renderConsenso(); renderClaude(); renderChatGPT(); renderGemini(); renderAccuracy();
   try{localStorage.setItem('jf_lang',lang)}catch(e){}
 }
 document.querySelectorAll('#langSeg .seg-btn').forEach(b=>b.addEventListener('click',()=>{applyLang(b.dataset.lang); gaEvent('toggle_language',{language:b.dataset.lang}); setupScorersTracking();}));
@@ -869,6 +1025,7 @@ document.getElementById('themeBtn').addEventListener('click',()=>{const nt=docum
 
 const savedLang=(function(){try{return localStorage.getItem('jf_lang')}catch(e){return null}})()||'es';
 applyLang(savedLang);
+loadResults();
 
 /* analítica: registrar la pestaña activa inicial y activar el seguimiento de goleadores */
 (function(){
@@ -880,5 +1037,6 @@ applyLang(savedLang);
 </body></html>"""
 
 HTML = HTML.replace("__BLOB__", BLOB)
+HTML = HTML.replace("__RESULTS_FALLBACK__", RESULTS_FB)
 open("/home/claude/wc2026/Benchmark_IA_Mundial2026.html","w",encoding="utf-8").write(HTML)
 print("Generado:", len(HTML), "bytes")
