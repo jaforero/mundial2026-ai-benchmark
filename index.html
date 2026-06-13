@@ -616,10 +616,65 @@ function consensusMatchTable(){
 }
 
 /* ---------- HEAD TO HEAD ---------- */
+const _MES={Ene:0,Feb:1,Mar:2,Abr:3,May:4,Jun:5,Jul:6,Ago:7,Sep:8,Oct:9,Nov:10,Dic:11,Jan:0,Apr:3,Aug:7,Dec:11};
+function _matchDate(m){
+  if(!m||!m.date) return null;
+  const p=m.date.trim().split(/\s+/); const mo=_MES[p[0]]; const d=parseInt(p[1],10);
+  if(mo==null||isNaN(d)) return null;
+  return new Date(2026,mo,d);
+}
+// índices de los 72 partidos ordenados cronológicamente (fecha · grupo · jornada)
+function h2hOrder(){
+  return DATA.consensus.matches.map((m,idx)=>({idx,m})).sort((a,b)=>{
+    const da=_matchDate(a.m), db=_matchDate(b.m);
+    const ta=da?da.getTime():Infinity, tb=db?db.getTime():Infinity;
+    if(ta!==tb) return ta-tb;
+    const ga=a.m.group||a.m.grp||'', gb=b.m.group||b.m.grp||'';
+    if(ga!==gb) return ga.localeCompare(gb);
+    return (a.m.md||0)-(b.m.md||0);
+  });
+}
+// ¿qué partidos ya se jugaron? señal principal: tienen marcador en results.json
+function _finishedMap(){
+  const arr = REAL_RESULTS || (typeof RESULTS_FALLBACK!=='undefined' ? _normResults(RESULTS_FALLBACK) : []);
+  const mp={};
+  (arr||[]).forEach(r=>{ if(r.ga!=null&&r.gb!=null) mp[[r.a,r.b].sort().join('|')]={fin:true,k:r.kickoff?new Date(r.kickoff):null};
+                         else if(r.kickoff) mp[[r.a,r.b].sort().join('|')]={fin:false,k:new Date(r.kickoff)}; });
+  return mp;
+}
+// un partido cuenta como "ya jugado/empezado" si tiene marcador final, o si tiene hora de inicio y ya pasó
+function _isPlayed(m, fin){
+  const e=fin[[m.a,m.b].sort().join('|')]; if(!e) return false;
+  if(e.fin) return true;
+  if(e.k && !isNaN(e.k) && Date.now()>=e.k.getTime()) return true;  // hora de inicio ya pasó
+  return false;
+}
+// partido por defecto: el primero AÚN NO JUGADO desde hoy (usa fecha del sistema)
+function defaultH2HIndex(){
+  const order=h2hOrder(); if(!order.length) return 0;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const fin=_finishedMap();
+  const next=order.find(o=>{const d=_matchDate(o.m); return d && d.getTime()>=today.getTime() && !_isPlayed(o.m,fin);});
+  if(next) return next.idx;                       // primer partido de hoy (o siguiente) sin jugar
+  return order[order.length-1].idx;               // todo jugado -> último
+}
 function h2hOptions(){
-  let opts=''; 
-  DATA.consensus.matches.forEach((m,idx)=>{ opts+=`<option value="${idx}">${m.group} · ${tf(m.a)} vs ${tf(m.b)}</option>`; });
-  return opts;
+  let html='', cur=null;
+  h2hOrder().forEach(({idx,m})=>{
+    const dt=m.date||'—';
+    if(dt!==cur){ if(cur!==null) html+='</optgroup>'; html+=`<optgroup label="${dt}">`; cur=dt; }
+    const g=m.group||m.grp||'';
+    html+=`<option value="${idx}">${g} · ${tf(m.a)} vs ${tf(m.b)}</option>`;
+  });
+  if(cur!==null) html+='</optgroup>';
+  return html;
+}
+let _h2hAuto=true;                          // true mientras el usuario no elija manualmente
+function h2hPick(v){ _h2hAuto=false; renderH2H(v); }
+function applyH2HDefault(){
+  const i=defaultH2HIndex();
+  const s=document.getElementById('h2h-sel'); if(s) s.value=String(i);
+  renderH2H(i);
 }
 function renderH2H(idx){
   const m = DATA.consensus.matches[idx];
@@ -740,7 +795,7 @@ function renderConsenso(){
   <div class="section-title">${tx('Comparador cara a cara — partido por partido','Head-to-head comparator — match by match')}</div>
   <div class="card">
     <p class="legend" style="margin-bottom:10px">${tx('Elige cualquiera de los 72 partidos y compara cómo lo ve cada IA y el consenso. Cada partido trae su <b>confianza del pronóstico</b> en lenguaje claro.','Pick any of the 72 matches and compare how each AI and the consensus see it. Every match shows its <b>forecast confidence</b> in plain language.')}</p>
-    <select class="h2h-sel" id="h2h-sel" onchange="renderH2H(this.value)">${h2hOptions()}</select>
+    <select class="h2h-sel" id="h2h-sel" onchange="h2hPick(this.value)">${h2hOptions()}</select>
     <div id="h2h-out" style="margin-top:18px"></div>
   </div>
 
@@ -758,7 +813,7 @@ function renderConsenso(){
 
   <div class="section-title">${tx('Cómo se construye el consenso','How the consensus is built')}</div>
   <p class="lead">${tx(`Combina las versiones más avanzadas de las tres IAs. Para el título usa la <b>${term('mediana','El valor del medio de las tres IAs: si un modelo se va a un extremo, no arrastra el resultado.')}</b> de las tres; para los grupos, los <b>${term('puntos esperados','Promedio de puntos que sumaría cada equipo en sus 3 partidos de grupo, según las probabilidades de cada resultado.')}</b> de los 72 partidos; y para cada partido, el promedio de probabilidades con el marcador más votado. El <b>índice de confianza</b> de cada partido aparece explicado al pasar el cursor sobre su cifra.`,`It combines the most advanced versions of the three AIs. For the title it uses the <b>${term('median','The middle value of the three AIs: if one model goes to an extreme, it does not drag the result.')}</b> of the three; for the groups, the <b>${term('expected points','Average points each team would earn in its 3 group matches, given the probability of each result.')}</b> from the 72 matches; and for each match, the average of the probabilities with the most-voted scoreline. The <b>confidence index</b> for each match is explained on hover over its figure.`)}</p>`;
-  renderH2H(0);
+  _h2hAuto=true; applyH2HDefault();
 }
 
 function renderClaude(){
@@ -953,8 +1008,8 @@ function _normResults(j){ return Array.isArray(j) ? j : (j && j.results ? j.resu
 function loadResults(){
   fetch('./results.json?ts='+Date.now())
     .then(r=>r.ok?r.json():Promise.reject())
-    .then(j=>{ REAL_RESULTS=_normResults(j); renderAccuracy(); })
-    .catch(()=>{ REAL_RESULTS=_normResults(RESULTS_FALLBACK); renderAccuracy(); });  // respaldo embebido (vista local/preview)
+    .then(j=>{ REAL_RESULTS=_normResults(j); renderAccuracy(); if(_h2hAuto&&document.getElementById('h2h-sel')) applyH2HDefault(); })
+    .catch(()=>{ REAL_RESULTS=_normResults(RESULTS_FALLBACK); renderAccuracy(); if(_h2hAuto&&document.getElementById('h2h-sel')) applyH2HDefault(); });  // respaldo embebido
 }
 
 
