@@ -94,6 +94,13 @@ transition:background .3s,color .3s;}
 .hero h1{margin:0;font-size:36px;line-height:1.1;font-weight:800;}
 .hero .sub{margin:14px 0 0;font-size:16.5px;line-height:1.5;opacity:.94;max-width:820px;}
 .hero .meta{margin:18px 0 0;font-size:13px;opacity:.9;}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 0;}
+.cta-btn{font-family:inherit;font-size:14px;font-weight:700;border-radius:999px;padding:11px 20px;cursor:pointer;border:1.5px solid rgba(255,255,255,.55);transition:transform .12s ease,background .12s ease;}
+.cta-btn.primary{background:#ffd84d;color:#1a1340;border-color:#ffd84d;}
+.cta-btn.ghost{background:rgba(255,255,255,.10);color:#fff;}
+.cta-btn:hover{transform:translateY(-1px);}
+.cta-btn.primary:hover{background:#ffdf6b;}
+.cta-btn.ghost:hover{background:rgba(255,255,255,.20);}
 /* tabs */
 .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 8px;}
 .tab{border:1px solid var(--border);background:#fff;color:var(--deep-blue);font-family:inherit;
@@ -350,21 +357,25 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
   quién levantará la copa, cómo terminará cada grupo, el camino hasta la final y quién ganará la Bota de Oro. Un cuarto pronóstico, el <b>consenso</b>,
   combina los tres. Cada IA llega a sus números de una forma distinta; en cada pestaña puedes abrir su explicación completa.</p>
   <p class="meta" data-en="Quantitative analysis · June 2026 · full data from the three tools">Análisis cuantitativo · junio de 2026 · datos completos de las tres herramientas</p>
+  <div class="hero-cta">
+    <button class="cta-btn primary" data-go="consenso"><span data-en="See the consensus prediction →">Ver la predicción del consenso →</span></button>
+    <button class="cta-btn ghost" data-go="precision"><span data-en="🏆 AI World Cup (live)">🏆 Mundial de las IAs (en vivo)</span></button>
+  </div>
 </div>
 
 <div class="tabs" id="tabs">
-  <button class="tab active" data-t="consenso"><span class="dotc" style="background:var(--c-cons)"></span><span data-en="Consensus">Consenso</span></button>
+  <button class="tab active" data-t="precision"><span data-en="🏆 AI World Cup">🏆 Mundial de las IAs</span></button>
+  <button class="tab" data-t="consenso"><span class="dotc" style="background:var(--c-cons)"></span><span data-en="Consensus">Consenso</span></button>
   <button class="tab" data-t="claude"><span class="dotc" style="background:var(--c-claude)"></span>Claude</button>
   <button class="tab" data-t="chatgpt"><span class="dotc" style="background:var(--c-chatgpt)"></span>ChatGPT</button>
   <button class="tab" data-t="gemini"><span class="dotc" style="background:var(--c-gemini)"></span>Gemini</button>
-  <button class="tab" data-t="precision"><span data-en="📊 Live accuracy">📊 Precisión en vivo</span></button>
 </div>
 
-<div id="consenso" class="panel active"></div>
+<div id="precision" class="panel active"></div>
+<div id="consenso" class="panel"></div>
 <div id="claude" class="panel"></div>
 <div id="chatgpt" class="panel"></div>
 <div id="gemini" class="panel"></div>
-<div id="precision" class="panel"></div>
 
 <div class="footer">
   <div data-en="Javier Forero · Statistician and AI & Analytics Consultant">Javier Forero · Estadístico y consultor en IA y Analítica</div>
@@ -889,7 +900,7 @@ function renderAccuracy(){
   if(REAL_RESULTS===null){ host.innerHTML=`<div class="acc-empty"><div class="big">⏳</div>${tx('Cargando resultados oficiales…','Loading official results…')}</div>`; return; }
   const {played,agg,rows,total}=computeAccuracy();
   if(played.length===0){
-    host.innerHTML=`<div class="acc-hero"><h2>📊 ${tx('Precisión en vivo · predicción vs realidad','Live accuracy · prediction vs reality')}</h2>
+    host.innerHTML=`<div class="acc-hero"><h2>🏆 ${tx('Mundial de las IAs · predicción vs realidad','AI World Cup · prediction vs reality')}</h2>
       <p>${tx('Aquí se comparará cada pronóstico con el resultado oficial de la FIFA a medida que terminen los partidos.','Each forecast will be compared against the official FIFA result as matches finish.')}</p></div>
       <div class="acc-empty"><div class="big">⚽</div>${tx('Aún no hay partidos jugados. Esta sección se actualiza sola cuando se publican los resultados oficiales.','No matches played yet. This section updates itself once official results are published.')}</div>`;
     return;
@@ -923,7 +934,7 @@ function renderAccuracy(){
   });
   host.innerHTML=`
     <div class="acc-hero">
-      <h2>📊 ${tx('Precisión en vivo · predicción vs realidad','Live accuracy · prediction vs reality')}</h2>
+      <h2>🏆 ${tx('Mundial de las IAs · predicción vs realidad','AI World Cup · prediction vs reality')}</h2>
       <p>${tx('Cada modelo y el consenso se comparan con el resultado oficial de la FIFA. Se premia tanto acertar el <b>marcador exacto</b> (3 pts) como acertar solo el <b>resultado</b> —ganar, empatar o perder— aunque falle el marcador (1 pt).','Each model and the consensus are compared against the official FIFA result. Points reward both the <b>exact score</b> (3 pts) and getting just the <b>outcome</b> —win, draw or loss— even if the score is wrong (1 pt).')}</p>
       <div class="acc-progress"><div class="track"><div class="fill" style="width:${pctPlayed}%"></div></div>
         <div class="lbl">${played.length} / ${total} ${tx('partidos jugados','matches played')}</div></div>
@@ -949,7 +960,7 @@ function loadResults(){
 
 /* ============ ANALÍTICA (GA4) ============ */
 function gaEvent(name, params){ try{ if(typeof gtag==='function') gtag('event', name, params||{}); }catch(e){} }
-const AI_LABELS={consenso:'Consenso',claude:'Claude',chatgpt:'ChatGPT',gemini:'Gemini',precision:'Precisión'};
+const AI_LABELS={consenso:'Consenso',claude:'Claude',chatgpt:'ChatGPT',gemini:'Gemini',precision:'Mundial de las IAs'};
 function trackTab(tabId){
   gaEvent('select_tab', {
     ai_tab: tabId,                                                   // consenso|claude|chatgpt|gemini
@@ -980,14 +991,23 @@ function setupScorersTracking(){
 }
 
 /* ============ TABS ============ */
-document.getElementById('tabs').addEventListener('click', e=>{
-  const b=e.target.closest('.tab'); if(!b)return;
+function goTab(id){
+  const b=document.querySelector('.tab[data-t="'+id+'"]'); if(!b)return;
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active'); document.getElementById(b.dataset.t).classList.add('active');
-  trackTab(b.dataset.t);
-  setupScorersTracking();
+  b.classList.add('active'); const p=document.getElementById(id); if(p)p.classList.add('active');
+  trackTab(id); setupScorersTracking();
+}
+document.getElementById('tabs').addEventListener('click', e=>{
+  const b=e.target.closest('.tab'); if(!b)return;
+  goTab(b.dataset.t);
 });
+/* accesos rápidos del hero */
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{
+  goTab(b.dataset.go);
+  gaEvent('hero_cta',{target:b.dataset.go});
+  const t=document.getElementById('tabs'); if(t&&t.scrollIntoView) t.scrollIntoView({behavior:'smooth',block:'start'});
+}));
 
 /* ============ IDIOMA + TEMA ============ */
 function applyLang(lang){
