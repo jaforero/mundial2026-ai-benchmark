@@ -6,109 +6,21 @@
    "grupo": "A",
    "jornada": 1,
    "fecha": "Jun 11",
-   "a": "México",
-   "b": "Sudáfrica",
+   "a": "Corea del Sur",
+   "b": "Chequia",
    "ga": 2,
-   "gb": 0
+   "gb": 1,
+   "iso": "2026-06-11"
   },
   {
    "grupo": "A",
    "jornada": 1,
    "fecha": "Jun 11",
-   "a": "Corea del Sur",
-   "b": "Chequia",
+   "a": "México",
+   "b": "Sudáfrica",
    "ga": 2,
-   "gb": 1
-  },
-  {
-   "grupo": "A",
-   "jornada": 2,
-   "fecha": "Jun 18",
-   "a": "México",
-   "b": "Corea del Sur",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "A",
-   "jornada": 2,
-   "fecha": "Jun 18",
-   "a": "Sudáfrica",
-   "b": "Chequia",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "B",
-   "jornada": 2,
-   "fecha": "Jun 18",
-   "a": "Canadá",
-   "b": "Qatar",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "B",
-   "jornada": 2,
-   "fecha": "Jun 18",
-   "a": "Bosnia",
-   "b": "Suiza",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "A",
-   "jornada": 3,
-   "fecha": "Jun 24",
-   "a": "México",
-   "b": "Chequia",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "A",
-   "jornada": 3,
-   "fecha": "Jun 24",
-   "a": "Sudáfrica",
-   "b": "Corea del Sur",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "B",
-   "jornada": 3,
-   "fecha": "Jun 24",
-   "a": "Canadá",
-   "b": "Suiza",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "B",
-   "jornada": 3,
-   "fecha": "Jun 24",
-   "a": "Bosnia",
-   "b": "Qatar",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "C",
-   "jornada": 3,
-   "fecha": "Jun 24",
-   "a": "Brasil",
-   "b": "Escocia",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "C",
-   "jornada": 3,
-   "fecha": "Jun 24",
-   "a": "Marruecos",
-   "b": "Haití",
-   "ga": null,
-   "gb": null
+   "gb": 0,
+   "iso": "2026-06-11"
   },
   {
    "grupo": "B",
@@ -117,16 +29,8 @@
    "a": "Canadá",
    "b": "Bosnia",
    "ga": 1,
-   "gb": 1
-  },
-  {
-   "grupo": "B",
-   "jornada": 1,
-   "fecha": "Jun 12",
-   "a": "Qatar",
-   "b": "Suiza",
-   "ga": null,
-   "gb": null
+   "gb": 1,
+   "iso": "2026-06-12"
   },
   {
    "grupo": "D",
@@ -135,16 +39,18 @@
    "a": "Estados Unidos",
    "b": "Paraguay",
    "ga": 4,
-   "gb": 1
+   "gb": 1,
+   "iso": "2026-06-12"
   },
   {
-   "grupo": "D",
+   "grupo": "B",
    "jornada": 1,
-   "fecha": "Jun 12",
-   "a": "Australia",
-   "b": "Türkiye",
+   "fecha": "Jun 13",
+   "a": "Qatar",
+   "b": "Suiza",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-13"
   },
   {
    "grupo": "C",
@@ -153,7 +59,8 @@
    "a": "Brasil",
    "b": "Marruecos",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-13"
   },
   {
    "grupo": "C",
@@ -162,97 +69,18 @@
    "a": "Haití",
    "b": "Escocia",
    "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "C",
-   "jornada": 2,
-   "fecha": "Jun 19",
-   "a": "Brasil",
-   "b": "Haití",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "C",
-   "jornada": 2,
-   "fecha": "Jun 19",
-   "a": "Marruecos",
-   "b": "Escocia",
-   "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-13"
   },
   {
    "grupo": "D",
-   "jornada": 2,
-   "fecha": "Jun 19",
-   "a": "Estados Unidos",
-   "b": "Australia",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "D",
-   "jornada": 2,
-   "fecha": "Jun 19",
-   "a": "Paraguay",
+   "jornada": 1,
+   "fecha": "Jun 13",
+   "a": "Australia",
    "b": "Türkiye",
    "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "D",
-   "jornada": 3,
-   "fecha": "Jun 25",
-   "a": "Estados Unidos",
-   "b": "Türkiye",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "D",
-   "jornada": 3,
-   "fecha": "Jun 25",
-   "a": "Paraguay",
-   "b": "Australia",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "E",
-   "jornada": 3,
-   "fecha": "Jun 25",
-   "a": "Alemania",
-   "b": "Ecuador",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "E",
-   "jornada": 3,
-   "fecha": "Jun 25",
-   "a": "Curazao",
-   "b": "Costa de Marfil",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "F",
-   "jornada": 3,
-   "fecha": "Jun 25",
-   "a": "Países Bajos",
-   "b": "Túnez",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "F",
-   "jornada": 3,
-   "fecha": "Jun 25",
-   "a": "Japón",
-   "b": "Suecia",
-   "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-13"
   },
   {
    "grupo": "E",
@@ -261,7 +89,8 @@
    "a": "Alemania",
    "b": "Curazao",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-14"
   },
   {
    "grupo": "E",
@@ -270,7 +99,8 @@
    "a": "Costa de Marfil",
    "b": "Ecuador",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-14"
   },
   {
    "grupo": "F",
@@ -279,7 +109,8 @@
    "a": "Países Bajos",
    "b": "Japón",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-14"
   },
   {
    "grupo": "F",
@@ -288,43 +119,8 @@
    "a": "Suecia",
    "b": "Túnez",
    "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "E",
-   "jornada": 2,
-   "fecha": "Jun 20",
-   "a": "Alemania",
-   "b": "Costa de Marfil",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "E",
-   "jornada": 2,
-   "fecha": "Jun 20",
-   "a": "Curazao",
-   "b": "Ecuador",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "F",
-   "jornada": 2,
-   "fecha": "Jun 20",
-   "a": "Países Bajos",
-   "b": "Suecia",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "F",
-   "jornada": 2,
-   "fecha": "Jun 20",
-   "a": "Japón",
-   "b": "Túnez",
-   "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-14"
   },
   {
    "grupo": "G",
@@ -333,7 +129,8 @@
    "a": "Bélgica",
    "b": "Egipto",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-15"
   },
   {
    "grupo": "G",
@@ -342,16 +139,8 @@
    "a": "Irán",
    "b": "Nueva Zelanda",
    "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "H",
-   "jornada": 1,
-   "fecha": "Jun 15",
-   "a": "España",
-   "b": "Cabo Verde",
-   "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-15"
   },
   {
    "grupo": "H",
@@ -360,97 +149,18 @@
    "a": "Arabia Saudí",
    "b": "Uruguay",
    "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "G",
-   "jornada": 2,
-   "fecha": "Jun 21",
-   "a": "Bélgica",
-   "b": "Irán",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "G",
-   "jornada": 2,
-   "fecha": "Jun 21",
-   "a": "Egipto",
-   "b": "Nueva Zelanda",
-   "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-15"
   },
   {
    "grupo": "H",
-   "jornada": 2,
-   "fecha": "Jun 21",
+   "jornada": 1,
+   "fecha": "Jun 15",
    "a": "España",
-   "b": "Arabia Saudí",
+   "b": "Cabo Verde",
    "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "H",
-   "jornada": 2,
-   "fecha": "Jun 21",
-   "a": "Cabo Verde",
-   "b": "Uruguay",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "G",
-   "jornada": 3,
-   "fecha": "Jun 26",
-   "a": "Bélgica",
-   "b": "Nueva Zelanda",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "G",
-   "jornada": 3,
-   "fecha": "Jun 26",
-   "a": "Egipto",
-   "b": "Irán",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "H",
-   "jornada": 3,
-   "fecha": "Jun 26",
-   "a": "España",
-   "b": "Uruguay",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "H",
-   "jornada": 3,
-   "fecha": "Jun 26",
-   "a": "Cabo Verde",
-   "b": "Arabia Saudí",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "I",
-   "jornada": 3,
-   "fecha": "Jun 26",
-   "a": "Francia",
-   "b": "Noruega",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "I",
-   "jornada": 3,
-   "fecha": "Jun 26",
-   "a": "Senegal",
-   "b": "Iraq",
-   "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-15"
   },
   {
    "grupo": "I",
@@ -459,7 +169,8 @@
    "a": "Francia",
    "b": "Senegal",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-16"
   },
   {
    "grupo": "I",
@@ -468,7 +179,8 @@
    "a": "Iraq",
    "b": "Noruega",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-16"
   },
   {
    "grupo": "J",
@@ -477,7 +189,8 @@
    "a": "Argentina",
    "b": "Argelia",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-16"
   },
   {
    "grupo": "J",
@@ -486,97 +199,8 @@
    "a": "Austria",
    "b": "Jordania",
    "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "I",
-   "jornada": 2,
-   "fecha": "Jun 22",
-   "a": "Francia",
-   "b": "Iraq",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "I",
-   "jornada": 2,
-   "fecha": "Jun 22",
-   "a": "Senegal",
-   "b": "Noruega",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "J",
-   "jornada": 2,
-   "fecha": "Jun 22",
-   "a": "Argentina",
-   "b": "Austria",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "J",
-   "jornada": 2,
-   "fecha": "Jun 22",
-   "a": "Argelia",
-   "b": "Jordania",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "J",
-   "jornada": 3,
-   "fecha": "Jun 27",
-   "a": "Argentina",
-   "b": "Jordania",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "J",
-   "jornada": 3,
-   "fecha": "Jun 27",
-   "a": "Argelia",
-   "b": "Austria",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "K",
-   "jornada": 3,
-   "fecha": "Jun 27",
-   "a": "Portugal",
-   "b": "Colombia",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "K",
-   "jornada": 3,
-   "fecha": "Jun 27",
-   "a": "RD Congo",
-   "b": "Uzbekistán",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "L",
-   "jornada": 3,
-   "fecha": "Jun 27",
-   "a": "Inglaterra",
-   "b": "Panamá",
-   "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "L",
-   "jornada": 3,
-   "fecha": "Jun 27",
-   "a": "Croacia",
-   "b": "Ghana",
-   "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-16"
   },
   {
    "grupo": "K",
@@ -585,7 +209,8 @@
    "a": "Portugal",
    "b": "RD Congo",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-17"
   },
   {
    "grupo": "K",
@@ -594,16 +219,8 @@
    "a": "Uzbekistán",
    "b": "Colombia",
    "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "L",
-   "jornada": 1,
-   "fecha": "Jun 17",
-   "a": "Inglaterra",
-   "b": "Croacia",
-   "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-17"
   },
   {
    "grupo": "L",
@@ -612,7 +229,218 @@
    "a": "Ghana",
    "b": "Panamá",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-17"
+  },
+  {
+   "grupo": "L",
+   "jornada": 1,
+   "fecha": "Jun 17",
+   "a": "Inglaterra",
+   "b": "Croacia",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-17"
+  },
+  {
+   "grupo": "A",
+   "jornada": 2,
+   "fecha": "Jun 18",
+   "a": "México",
+   "b": "Corea del Sur",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-18"
+  },
+  {
+   "grupo": "A",
+   "jornada": 2,
+   "fecha": "Jun 18",
+   "a": "Sudáfrica",
+   "b": "Chequia",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-18"
+  },
+  {
+   "grupo": "B",
+   "jornada": 2,
+   "fecha": "Jun 18",
+   "a": "Bosnia",
+   "b": "Suiza",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-18"
+  },
+  {
+   "grupo": "B",
+   "jornada": 2,
+   "fecha": "Jun 18",
+   "a": "Canadá",
+   "b": "Qatar",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-18"
+  },
+  {
+   "grupo": "C",
+   "jornada": 2,
+   "fecha": "Jun 19",
+   "a": "Brasil",
+   "b": "Haití",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-19"
+  },
+  {
+   "grupo": "C",
+   "jornada": 2,
+   "fecha": "Jun 19",
+   "a": "Marruecos",
+   "b": "Escocia",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-19"
+  },
+  {
+   "grupo": "D",
+   "jornada": 2,
+   "fecha": "Jun 19",
+   "a": "Estados Unidos",
+   "b": "Australia",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-19"
+  },
+  {
+   "grupo": "D",
+   "jornada": 2,
+   "fecha": "Jun 19",
+   "a": "Paraguay",
+   "b": "Türkiye",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-19"
+  },
+  {
+   "grupo": "E",
+   "jornada": 2,
+   "fecha": "Jun 20",
+   "a": "Alemania",
+   "b": "Costa de Marfil",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-20"
+  },
+  {
+   "grupo": "E",
+   "jornada": 2,
+   "fecha": "Jun 20",
+   "a": "Curazao",
+   "b": "Ecuador",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-20"
+  },
+  {
+   "grupo": "F",
+   "jornada": 2,
+   "fecha": "Jun 20",
+   "a": "Japón",
+   "b": "Túnez",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-20"
+  },
+  {
+   "grupo": "F",
+   "jornada": 2,
+   "fecha": "Jun 20",
+   "a": "Países Bajos",
+   "b": "Suecia",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-20"
+  },
+  {
+   "grupo": "G",
+   "jornada": 2,
+   "fecha": "Jun 21",
+   "a": "Bélgica",
+   "b": "Irán",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-21"
+  },
+  {
+   "grupo": "G",
+   "jornada": 2,
+   "fecha": "Jun 21",
+   "a": "Egipto",
+   "b": "Nueva Zelanda",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-21"
+  },
+  {
+   "grupo": "H",
+   "jornada": 2,
+   "fecha": "Jun 21",
+   "a": "Cabo Verde",
+   "b": "Uruguay",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-21"
+  },
+  {
+   "grupo": "H",
+   "jornada": 2,
+   "fecha": "Jun 21",
+   "a": "España",
+   "b": "Arabia Saudí",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-21"
+  },
+  {
+   "grupo": "I",
+   "jornada": 2,
+   "fecha": "Jun 22",
+   "a": "Francia",
+   "b": "Iraq",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-22"
+  },
+  {
+   "grupo": "I",
+   "jornada": 2,
+   "fecha": "Jun 22",
+   "a": "Senegal",
+   "b": "Noruega",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-22"
+  },
+  {
+   "grupo": "J",
+   "jornada": 2,
+   "fecha": "Jun 22",
+   "a": "Argelia",
+   "b": "Jordania",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-22"
+  },
+  {
+   "grupo": "J",
+   "jornada": 2,
+   "fecha": "Jun 22",
+   "a": "Argentina",
+   "b": "Austria",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-22"
   },
   {
    "grupo": "K",
@@ -621,7 +449,8 @@
    "a": "Portugal",
    "b": "Uzbekistán",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-23"
   },
   {
    "grupo": "K",
@@ -630,16 +459,8 @@
    "a": "RD Congo",
    "b": "Colombia",
    "ga": null,
-   "gb": null
-  },
-  {
-   "grupo": "L",
-   "jornada": 2,
-   "fecha": "Jun 23",
-   "a": "Inglaterra",
-   "b": "Ghana",
-   "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-23"
   },
   {
    "grupo": "L",
@@ -648,7 +469,258 @@
    "a": "Croacia",
    "b": "Panamá",
    "ga": null,
-   "gb": null
+   "gb": null,
+   "iso": "2026-06-23"
+  },
+  {
+   "grupo": "L",
+   "jornada": 2,
+   "fecha": "Jun 23",
+   "a": "Inglaterra",
+   "b": "Ghana",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-23"
+  },
+  {
+   "grupo": "A",
+   "jornada": 3,
+   "fecha": "Jun 24",
+   "a": "México",
+   "b": "Chequia",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-24"
+  },
+  {
+   "grupo": "A",
+   "jornada": 3,
+   "fecha": "Jun 24",
+   "a": "Sudáfrica",
+   "b": "Corea del Sur",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-24"
+  },
+  {
+   "grupo": "B",
+   "jornada": 3,
+   "fecha": "Jun 24",
+   "a": "Bosnia",
+   "b": "Qatar",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-24"
+  },
+  {
+   "grupo": "B",
+   "jornada": 3,
+   "fecha": "Jun 24",
+   "a": "Canadá",
+   "b": "Suiza",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-24"
+  },
+  {
+   "grupo": "C",
+   "jornada": 3,
+   "fecha": "Jun 24",
+   "a": "Brasil",
+   "b": "Escocia",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-24"
+  },
+  {
+   "grupo": "C",
+   "jornada": 3,
+   "fecha": "Jun 24",
+   "a": "Marruecos",
+   "b": "Haití",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-24"
+  },
+  {
+   "grupo": "D",
+   "jornada": 3,
+   "fecha": "Jun 25",
+   "a": "Estados Unidos",
+   "b": "Türkiye",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-25"
+  },
+  {
+   "grupo": "D",
+   "jornada": 3,
+   "fecha": "Jun 25",
+   "a": "Paraguay",
+   "b": "Australia",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-25"
+  },
+  {
+   "grupo": "E",
+   "jornada": 3,
+   "fecha": "Jun 25",
+   "a": "Alemania",
+   "b": "Ecuador",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-25"
+  },
+  {
+   "grupo": "E",
+   "jornada": 3,
+   "fecha": "Jun 25",
+   "a": "Curazao",
+   "b": "Costa de Marfil",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-25"
+  },
+  {
+   "grupo": "F",
+   "jornada": 3,
+   "fecha": "Jun 25",
+   "a": "Japón",
+   "b": "Suecia",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-25"
+  },
+  {
+   "grupo": "F",
+   "jornada": 3,
+   "fecha": "Jun 25",
+   "a": "Países Bajos",
+   "b": "Túnez",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-25"
+  },
+  {
+   "grupo": "G",
+   "jornada": 3,
+   "fecha": "Jun 26",
+   "a": "Bélgica",
+   "b": "Nueva Zelanda",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-26"
+  },
+  {
+   "grupo": "G",
+   "jornada": 3,
+   "fecha": "Jun 26",
+   "a": "Egipto",
+   "b": "Irán",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-26"
+  },
+  {
+   "grupo": "H",
+   "jornada": 3,
+   "fecha": "Jun 26",
+   "a": "Cabo Verde",
+   "b": "Arabia Saudí",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-26"
+  },
+  {
+   "grupo": "H",
+   "jornada": 3,
+   "fecha": "Jun 26",
+   "a": "España",
+   "b": "Uruguay",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-26"
+  },
+  {
+   "grupo": "I",
+   "jornada": 3,
+   "fecha": "Jun 26",
+   "a": "Francia",
+   "b": "Noruega",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-26"
+  },
+  {
+   "grupo": "I",
+   "jornada": 3,
+   "fecha": "Jun 26",
+   "a": "Senegal",
+   "b": "Iraq",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-26"
+  },
+  {
+   "grupo": "J",
+   "jornada": 3,
+   "fecha": "Jun 27",
+   "a": "Argelia",
+   "b": "Austria",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-27"
+  },
+  {
+   "grupo": "J",
+   "jornada": 3,
+   "fecha": "Jun 27",
+   "a": "Argentina",
+   "b": "Jordania",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-27"
+  },
+  {
+   "grupo": "K",
+   "jornada": 3,
+   "fecha": "Jun 27",
+   "a": "Portugal",
+   "b": "Colombia",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-27"
+  },
+  {
+   "grupo": "K",
+   "jornada": 3,
+   "fecha": "Jun 27",
+   "a": "RD Congo",
+   "b": "Uzbekistán",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-27"
+  },
+  {
+   "grupo": "L",
+   "jornada": 3,
+   "fecha": "Jun 27",
+   "a": "Croacia",
+   "b": "Ghana",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-27"
+  },
+  {
+   "grupo": "L",
+   "jornada": 3,
+   "fecha": "Jun 27",
+   "a": "Inglaterra",
+   "b": "Panamá",
+   "ga": null,
+   "gb": null,
+   "iso": "2026-06-27"
   }
  ]
 }

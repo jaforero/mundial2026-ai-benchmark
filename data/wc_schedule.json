@@ -1,0 +1,434 @@
+{
+ "México|Sudáfrica": {
+  "date": "Jun 11",
+  "iso": "2026-06-11",
+  "grp": "A",
+  "md": 1
+ },
+ "Chequia|Corea del Sur": {
+  "date": "Jun 11",
+  "iso": "2026-06-11",
+  "grp": "A",
+  "md": 1
+ },
+ "Chequia|Sudáfrica": {
+  "date": "Jun 18",
+  "iso": "2026-06-18",
+  "grp": "A",
+  "md": 2
+ },
+ "Corea del Sur|México": {
+  "date": "Jun 18",
+  "iso": "2026-06-18",
+  "grp": "A",
+  "md": 2
+ },
+ "Chequia|México": {
+  "date": "Jun 24",
+  "iso": "2026-06-24",
+  "grp": "A",
+  "md": 3
+ },
+ "Corea del Sur|Sudáfrica": {
+  "date": "Jun 24",
+  "iso": "2026-06-24",
+  "grp": "A",
+  "md": 3
+ },
+ "Bosnia|Canadá": {
+  "date": "Jun 12",
+  "iso": "2026-06-12",
+  "grp": "B",
+  "md": 1
+ },
+ "Qatar|Suiza": {
+  "date": "Jun 13",
+  "iso": "2026-06-13",
+  "grp": "B",
+  "md": 1
+ },
+ "Bosnia|Suiza": {
+  "date": "Jun 18",
+  "iso": "2026-06-18",
+  "grp": "B",
+  "md": 2
+ },
+ "Canadá|Qatar": {
+  "date": "Jun 18",
+  "iso": "2026-06-18",
+  "grp": "B",
+  "md": 2
+ },
+ "Canadá|Suiza": {
+  "date": "Jun 24",
+  "iso": "2026-06-24",
+  "grp": "B",
+  "md": 3
+ },
+ "Bosnia|Qatar": {
+  "date": "Jun 24",
+  "iso": "2026-06-24",
+  "grp": "B",
+  "md": 3
+ },
+ "Brasil|Marruecos": {
+  "date": "Jun 13",
+  "iso": "2026-06-13",
+  "grp": "C",
+  "md": 1
+ },
+ "Escocia|Haití": {
+  "date": "Jun 13",
+  "iso": "2026-06-13",
+  "grp": "C",
+  "md": 1
+ },
+ "Escocia|Marruecos": {
+  "date": "Jun 19",
+  "iso": "2026-06-19",
+  "grp": "C",
+  "md": 2
+ },
+ "Brasil|Haití": {
+  "date": "Jun 19",
+  "iso": "2026-06-19",
+  "grp": "C",
+  "md": 2
+ },
+ "Brasil|Escocia": {
+  "date": "Jun 24",
+  "iso": "2026-06-24",
+  "grp": "C",
+  "md": 3
+ },
+ "Haití|Marruecos": {
+  "date": "Jun 24",
+  "iso": "2026-06-24",
+  "grp": "C",
+  "md": 3
+ },
+ "Estados Unidos|Paraguay": {
+  "date": "Jun 12",
+  "iso": "2026-06-12",
+  "grp": "D",
+  "md": 1
+ },
+ "Australia|Türkiye": {
+  "date": "Jun 13",
+  "iso": "2026-06-13",
+  "grp": "D",
+  "md": 1
+ },
+ "Australia|Estados Unidos": {
+  "date": "Jun 19",
+  "iso": "2026-06-19",
+  "grp": "D",
+  "md": 2
+ },
+ "Paraguay|Türkiye": {
+  "date": "Jun 19",
+  "iso": "2026-06-19",
+  "grp": "D",
+  "md": 2
+ },
+ "Estados Unidos|Türkiye": {
+  "date": "Jun 25",
+  "iso": "2026-06-25",
+  "grp": "D",
+  "md": 3
+ },
+ "Australia|Paraguay": {
+  "date": "Jun 25",
+  "iso": "2026-06-25",
+  "grp": "D",
+  "md": 3
+ },
+ "Alemania|Curazao": {
+  "date": "Jun 14",
+  "iso": "2026-06-14",
+  "grp": "E",
+  "md": 1
+ },
+ "Costa de Marfil|Ecuador": {
+  "date": "Jun 14",
+  "iso": "2026-06-14",
+  "grp": "E",
+  "md": 1
+ },
+ "Alemania|Costa de Marfil": {
+  "date": "Jun 20",
+  "iso": "2026-06-20",
+  "grp": "E",
+  "md": 2
+ },
+ "Curazao|Ecuador": {
+  "date": "Jun 20",
+  "iso": "2026-06-20",
+  "grp": "E",
+  "md": 2
+ },
+ "Costa de Marfil|Curazao": {
+  "date": "Jun 25",
+  "iso": "2026-06-25",
+  "grp": "E",
+  "md": 3
+ },
+ "Alemania|Ecuador": {
+  "date": "Jun 25",
+  "iso": "2026-06-25",
+  "grp": "E",
+  "md": 3
+ },
+ "Japón|Países Bajos": {
+  "date": "Jun 14",
+  "iso": "2026-06-14",
+  "grp": "F",
+  "md": 1
+ },
+ "Suecia|Túnez": {
+  "date": "Jun 14",
+  "iso": "2026-06-14",
+  "grp": "F",
+  "md": 1
+ },
+ "Países Bajos|Suecia": {
+  "date": "Jun 20",
+  "iso": "2026-06-20",
+  "grp": "F",
+  "md": 2
+ },
+ "Japón|Túnez": {
+  "date": "Jun 20",
+  "iso": "2026-06-20",
+  "grp": "F",
+  "md": 2
+ },
+ "Japón|Suecia": {
+  "date": "Jun 25",
+  "iso": "2026-06-25",
+  "grp": "F",
+  "md": 3
+ },
+ "Países Bajos|Túnez": {
+  "date": "Jun 25",
+  "iso": "2026-06-25",
+  "grp": "F",
+  "md": 3
+ },
+ "Bélgica|Egipto": {
+  "date": "Jun 15",
+  "iso": "2026-06-15",
+  "grp": "G",
+  "md": 1
+ },
+ "Irán|Nueva Zelanda": {
+  "date": "Jun 15",
+  "iso": "2026-06-15",
+  "grp": "G",
+  "md": 1
+ },
+ "Bélgica|Irán": {
+  "date": "Jun 21",
+  "iso": "2026-06-21",
+  "grp": "G",
+  "md": 2
+ },
+ "Egipto|Nueva Zelanda": {
+  "date": "Jun 21",
+  "iso": "2026-06-21",
+  "grp": "G",
+  "md": 2
+ },
+ "Egipto|Irán": {
+  "date": "Jun 26",
+  "iso": "2026-06-26",
+  "grp": "G",
+  "md": 3
+ },
+ "Bélgica|Nueva Zelanda": {
+  "date": "Jun 26",
+  "iso": "2026-06-26",
+  "grp": "G",
+  "md": 3
+ },
+ "Cabo Verde|España": {
+  "date": "Jun 15",
+  "iso": "2026-06-15",
+  "grp": "H",
+  "md": 1
+ },
+ "Arabia Saudí|Uruguay": {
+  "date": "Jun 15",
+  "iso": "2026-06-15",
+  "grp": "H",
+  "md": 1
+ },
+ "Arabia Saudí|España": {
+  "date": "Jun 21",
+  "iso": "2026-06-21",
+  "grp": "H",
+  "md": 2
+ },
+ "Cabo Verde|Uruguay": {
+  "date": "Jun 21",
+  "iso": "2026-06-21",
+  "grp": "H",
+  "md": 2
+ },
+ "España|Uruguay": {
+  "date": "Jun 26",
+  "iso": "2026-06-26",
+  "grp": "H",
+  "md": 3
+ },
+ "Arabia Saudí|Cabo Verde": {
+  "date": "Jun 26",
+  "iso": "2026-06-26",
+  "grp": "H",
+  "md": 3
+ },
+ "Francia|Senegal": {
+  "date": "Jun 16",
+  "iso": "2026-06-16",
+  "grp": "I",
+  "md": 1
+ },
+ "Iraq|Noruega": {
+  "date": "Jun 16",
+  "iso": "2026-06-16",
+  "grp": "I",
+  "md": 1
+ },
+ "Francia|Iraq": {
+  "date": "Jun 22",
+  "iso": "2026-06-22",
+  "grp": "I",
+  "md": 2
+ },
+ "Noruega|Senegal": {
+  "date": "Jun 22",
+  "iso": "2026-06-22",
+  "grp": "I",
+  "md": 2
+ },
+ "Francia|Noruega": {
+  "date": "Jun 26",
+  "iso": "2026-06-26",
+  "grp": "I",
+  "md": 3
+ },
+ "Iraq|Senegal": {
+  "date": "Jun 26",
+  "iso": "2026-06-26",
+  "grp": "I",
+  "md": 3
+ },
+ "Argelia|Argentina": {
+  "date": "Jun 16",
+  "iso": "2026-06-16",
+  "grp": "J",
+  "md": 1
+ },
+ "Austria|Jordania": {
+  "date": "Jun 16",
+  "iso": "2026-06-16",
+  "grp": "J",
+  "md": 1
+ },
+ "Argentina|Austria": {
+  "date": "Jun 22",
+  "iso": "2026-06-22",
+  "grp": "J",
+  "md": 2
+ },
+ "Argelia|Jordania": {
+  "date": "Jun 22",
+  "iso": "2026-06-22",
+  "grp": "J",
+  "md": 2
+ },
+ "Argelia|Austria": {
+  "date": "Jun 27",
+  "iso": "2026-06-27",
+  "grp": "J",
+  "md": 3
+ },
+ "Argentina|Jordania": {
+  "date": "Jun 27",
+  "iso": "2026-06-27",
+  "grp": "J",
+  "md": 3
+ },
+ "Portugal|RD Congo": {
+  "date": "Jun 17",
+  "iso": "2026-06-17",
+  "grp": "K",
+  "md": 1
+ },
+ "Colombia|Uzbekistán": {
+  "date": "Jun 17",
+  "iso": "2026-06-17",
+  "grp": "K",
+  "md": 1
+ },
+ "Portugal|Uzbekistán": {
+  "date": "Jun 23",
+  "iso": "2026-06-23",
+  "grp": "K",
+  "md": 2
+ },
+ "Colombia|RD Congo": {
+  "date": "Jun 23",
+  "iso": "2026-06-23",
+  "grp": "K",
+  "md": 2
+ },
+ "Colombia|Portugal": {
+  "date": "Jun 27",
+  "iso": "2026-06-27",
+  "grp": "K",
+  "md": 3
+ },
+ "RD Congo|Uzbekistán": {
+  "date": "Jun 27",
+  "iso": "2026-06-27",
+  "grp": "K",
+  "md": 3
+ },
+ "Croacia|Inglaterra": {
+  "date": "Jun 17",
+  "iso": "2026-06-17",
+  "grp": "L",
+  "md": 1
+ },
+ "Ghana|Panamá": {
+  "date": "Jun 17",
+  "iso": "2026-06-17",
+  "grp": "L",
+  "md": 1
+ },
+ "Ghana|Inglaterra": {
+  "date": "Jun 23",
+  "iso": "2026-06-23",
+  "grp": "L",
+  "md": 2
+ },
+ "Croacia|Panamá": {
+  "date": "Jun 23",
+  "iso": "2026-06-23",
+  "grp": "L",
+  "md": 2
+ },
+ "Inglaterra|Panamá": {
+  "date": "Jun 27",
+  "iso": "2026-06-27",
+  "grp": "L",
+  "md": 3
+ },
+ "Croacia|Ghana": {
+  "date": "Jun 27",
+  "iso": "2026-06-27",
+  "grp": "L",
+  "md": 3
+ }
+}
