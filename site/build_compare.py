@@ -261,6 +261,8 @@ font-family:inherit;font-size:14.5px;color:var(--deep-blue);font-weight:700;back
 .h2h-big{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:6px 0 14px;border-bottom:1px solid var(--border);margin-bottom:14px;}
 .h2h-team{font-size:20px;font-weight:800;color:var(--deep-blue);}
 .h2h-vs{color:var(--muted);font-weight:700;}
+.fixture-meta{font-size:13px;color:var(--text);margin:-4px 0 14px;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;line-height:1.4;}
+.fixture-meta .ven{color:var(--muted);} .fixture-meta b{color:var(--deep-blue);}
 .rich{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
 .rich .m{background:var(--soft-lilac);border:1px solid var(--border);border-radius:12px;padding:10px 12px;}
 .rich .m .v{font-size:18px;font-weight:800;color:var(--purple);} .rich .m .l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:3px;}
@@ -687,6 +689,19 @@ function applyH2HDefault(){
   const s=document.getElementById('h2h-sel'); if(s) s.value=String(i);
   renderH2H(i);
 }
+// hora local del estadio (viene en el ISO con su offset) + conversión a Colombia (UTC-5)
+function _hhmm(iso){ return (iso && iso.length>=16) ? iso.slice(11,16) : ''; }
+function _coTime(iso){ try{ return new Date(iso).toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit',hour12:false}); }catch(e){ return ''; } }
+function fixtureMeta(m){
+  if(!m.kickoff && !m.venue) return '';
+  let bits=[];
+  const loc=_hhmm(m.kickoff), co=_coTime(m.kickoff);
+  if(m.date && loc) bits.push(`${m.date} · ${loc} ${tx('hora local','local time')} <b>(${co} ${tx('hora Colombia','Colombia time')})</b>`);
+  else if(m.date) bits.push(m.date);
+  let s=bits.join('');
+  if(m.venue) s+=`${s?' &nbsp;·&nbsp; ':''}<span class="ven">📍 ${m.venue}</span>`;
+  return `<div class="fixture-meta">${s}</div>`;
+}
 function renderH2H(idx){
   const m = DATA.consensus.matches[idx];
   const claudeRich = DATA.claude.fixtures.find(f=>(f.a===m.a&&f.b===m.b)||(f.a===m.b&&f.b===m.a));
@@ -740,6 +755,7 @@ function renderH2H(idx){
     </div></div>`;
   document.getElementById('h2h-out').innerHTML =
     `<div class="h2h-big"><span class="h2h-team">${tf(m.a)}</span><span class="h2h-vs">vs</span><span class="h2h-team">${tf(m.b)}</span></div>
+     ${fixtureMeta(m)}
      ${rows}<div class="insight" style="margin-top:14px"><p>${agreeTxt}. ${tx(`Barra: azul gana ${tn(m.a)} · gris empate · morado gana ${tn(m.b)}.`,`Bar: blue = ${tn(m.a)} wins · grey = draw · purple = ${tn(m.b)} wins.`)}${drawNote}</p></div>${cidx}${xgline}${rich}`;
 }
 

@@ -10,7 +10,9 @@
    "b": "Chequia",
    "ga": 2,
    "gb": 1,
-   "iso": "2026-06-11"
+   "iso": "2026-06-11",
+   "kickoff": "2026-06-11T20:00:00-06:00",
+   "venue": "Guadalajara (Zapopan)"
   },
   {
    "grupo": "A",
@@ -20,7 +22,9 @@
    "b": "Sudáfrica",
    "ga": 2,
    "gb": 0,
-   "iso": "2026-06-11"
+   "iso": "2026-06-11",
+   "kickoff": "2026-06-11T13:00:00-06:00",
+   "venue": "Mexico City"
   },
   {
    "grupo": "B",
@@ -30,7 +34,9 @@
    "b": "Bosnia",
    "ga": 1,
    "gb": 1,
-   "iso": "2026-06-12"
+   "iso": "2026-06-12",
+   "kickoff": "2026-06-12T15:00:00-04:00",
+   "venue": "Toronto"
   },
   {
    "grupo": "D",
@@ -40,7 +46,9 @@
    "b": "Paraguay",
    "ga": 4,
    "gb": 1,
-   "iso": "2026-06-12"
+   "iso": "2026-06-12",
+   "kickoff": "2026-06-12T18:00:00-07:00",
+   "venue": "Los Angeles (Inglewood)"
   },
   {
    "grupo": "B",
@@ -50,7 +58,9 @@
    "b": "Suiza",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-13"
+   "iso": "2026-06-13",
+   "kickoff": "2026-06-13T12:00:00-07:00",
+   "venue": "San Francisco Bay Area (Santa Clara)"
   },
   {
    "grupo": "C",
@@ -60,7 +70,9 @@
    "b": "Marruecos",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-13"
+   "iso": "2026-06-13",
+   "kickoff": "2026-06-13T18:00:00-04:00",
+   "venue": "New York/New Jersey (East Rutherford)"
   },
   {
    "grupo": "C",
@@ -70,7 +82,9 @@
    "b": "Escocia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-13"
+   "iso": "2026-06-13",
+   "kickoff": "2026-06-13T21:00:00-04:00",
+   "venue": "Boston (Foxborough)"
   },
   {
    "grupo": "D",
@@ -80,7 +94,9 @@
    "b": "Türkiye",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-13"
+   "iso": "2026-06-13",
+   "kickoff": "2026-06-13T21:00:00-07:00",
+   "venue": "Vancouver"
   },
   {
    "grupo": "E",
@@ -90,7 +106,9 @@
    "b": "Curazao",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-14"
+   "iso": "2026-06-14",
+   "kickoff": "2026-06-14T12:00:00-05:00",
+   "venue": "Houston"
   },
   {
    "grupo": "E",
@@ -100,7 +118,9 @@
    "b": "Ecuador",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-14"
+   "iso": "2026-06-14",
+   "kickoff": "2026-06-14T19:00:00-04:00",
+   "venue": "Philadelphia"
   },
   {
    "grupo": "F",
@@ -110,7 +130,9 @@
    "b": "Japón",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-14"
+   "iso": "2026-06-14",
+   "kickoff": "2026-06-14T15:00:00-05:00",
+   "venue": "Dallas (Arlington)"
   },
   {
    "grupo": "F",
@@ -120,7 +142,9 @@
    "b": "Túnez",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-14"
+   "iso": "2026-06-14",
+   "kickoff": "2026-06-14T20:00:00-06:00",
+   "venue": "Monterrey (Guadalupe)"
   },
   {
    "grupo": "G",
@@ -130,7 +154,9 @@
    "b": "Egipto",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-15"
+   "iso": "2026-06-15",
+   "kickoff": "2026-06-15T12:00:00-07:00",
+   "venue": "Seattle"
   },
   {
    "grupo": "G",
@@ -140,7 +166,9 @@
    "b": "Nueva Zelanda",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-15"
+   "iso": "2026-06-15",
+   "kickoff": "2026-06-15T18:00:00-07:00",
+   "venue": "Los Angeles (Inglewood)"
   },
   {
    "grupo": "H",
@@ -150,7 +178,9 @@
    "b": "Uruguay",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-15"
+   "iso": "2026-06-15",
+   "kickoff": "2026-06-15T18:00:00-04:00",
+   "venue": "Miami (Miami Gardens)"
   },
   {
    "grupo": "H",
@@ -160,7 +190,9 @@
    "b": "Cabo Verde",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-15"
+   "iso": "2026-06-15",
+   "kickoff": "2026-06-15T12:00:00-04:00",
+   "venue": "Atlanta"
   },
   {
    "grupo": "I",
@@ -170,7 +202,9 @@
    "b": "Senegal",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-16"
+   "iso": "2026-06-16",
+   "kickoff": "2026-06-16T15:00:00-04:00",
+   "venue": "New York/New Jersey (East Rutherford)"
   },
   {
    "grupo": "I",
@@ -180,7 +214,9 @@
    "b": "Noruega",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-16"
+   "iso": "2026-06-16",
+   "kickoff": "2026-06-16T18:00:00-04:00",
+   "venue": "Boston (Foxborough)"
   },
   {
    "grupo": "J",
@@ -190,7 +226,9 @@
    "b": "Argelia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-16"
+   "iso": "2026-06-16",
+   "kickoff": "2026-06-16T20:00:00-05:00",
+   "venue": "Kansas City"
   },
   {
    "grupo": "J",
@@ -200,7 +238,9 @@
    "b": "Jordania",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-16"
+   "iso": "2026-06-16",
+   "kickoff": "2026-06-16T21:00:00-07:00",
+   "venue": "San Francisco Bay Area (Santa Clara)"
   },
   {
    "grupo": "K",
@@ -210,7 +250,9 @@
    "b": "RD Congo",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-17"
+   "iso": "2026-06-17",
+   "kickoff": "2026-06-17T12:00:00-05:00",
+   "venue": "Houston"
   },
   {
    "grupo": "K",
@@ -220,7 +262,9 @@
    "b": "Colombia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-17"
+   "iso": "2026-06-17",
+   "kickoff": "2026-06-17T20:00:00-06:00",
+   "venue": "Mexico City"
   },
   {
    "grupo": "L",
@@ -230,7 +274,9 @@
    "b": "Panamá",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-17"
+   "iso": "2026-06-17",
+   "kickoff": "2026-06-17T19:00:00-04:00",
+   "venue": "Toronto"
   },
   {
    "grupo": "L",
@@ -240,7 +286,9 @@
    "b": "Croacia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-17"
+   "iso": "2026-06-17",
+   "kickoff": "2026-06-17T15:00:00-05:00",
+   "venue": "Dallas (Arlington)"
   },
   {
    "grupo": "A",
@@ -250,7 +298,9 @@
    "b": "Corea del Sur",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-18"
+   "iso": "2026-06-18",
+   "kickoff": "2026-06-18T19:00:00-06:00",
+   "venue": "Guadalajara (Zapopan)"
   },
   {
    "grupo": "A",
@@ -260,7 +310,9 @@
    "b": "Chequia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-18"
+   "iso": "2026-06-18",
+   "kickoff": "2026-06-18T12:00:00-04:00",
+   "venue": "Atlanta"
   },
   {
    "grupo": "B",
@@ -270,7 +322,9 @@
    "b": "Suiza",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-18"
+   "iso": "2026-06-18",
+   "kickoff": "2026-06-18T12:00:00-07:00",
+   "venue": "Los Angeles (Inglewood)"
   },
   {
    "grupo": "B",
@@ -280,7 +334,9 @@
    "b": "Qatar",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-18"
+   "iso": "2026-06-18",
+   "kickoff": "2026-06-18T15:00:00-07:00",
+   "venue": "Vancouver"
   },
   {
    "grupo": "C",
@@ -290,7 +346,9 @@
    "b": "Haití",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-19"
+   "iso": "2026-06-19",
+   "kickoff": "2026-06-19T20:30:00-04:00",
+   "venue": "Philadelphia"
   },
   {
    "grupo": "C",
@@ -300,7 +358,9 @@
    "b": "Escocia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-19"
+   "iso": "2026-06-19",
+   "kickoff": "2026-06-19T18:00:00-04:00",
+   "venue": "Boston (Foxborough)"
   },
   {
    "grupo": "D",
@@ -310,7 +370,9 @@
    "b": "Australia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-19"
+   "iso": "2026-06-19",
+   "kickoff": "2026-06-19T12:00:00-07:00",
+   "venue": "Seattle"
   },
   {
    "grupo": "D",
@@ -320,7 +382,9 @@
    "b": "Türkiye",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-19"
+   "iso": "2026-06-19",
+   "kickoff": "2026-06-19T20:00:00-07:00",
+   "venue": "San Francisco Bay Area (Santa Clara)"
   },
   {
    "grupo": "E",
@@ -330,7 +394,9 @@
    "b": "Costa de Marfil",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-20"
+   "iso": "2026-06-20",
+   "kickoff": "2026-06-20T16:00:00-04:00",
+   "venue": "Toronto"
   },
   {
    "grupo": "E",
@@ -340,7 +406,9 @@
    "b": "Ecuador",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-20"
+   "iso": "2026-06-20",
+   "kickoff": "2026-06-20T19:00:00-05:00",
+   "venue": "Kansas City"
   },
   {
    "grupo": "F",
@@ -350,7 +418,9 @@
    "b": "Túnez",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-20"
+   "iso": "2026-06-20",
+   "kickoff": "2026-06-20T22:00:00-06:00",
+   "venue": "Monterrey (Guadalupe)"
   },
   {
    "grupo": "F",
@@ -360,7 +430,9 @@
    "b": "Suecia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-20"
+   "iso": "2026-06-20",
+   "kickoff": "2026-06-20T12:00:00-05:00",
+   "venue": "Houston"
   },
   {
    "grupo": "G",
@@ -370,7 +442,9 @@
    "b": "Irán",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-21"
+   "iso": "2026-06-21",
+   "kickoff": "2026-06-21T12:00:00-07:00",
+   "venue": "Los Angeles (Inglewood)"
   },
   {
    "grupo": "G",
@@ -380,7 +454,9 @@
    "b": "Nueva Zelanda",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-21"
+   "iso": "2026-06-21",
+   "kickoff": "2026-06-21T18:00:00-07:00",
+   "venue": "Vancouver"
   },
   {
    "grupo": "H",
@@ -390,7 +466,9 @@
    "b": "Uruguay",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-21"
+   "iso": "2026-06-21",
+   "kickoff": "2026-06-21T18:00:00-04:00",
+   "venue": "Miami (Miami Gardens)"
   },
   {
    "grupo": "H",
@@ -400,7 +478,9 @@
    "b": "Arabia Saudí",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-21"
+   "iso": "2026-06-21",
+   "kickoff": "2026-06-21T12:00:00-04:00",
+   "venue": "Atlanta"
   },
   {
    "grupo": "I",
@@ -410,7 +490,9 @@
    "b": "Iraq",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-22"
+   "iso": "2026-06-22",
+   "kickoff": "2026-06-22T17:00:00-04:00",
+   "venue": "Philadelphia"
   },
   {
    "grupo": "I",
@@ -420,7 +502,9 @@
    "b": "Noruega",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-22"
+   "iso": "2026-06-22",
+   "kickoff": "2026-06-22T20:00:00-04:00",
+   "venue": "New York/New Jersey (East Rutherford)"
   },
   {
    "grupo": "J",
@@ -430,7 +514,9 @@
    "b": "Jordania",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-22"
+   "iso": "2026-06-22",
+   "kickoff": "2026-06-22T20:00:00-07:00",
+   "venue": "San Francisco Bay Area (Santa Clara)"
   },
   {
    "grupo": "J",
@@ -440,7 +526,9 @@
    "b": "Austria",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-22"
+   "iso": "2026-06-22",
+   "kickoff": "2026-06-22T12:00:00-05:00",
+   "venue": "Dallas (Arlington)"
   },
   {
    "grupo": "K",
@@ -450,7 +538,9 @@
    "b": "Uzbekistán",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-23"
+   "iso": "2026-06-23",
+   "kickoff": "2026-06-23T12:00:00-05:00",
+   "venue": "Houston"
   },
   {
    "grupo": "K",
@@ -460,7 +550,9 @@
    "b": "Colombia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-23"
+   "iso": "2026-06-23",
+   "kickoff": "2026-06-23T20:00:00-06:00",
+   "venue": "Guadalajara (Zapopan)"
   },
   {
    "grupo": "L",
@@ -470,7 +562,9 @@
    "b": "Panamá",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-23"
+   "iso": "2026-06-23",
+   "kickoff": "2026-06-23T19:00:00-04:00",
+   "venue": "Toronto"
   },
   {
    "grupo": "L",
@@ -480,7 +574,9 @@
    "b": "Ghana",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-23"
+   "iso": "2026-06-23",
+   "kickoff": "2026-06-23T16:00:00-04:00",
+   "venue": "Boston (Foxborough)"
   },
   {
    "grupo": "A",
@@ -490,7 +586,9 @@
    "b": "Chequia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-24"
+   "iso": "2026-06-24",
+   "kickoff": "2026-06-24T19:00:00-06:00",
+   "venue": "Mexico City"
   },
   {
    "grupo": "A",
@@ -500,7 +598,9 @@
    "b": "Corea del Sur",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-24"
+   "iso": "2026-06-24",
+   "kickoff": "2026-06-24T19:00:00-06:00",
+   "venue": "Monterrey (Guadalupe)"
   },
   {
    "grupo": "B",
@@ -510,7 +610,9 @@
    "b": "Qatar",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-24"
+   "iso": "2026-06-24",
+   "kickoff": "2026-06-24T12:00:00-07:00",
+   "venue": "Seattle"
   },
   {
    "grupo": "B",
@@ -520,7 +622,9 @@
    "b": "Suiza",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-24"
+   "iso": "2026-06-24",
+   "kickoff": "2026-06-24T12:00:00-07:00",
+   "venue": "Vancouver"
   },
   {
    "grupo": "C",
@@ -530,7 +634,9 @@
    "b": "Escocia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-24"
+   "iso": "2026-06-24",
+   "kickoff": "2026-06-24T18:00:00-04:00",
+   "venue": "Miami (Miami Gardens)"
   },
   {
    "grupo": "C",
@@ -540,7 +646,9 @@
    "b": "Haití",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-24"
+   "iso": "2026-06-24",
+   "kickoff": "2026-06-24T18:00:00-04:00",
+   "venue": "Atlanta"
   },
   {
    "grupo": "D",
@@ -550,7 +658,9 @@
    "b": "Türkiye",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-25"
+   "iso": "2026-06-25",
+   "kickoff": "2026-06-25T19:00:00-07:00",
+   "venue": "Los Angeles (Inglewood)"
   },
   {
    "grupo": "D",
@@ -560,7 +670,9 @@
    "b": "Australia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-25"
+   "iso": "2026-06-25",
+   "kickoff": "2026-06-25T19:00:00-07:00",
+   "venue": "San Francisco Bay Area (Santa Clara)"
   },
   {
    "grupo": "E",
@@ -570,7 +682,9 @@
    "b": "Ecuador",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-25"
+   "iso": "2026-06-25",
+   "kickoff": "2026-06-25T16:00:00-04:00",
+   "venue": "New York/New Jersey (East Rutherford)"
   },
   {
    "grupo": "E",
@@ -580,7 +694,9 @@
    "b": "Costa de Marfil",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-25"
+   "iso": "2026-06-25",
+   "kickoff": "2026-06-25T16:00:00-04:00",
+   "venue": "Philadelphia"
   },
   {
    "grupo": "F",
@@ -590,7 +706,9 @@
    "b": "Suecia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-25"
+   "iso": "2026-06-25",
+   "kickoff": "2026-06-25T18:00:00-05:00",
+   "venue": "Dallas (Arlington)"
   },
   {
    "grupo": "F",
@@ -600,7 +718,9 @@
    "b": "Túnez",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-25"
+   "iso": "2026-06-25",
+   "kickoff": "2026-06-25T18:00:00-05:00",
+   "venue": "Kansas City"
   },
   {
    "grupo": "G",
@@ -610,7 +730,9 @@
    "b": "Nueva Zelanda",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-26"
+   "iso": "2026-06-26",
+   "kickoff": "2026-06-26T20:00:00-07:00",
+   "venue": "Vancouver"
   },
   {
    "grupo": "G",
@@ -620,7 +742,9 @@
    "b": "Irán",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-26"
+   "iso": "2026-06-26",
+   "kickoff": "2026-06-26T20:00:00-07:00",
+   "venue": "Seattle"
   },
   {
    "grupo": "H",
@@ -630,7 +754,9 @@
    "b": "Arabia Saudí",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-26"
+   "iso": "2026-06-26",
+   "kickoff": "2026-06-26T19:00:00-05:00",
+   "venue": "Houston"
   },
   {
    "grupo": "H",
@@ -640,7 +766,9 @@
    "b": "Uruguay",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-26"
+   "iso": "2026-06-26",
+   "kickoff": "2026-06-26T18:00:00-06:00",
+   "venue": "Guadalajara (Zapopan)"
   },
   {
    "grupo": "I",
@@ -650,7 +778,9 @@
    "b": "Noruega",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-26"
+   "iso": "2026-06-26",
+   "kickoff": "2026-06-26T15:00:00-04:00",
+   "venue": "Boston (Foxborough)"
   },
   {
    "grupo": "I",
@@ -660,7 +790,9 @@
    "b": "Iraq",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-26"
+   "iso": "2026-06-26",
+   "kickoff": "2026-06-26T15:00:00-04:00",
+   "venue": "Toronto"
   },
   {
    "grupo": "J",
@@ -670,7 +802,9 @@
    "b": "Austria",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-27"
+   "iso": "2026-06-27",
+   "kickoff": "2026-06-27T21:00:00-05:00",
+   "venue": "Kansas City"
   },
   {
    "grupo": "J",
@@ -680,7 +814,9 @@
    "b": "Jordania",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-27"
+   "iso": "2026-06-27",
+   "kickoff": "2026-06-27T21:00:00-05:00",
+   "venue": "Dallas (Arlington)"
   },
   {
    "grupo": "K",
@@ -690,7 +826,9 @@
    "b": "Colombia",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-27"
+   "iso": "2026-06-27",
+   "kickoff": "2026-06-27T19:30:00-04:00",
+   "venue": "Miami (Miami Gardens)"
   },
   {
    "grupo": "K",
@@ -700,7 +838,9 @@
    "b": "Uzbekistán",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-27"
+   "iso": "2026-06-27",
+   "kickoff": "2026-06-27T19:30:00-04:00",
+   "venue": "Atlanta"
   },
   {
    "grupo": "L",
@@ -710,7 +850,9 @@
    "b": "Ghana",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-27"
+   "iso": "2026-06-27",
+   "kickoff": "2026-06-27T17:00:00-04:00",
+   "venue": "Philadelphia"
   },
   {
    "grupo": "L",
@@ -720,7 +862,9 @@
    "b": "Panamá",
    "ga": null,
    "gb": null,
-   "iso": "2026-06-27"
+   "iso": "2026-06-27",
+   "kickoff": "2026-06-27T17:00:00-04:00",
+   "venue": "New York/New Jersey (East Rutherford)"
   }
  ]
 }

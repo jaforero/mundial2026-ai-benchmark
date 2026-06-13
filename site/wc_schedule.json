@@ -3,432 +3,576 @@
   "date": "Jun 11",
   "iso": "2026-06-11",
   "grp": "A",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-11T13:00:00-06:00",
+  "venue": "Mexico City"
  },
  "Chequia|Corea del Sur": {
   "date": "Jun 11",
   "iso": "2026-06-11",
   "grp": "A",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-11T20:00:00-06:00",
+  "venue": "Guadalajara (Zapopan)"
  },
  "Chequia|Sudáfrica": {
   "date": "Jun 18",
   "iso": "2026-06-18",
   "grp": "A",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-18T12:00:00-04:00",
+  "venue": "Atlanta"
  },
  "Corea del Sur|México": {
   "date": "Jun 18",
   "iso": "2026-06-18",
   "grp": "A",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-18T19:00:00-06:00",
+  "venue": "Guadalajara (Zapopan)"
  },
  "Chequia|México": {
   "date": "Jun 24",
   "iso": "2026-06-24",
   "grp": "A",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-24T19:00:00-06:00",
+  "venue": "Mexico City"
  },
  "Corea del Sur|Sudáfrica": {
   "date": "Jun 24",
   "iso": "2026-06-24",
   "grp": "A",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-24T19:00:00-06:00",
+  "venue": "Monterrey (Guadalupe)"
  },
  "Bosnia|Canadá": {
   "date": "Jun 12",
   "iso": "2026-06-12",
   "grp": "B",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-12T15:00:00-04:00",
+  "venue": "Toronto"
  },
  "Qatar|Suiza": {
   "date": "Jun 13",
   "iso": "2026-06-13",
   "grp": "B",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-13T12:00:00-07:00",
+  "venue": "San Francisco Bay Area (Santa Clara)"
  },
  "Bosnia|Suiza": {
   "date": "Jun 18",
   "iso": "2026-06-18",
   "grp": "B",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-18T12:00:00-07:00",
+  "venue": "Los Angeles (Inglewood)"
  },
  "Canadá|Qatar": {
   "date": "Jun 18",
   "iso": "2026-06-18",
   "grp": "B",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-18T15:00:00-07:00",
+  "venue": "Vancouver"
  },
  "Canadá|Suiza": {
   "date": "Jun 24",
   "iso": "2026-06-24",
   "grp": "B",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-24T12:00:00-07:00",
+  "venue": "Vancouver"
  },
  "Bosnia|Qatar": {
   "date": "Jun 24",
   "iso": "2026-06-24",
   "grp": "B",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-24T12:00:00-07:00",
+  "venue": "Seattle"
  },
  "Brasil|Marruecos": {
   "date": "Jun 13",
   "iso": "2026-06-13",
   "grp": "C",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-13T18:00:00-04:00",
+  "venue": "New York/New Jersey (East Rutherford)"
  },
  "Escocia|Haití": {
   "date": "Jun 13",
   "iso": "2026-06-13",
   "grp": "C",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-13T21:00:00-04:00",
+  "venue": "Boston (Foxborough)"
  },
  "Escocia|Marruecos": {
   "date": "Jun 19",
   "iso": "2026-06-19",
   "grp": "C",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-19T18:00:00-04:00",
+  "venue": "Boston (Foxborough)"
  },
  "Brasil|Haití": {
   "date": "Jun 19",
   "iso": "2026-06-19",
   "grp": "C",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-19T20:30:00-04:00",
+  "venue": "Philadelphia"
  },
  "Brasil|Escocia": {
   "date": "Jun 24",
   "iso": "2026-06-24",
   "grp": "C",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-24T18:00:00-04:00",
+  "venue": "Miami (Miami Gardens)"
  },
  "Haití|Marruecos": {
   "date": "Jun 24",
   "iso": "2026-06-24",
   "grp": "C",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-24T18:00:00-04:00",
+  "venue": "Atlanta"
  },
  "Estados Unidos|Paraguay": {
   "date": "Jun 12",
   "iso": "2026-06-12",
   "grp": "D",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-12T18:00:00-07:00",
+  "venue": "Los Angeles (Inglewood)"
  },
  "Australia|Türkiye": {
   "date": "Jun 13",
   "iso": "2026-06-13",
   "grp": "D",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-13T21:00:00-07:00",
+  "venue": "Vancouver"
  },
  "Australia|Estados Unidos": {
   "date": "Jun 19",
   "iso": "2026-06-19",
   "grp": "D",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-19T12:00:00-07:00",
+  "venue": "Seattle"
  },
  "Paraguay|Türkiye": {
   "date": "Jun 19",
   "iso": "2026-06-19",
   "grp": "D",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-19T20:00:00-07:00",
+  "venue": "San Francisco Bay Area (Santa Clara)"
  },
  "Estados Unidos|Türkiye": {
   "date": "Jun 25",
   "iso": "2026-06-25",
   "grp": "D",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-25T19:00:00-07:00",
+  "venue": "Los Angeles (Inglewood)"
  },
  "Australia|Paraguay": {
   "date": "Jun 25",
   "iso": "2026-06-25",
   "grp": "D",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-25T19:00:00-07:00",
+  "venue": "San Francisco Bay Area (Santa Clara)"
  },
  "Alemania|Curazao": {
   "date": "Jun 14",
   "iso": "2026-06-14",
   "grp": "E",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-14T12:00:00-05:00",
+  "venue": "Houston"
  },
  "Costa de Marfil|Ecuador": {
   "date": "Jun 14",
   "iso": "2026-06-14",
   "grp": "E",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-14T19:00:00-04:00",
+  "venue": "Philadelphia"
  },
  "Alemania|Costa de Marfil": {
   "date": "Jun 20",
   "iso": "2026-06-20",
   "grp": "E",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-20T16:00:00-04:00",
+  "venue": "Toronto"
  },
  "Curazao|Ecuador": {
   "date": "Jun 20",
   "iso": "2026-06-20",
   "grp": "E",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-20T19:00:00-05:00",
+  "venue": "Kansas City"
  },
  "Costa de Marfil|Curazao": {
   "date": "Jun 25",
   "iso": "2026-06-25",
   "grp": "E",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-25T16:00:00-04:00",
+  "venue": "Philadelphia"
  },
  "Alemania|Ecuador": {
   "date": "Jun 25",
   "iso": "2026-06-25",
   "grp": "E",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-25T16:00:00-04:00",
+  "venue": "New York/New Jersey (East Rutherford)"
  },
  "Japón|Países Bajos": {
   "date": "Jun 14",
   "iso": "2026-06-14",
   "grp": "F",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-14T15:00:00-05:00",
+  "venue": "Dallas (Arlington)"
  },
  "Suecia|Túnez": {
   "date": "Jun 14",
   "iso": "2026-06-14",
   "grp": "F",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-14T20:00:00-06:00",
+  "venue": "Monterrey (Guadalupe)"
  },
  "Países Bajos|Suecia": {
   "date": "Jun 20",
   "iso": "2026-06-20",
   "grp": "F",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-20T12:00:00-05:00",
+  "venue": "Houston"
  },
  "Japón|Túnez": {
   "date": "Jun 20",
   "iso": "2026-06-20",
   "grp": "F",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-20T22:00:00-06:00",
+  "venue": "Monterrey (Guadalupe)"
  },
  "Japón|Suecia": {
   "date": "Jun 25",
   "iso": "2026-06-25",
   "grp": "F",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-25T18:00:00-05:00",
+  "venue": "Dallas (Arlington)"
  },
  "Países Bajos|Túnez": {
   "date": "Jun 25",
   "iso": "2026-06-25",
   "grp": "F",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-25T18:00:00-05:00",
+  "venue": "Kansas City"
  },
  "Bélgica|Egipto": {
   "date": "Jun 15",
   "iso": "2026-06-15",
   "grp": "G",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-15T12:00:00-07:00",
+  "venue": "Seattle"
  },
  "Irán|Nueva Zelanda": {
   "date": "Jun 15",
   "iso": "2026-06-15",
   "grp": "G",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-15T18:00:00-07:00",
+  "venue": "Los Angeles (Inglewood)"
  },
  "Bélgica|Irán": {
   "date": "Jun 21",
   "iso": "2026-06-21",
   "grp": "G",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-21T12:00:00-07:00",
+  "venue": "Los Angeles (Inglewood)"
  },
  "Egipto|Nueva Zelanda": {
   "date": "Jun 21",
   "iso": "2026-06-21",
   "grp": "G",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-21T18:00:00-07:00",
+  "venue": "Vancouver"
  },
  "Egipto|Irán": {
   "date": "Jun 26",
   "iso": "2026-06-26",
   "grp": "G",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-26T20:00:00-07:00",
+  "venue": "Seattle"
  },
  "Bélgica|Nueva Zelanda": {
   "date": "Jun 26",
   "iso": "2026-06-26",
   "grp": "G",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-26T20:00:00-07:00",
+  "venue": "Vancouver"
  },
  "Cabo Verde|España": {
   "date": "Jun 15",
   "iso": "2026-06-15",
   "grp": "H",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-15T12:00:00-04:00",
+  "venue": "Atlanta"
  },
  "Arabia Saudí|Uruguay": {
   "date": "Jun 15",
   "iso": "2026-06-15",
   "grp": "H",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-15T18:00:00-04:00",
+  "venue": "Miami (Miami Gardens)"
  },
  "Arabia Saudí|España": {
   "date": "Jun 21",
   "iso": "2026-06-21",
   "grp": "H",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-21T12:00:00-04:00",
+  "venue": "Atlanta"
  },
  "Cabo Verde|Uruguay": {
   "date": "Jun 21",
   "iso": "2026-06-21",
   "grp": "H",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-21T18:00:00-04:00",
+  "venue": "Miami (Miami Gardens)"
  },
  "España|Uruguay": {
   "date": "Jun 26",
   "iso": "2026-06-26",
   "grp": "H",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-26T18:00:00-06:00",
+  "venue": "Guadalajara (Zapopan)"
  },
  "Arabia Saudí|Cabo Verde": {
   "date": "Jun 26",
   "iso": "2026-06-26",
   "grp": "H",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-26T19:00:00-05:00",
+  "venue": "Houston"
  },
  "Francia|Senegal": {
   "date": "Jun 16",
   "iso": "2026-06-16",
   "grp": "I",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-16T15:00:00-04:00",
+  "venue": "New York/New Jersey (East Rutherford)"
  },
  "Iraq|Noruega": {
   "date": "Jun 16",
   "iso": "2026-06-16",
   "grp": "I",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-16T18:00:00-04:00",
+  "venue": "Boston (Foxborough)"
  },
  "Francia|Iraq": {
   "date": "Jun 22",
   "iso": "2026-06-22",
   "grp": "I",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-22T17:00:00-04:00",
+  "venue": "Philadelphia"
  },
  "Noruega|Senegal": {
   "date": "Jun 22",
   "iso": "2026-06-22",
   "grp": "I",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-22T20:00:00-04:00",
+  "venue": "New York/New Jersey (East Rutherford)"
  },
  "Francia|Noruega": {
   "date": "Jun 26",
   "iso": "2026-06-26",
   "grp": "I",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-26T15:00:00-04:00",
+  "venue": "Boston (Foxborough)"
  },
  "Iraq|Senegal": {
   "date": "Jun 26",
   "iso": "2026-06-26",
   "grp": "I",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-26T15:00:00-04:00",
+  "venue": "Toronto"
  },
  "Argelia|Argentina": {
   "date": "Jun 16",
   "iso": "2026-06-16",
   "grp": "J",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-16T20:00:00-05:00",
+  "venue": "Kansas City"
  },
  "Austria|Jordania": {
   "date": "Jun 16",
   "iso": "2026-06-16",
   "grp": "J",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-16T21:00:00-07:00",
+  "venue": "San Francisco Bay Area (Santa Clara)"
  },
  "Argentina|Austria": {
   "date": "Jun 22",
   "iso": "2026-06-22",
   "grp": "J",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-22T12:00:00-05:00",
+  "venue": "Dallas (Arlington)"
  },
  "Argelia|Jordania": {
   "date": "Jun 22",
   "iso": "2026-06-22",
   "grp": "J",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-22T20:00:00-07:00",
+  "venue": "San Francisco Bay Area (Santa Clara)"
  },
  "Argelia|Austria": {
   "date": "Jun 27",
   "iso": "2026-06-27",
   "grp": "J",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-27T21:00:00-05:00",
+  "venue": "Kansas City"
  },
  "Argentina|Jordania": {
   "date": "Jun 27",
   "iso": "2026-06-27",
   "grp": "J",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-27T21:00:00-05:00",
+  "venue": "Dallas (Arlington)"
  },
  "Portugal|RD Congo": {
   "date": "Jun 17",
   "iso": "2026-06-17",
   "grp": "K",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-17T12:00:00-05:00",
+  "venue": "Houston"
  },
  "Colombia|Uzbekistán": {
   "date": "Jun 17",
   "iso": "2026-06-17",
   "grp": "K",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-17T20:00:00-06:00",
+  "venue": "Mexico City"
  },
  "Portugal|Uzbekistán": {
   "date": "Jun 23",
   "iso": "2026-06-23",
   "grp": "K",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-23T12:00:00-05:00",
+  "venue": "Houston"
  },
  "Colombia|RD Congo": {
   "date": "Jun 23",
   "iso": "2026-06-23",
   "grp": "K",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-23T20:00:00-06:00",
+  "venue": "Guadalajara (Zapopan)"
  },
  "Colombia|Portugal": {
   "date": "Jun 27",
   "iso": "2026-06-27",
   "grp": "K",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-27T19:30:00-04:00",
+  "venue": "Miami (Miami Gardens)"
  },
  "RD Congo|Uzbekistán": {
   "date": "Jun 27",
   "iso": "2026-06-27",
   "grp": "K",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-27T19:30:00-04:00",
+  "venue": "Atlanta"
  },
  "Croacia|Inglaterra": {
   "date": "Jun 17",
   "iso": "2026-06-17",
   "grp": "L",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-17T15:00:00-05:00",
+  "venue": "Dallas (Arlington)"
  },
  "Ghana|Panamá": {
   "date": "Jun 17",
   "iso": "2026-06-17",
   "grp": "L",
-  "md": 1
+  "md": 1,
+  "kickoff": "2026-06-17T19:00:00-04:00",
+  "venue": "Toronto"
  },
  "Ghana|Inglaterra": {
   "date": "Jun 23",
   "iso": "2026-06-23",
   "grp": "L",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-23T16:00:00-04:00",
+  "venue": "Boston (Foxborough)"
  },
  "Croacia|Panamá": {
   "date": "Jun 23",
   "iso": "2026-06-23",
   "grp": "L",
-  "md": 2
+  "md": 2,
+  "kickoff": "2026-06-23T19:00:00-04:00",
+  "venue": "Toronto"
  },
  "Inglaterra|Panamá": {
   "date": "Jun 27",
   "iso": "2026-06-27",
   "grp": "L",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-27T17:00:00-04:00",
+  "venue": "New York/New Jersey (East Rutherford)"
  },
  "Croacia|Ghana": {
   "date": "Jun 27",
   "iso": "2026-06-27",
   "grp": "L",
-  "md": 3
+  "md": 3,
+  "kickoff": "2026-06-27T17:00:00-04:00",
+  "venue": "Philadelphia"
  }
 }

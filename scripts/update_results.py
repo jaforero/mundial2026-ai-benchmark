@@ -31,12 +31,21 @@ def fetch_feed():
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.loads(r.read().decode("utf-8"))
 
+SCHEDULE = os.path.join(ROOT, "data", "wc_schedule.json")
+
 def main():
     name_map = json.load(open(NAME_MAP, encoding="utf-8"))
     results = json.load(open(RESULTS, encoding="utf-8"))
     feed = fetch_feed()
+    # calendario local (fecha/hora/sede reales) para completar campos faltantes
+    sched = {}
+    try:
+        sched = json.load(open(SCHEDULE, encoding="utf-8"))
+    except Exception:
+        pass
 
     def canon(t): return name_map.get(t, t)
+    def skey(a, b): return "|".join(sorted((a, b)))
 
     # marcadores finales del feed, indexados por par de equipos canónico
     finals = {}
@@ -50,8 +59,13 @@ def main():
 
     changed = 0
     for row in results.get("results", []):
+        # completar hora/sede reales si faltan (no cuenta como cambio de resultado)
+        e = sched.get(skey(row["a"], row["b"]))
+        if e:
+            if not row.get("kickoff") and e.get("kickoff"): row["kickoff"] = e["kickoff"]; changed += 1
+            if not row.get("venue") and e.get("venue"): row["venue"] = e["venue"]; changed += 1
         if row.get("ga") is not None and row.get("gb") is not None:
-            continue                       # ya cargado, no tocar
+            continue                       # ya cargado, no tocar el marcador
         key = frozenset((row["a"], row["b"]))
         if key not in finals:
             continue                       # todavía no hay marcador oficial

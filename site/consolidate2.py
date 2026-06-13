@@ -543,7 +543,7 @@ def _inject_md(mlist):
     for m in mlist:
         a,b=m.get("a",""),m.get("b","")
         e=REAL_SCHED.get("|".join(sorted((a,b))))
-        if e: m["md"]=e["md"]; m["date"]=e["date"]; m["grp"]=e["grp"]; m["iso"]=e["iso"]
+        if e: m["md"]=e["md"]; m["date"]=e["date"]; m["grp"]=e["grp"]; m["iso"]=e["iso"]; m["kickoff"]=e.get("kickoff"); m["venue"]=e.get("venue")
 _inject_md(cons_matches)
 for flist in [cl["fixtures"], list(cg_matches.values()), list(gm_matches.values())]:
     _inject_md(flist)
