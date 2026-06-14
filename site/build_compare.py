@@ -68,7 +68,7 @@ HTML = r"""<!DOCTYPE html>
 :root{--purple:#4e00ff;--purple-light:#7c4dff;--deep-blue:#041c59;--vibrant-blue:#0048ff;
 --bg:#f5f7fb;--white:#fff;--border:#e3e8f5;--soft-lilac:#f6f3ff;--text:#1f2937;--muted:#5f6b7a;
 --grad-hero:linear-gradient(135deg,#041c59 0%,#4e00ff 68%,#7c4dff 100%);
---c-claude:#0048ff;--c-chatgpt:#10a37f;--c-gemini:#7c4dff;--c-cons:#4e00ff;
+--c-claude:#D9622D;--c-chatgpt:#10a37f;--c-gemini:#1A73E8;--c-cons:#4e00ff;
 --tip-bg:#0e1430;--track:#f1f3fa;--range:#d8def0;--bartrack:#eef1f8;}
 /* ===== tema oscuro ===== */
 [data-theme="dark"]{--deep-blue:#cfd9f7;--bg:#0a1020;--white:#121b33;--border:#26324d;
@@ -252,6 +252,15 @@ border:1px solid var(--border);border-radius:14px;background:var(--card);transit
 .sk-chip{display:inline-block;padding:1px 6px;border-radius:7px;background:var(--soft-lilac);margin-left:4px;font-weight:700;}
 .sk-agree{display:inline-block;font-size:10px;font-weight:800;padding:1px 7px;border-radius:8px;margin-left:6px;}
 .sk-agree.three{background:#dcfce7;color:#15803d;}.sk-agree.two{background:#e6f7ee;color:#1a9e5c;}.sk-agree.one{background:#fff3da;color:#b58900;}
+@media(max-width:640px){
+  .sk{grid-template-columns:24px 1fr;grid-template-areas:"rank main" ". right";gap:2px 10px;padding:12px;}
+  .sk-rank{grid-area:rank;align-self:start;}
+  .sk-main{grid-area:main;}
+  .sk-right{grid-area:right;text-align:left;white-space:normal;margin-top:8px;}
+  .sk-prob{display:inline-block;font-size:15px;margin-right:8px;}
+  .sk-chips{display:block;margin-top:5px;line-height:2;}
+  .sk-chip{margin-left:0;margin-right:5px;}
+}
 .dotleg{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px 0 10px;vertical-align:middle;}
 /* head to head */
 .h2h-sel{width:100%;max-width:480px;padding:11px 14px;border:1px solid var(--border);border-radius:12px;
@@ -433,7 +442,7 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 
 <script>
 const DATA = __BLOB__;
-const COL = {Claude:'#0048ff', ChatGPT:'#10a37f', Gemini:'#7c4dff', Consenso:'#4e00ff'};
+const COL = {Claude:'#D9622D', ChatGPT:'#10a37f', Gemini:'#1A73E8', Consenso:'#4e00ff'};
 const ELO = DATA.elo || {};
 const fmt = x => (x==null?'—':(Math.round(x*10)/10).toFixed(1)+'%');
 
