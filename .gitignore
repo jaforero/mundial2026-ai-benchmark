@@ -1,0 +1,18 @@
+# Dataset externo de partidos internacionales (descargar; ver README)
+intl_results.csv
+*.csv
+
+# Temporales de simulación / backups
+*_backup*.json
+*.tmp
+_*.js
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Sistema
+.DS_Store
+Thumbs.db
