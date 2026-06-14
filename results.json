@@ -128,8 +128,8 @@
    "fecha": "Jun 14",
    "a": "Países Bajos",
    "b": "Japón",
-   "ga": null,
-   "gb": null,
+   "ga": 2,
+   "gb": 2,
    "iso": "2026-06-14",
    "kickoff": "2026-06-14T15:00:00-05:00",
    "venue": "Dallas (Arlington)"
