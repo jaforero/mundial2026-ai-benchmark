@@ -1,0 +1,44 @@
+name: Actualizar resultados (Mundial de las IAs)
+
+# Trae los marcadores oficiales más recientes a results.json sin intervención manual.
+# Fuente: openfootball/worldcup.json (dominio público, sin API key).
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"      # cada 30 minutos (UTC). Suficiente: los resultados aparecen al terminar cada partido.
+  workflow_dispatch:            # permite ejecutarlo a mano desde la pestaña Actions
+
+permissions:
+  contents: write               # necesario para hacer commit de results.json
+
+concurrency:
+  group: update-results
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Actualizar results.json desde el feed oficial
+        run: python scripts/update_results.py
+
+      - name: Commit y push si hubo cambios
+        run: |
+          if [[ -n "$(git status --porcelain results.json)" ]]; then
+            git config user.name  "results-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add results.json
+            git commit -m "Resultados: actualización automática $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+            echo "results.json actualizado y publicado."
+          else
+            echo "Sin cambios: nada que publicar."
+          fi
