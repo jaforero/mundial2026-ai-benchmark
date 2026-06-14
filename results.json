@@ -92,8 +92,8 @@
    "fecha": "Jun 13",
    "a": "Australia",
    "b": "Türkiye",
-   "ga": null,
-   "gb": null,
+   "ga": 2,
+   "gb": 0,
    "iso": "2026-06-13",
    "kickoff": "2026-06-13T21:00:00-07:00",
    "venue": "Vancouver"
