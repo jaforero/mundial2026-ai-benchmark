@@ -252,6 +252,15 @@ font-family:inherit;font-size:14.5px;color:var(--deep-blue);font-weight:700;back
 .h2h-vs{color:var(--muted);font-weight:700;}
 .fixture-meta{font-size:13px;color:var(--text);margin:-4px 0 14px;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;line-height:1.4;}
 .fixture-meta .ven{color:var(--muted);} .fixture-meta b{color:var(--deep-blue);}
+.h2h-filters{display:grid;gap:12px;margin-bottom:18px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+.h2h-filters input,.h2h-filters select{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);}
+.h2h-filters label{font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;}
+.h2h-table{margin-top:12px;max-height:600px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;}
+.h2h-row-compact{display:grid;grid-template-columns:80px 1fr 60px 60px 60px 60px 60px;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);align-items:center;font-size:12px;}
+.h2h-row-compact:hover{background:var(--hover);cursor:pointer;}
+.h2h-row-compact .date{color:var(--muted);font-weight:600;} .h2h-row-compact .teams{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.h2h-row-compact .score{font-weight:800;color:var(--deep-blue);text-align:center;} .h2h-row-compact .pred{font-size:11px;text-align:center;padding:2px 4px;border-radius:4px;}
+.h2h-filters-clear{font-size:12px;color:var(--link);cursor:pointer;text-decoration:underline;margin-top:-6px;}
 .rich{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
 .rich .m{background:var(--soft-lilac);border:1px solid var(--border);border-radius:12px;padding:10px 12px;}
 .rich .m .v{font-size:18px;font-weight:800;color:var(--purple);} .rich .m .l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:3px;}
@@ -678,6 +687,42 @@ function applyH2HDefault(){
   const s=document.getElementById('h2h-sel'); if(s) s.value=String(i);
   renderH2H(i);
 }
+// filtros del comparador
+let h2h_filters = {group: '', matchday: '', team: ''};
+function h2hApplyFilters(){
+  const gv = document.getElementById('h2h-group')?.value || '';
+  const mv = document.getElementById('h2h-matchday')?.value || '';
+  const tv = document.getElementById('h2h-team')?.value || '';
+  h2h_filters = {group: gv, matchday: mv, team: tv.toLowerCase()};
+  h2hRenderTable();
+}
+function h2hClearFilters(){ document.getElementById('h2h-group').value=''; document.getElementById('h2h-matchday').value=''; document.getElementById('h2h-team').value=''; h2h_filters={group:'',matchday:'',team:''}; h2hRenderTable(); }
+function h2hRenderTable(){
+  let rows = DATA.consensus.matches.filter(m=>{
+    if(h2h_filters.group && (m.grp||m.group)!==h2h_filters.group) return false;
+    if(h2h_filters.matchday && (m.md||m.matchday)!==parseInt(h2h_filters.matchday)) return false;
+    if(h2h_filters.team && !(m.a.toLowerCase().includes(h2h_filters.team) || m.b.toLowerCase().includes(h2h_filters.team))) return false;
+    return true;
+  });
+  let html = '<div class="h2h-table">';
+  rows.forEach((m,i)=>{
+    const g=m.by['Gemini']||{}; const c=m.by['Claude']||{}; const ch=m.by['ChatGPT']||{};
+    const rz = REAL_RESULTS?.find(r=>(r.a===m.a&&r.b===m.b)||(r.a===m.b&&r.b===m.a));
+    const sc = rz ? `${rz.ga}-${rz.gb}` : '—';
+    html+=`<div class="h2h-row-compact" onclick="h2hShowDetail(${DATA.consensus.matches.indexOf(m)})">
+      <div class="date">${m.date||'—'}</div>
+      <div class="teams"><b>${tf(m.a)}</b> vs <b>${tf(m.b)}</b></div>
+      <div class="score">${sc}</div>
+      <div class="pred" style="background:${COL.Claude}20;color:${COL.Claude}">${c.score||'—'}</div>
+      <div class="pred" style="background:${COL.ChatGPT}20;color:${COL.ChatGPT}">${ch.score||'—'}</div>
+      <div class="pred" style="background:${COL.Gemini}20;color:${COL.Gemini}">${g.score||'—'}</div>
+      <div class="pred" style="background:${COL.Consenso}20;color:${COL.Consenso}">${m.score||'—'}</div>
+    </div>`;
+  });
+  html+=`</div><div style="margin-top:8px;font-size:11px;color:var(--muted);">${rows.length} de ${DATA.consensus.matches.length} partidos</div>`;
+  document.getElementById('h2h-out').innerHTML = html;
+}
+function h2hShowDetail(idx){ _h2hAuto=false; renderH2H(idx); window.scrollTo({top: document.querySelector('.h2h-big')?.offsetTop - 100, behavior:'smooth'}); }
 // hora local del estadio (viene en el ISO con su offset) + conversión a Colombia (UTC-5)
 function _hhmm(iso){ return (iso && iso.length>=16) ? iso.slice(11,16) : ''; }
 function _coTime(iso){ try{ return new Date(iso).toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit',hour12:false}); }catch(e){ return ''; } }
@@ -810,9 +855,34 @@ function renderConsenso(){
 
   <div class="section-title">${tx('Comparador cara a cara — partido por partido','Head-to-head comparator — match by match')}</div>
   <div class="card">
-    <p class="legend" style="margin-bottom:10px">${tx('Elige cualquiera de los 72 partidos y compara cómo lo ve cada IA y el consenso. Cada partido trae su <b>confianza del pronóstico</b> en lenguaje claro.','Pick any of the 72 matches and compare how each AI and the consensus see it. Every match shows its <b>forecast confidence</b> in plain language.')}</p>
-    <select class="h2h-sel" id="h2h-sel" onchange="h2hPick(this.value)">${h2hOptions()}</select>
-    <div id="h2h-out" style="margin-top:18px"></div>
+    <p class="legend" style="margin-bottom:14px">${tx('Filtra y busca entre los 72 partidos. Haz clic en cualquiera para ver el detalle completo.','Filter and search among all 72 matches. Click any match to see full details.')}</p>
+    <div class="h2h-filters">
+      <div>
+        <label>${tx('Grupo','Group')}</label>
+        <select id="h2h-group" onchange="h2hApplyFilters()">
+          <option value="">${tx('Todos','All')}</option>
+          ${['A','B','C','D','E','F','G','H','I','J','K','L'].map(g=>`<option value="${g}">${tx(`Grupo ${g}`,`Group ${g}`)}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label>${tx('Jornada','Matchday')}</label>
+        <select id="h2h-matchday" onchange="h2hApplyFilters()">
+          <option value="">${tx('Todas','All')}</option>
+          <option value="1">${tx('Jornada 1','Matchday 1')}</option>
+          <option value="2">${tx('Jornada 2','Matchday 2')}</option>
+          <option value="3">${tx('Jornada 3','Matchday 3')}</option>
+        </select>
+      </div>
+      <div>
+        <label>${tx('Búsqueda (equipo)','Search (team)')}</label>
+        <input id="h2h-team" type="text" placeholder="${tx('ej: Brasil','e.g.: Brazil')}" onchange="h2hApplyFilters()" oninput="h2hApplyFilters()">
+      </div>
+    </div>
+    <div class="h2h-filters-clear" onclick="h2hClearFilters()">${tx('Limpiar filtros','Clear filters')}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:12px;margin-bottom:8px;display:grid;grid-template-columns:80px 1fr 60px 60px 60px 60px 60px;gap:8px;padding:0 12px;font-weight:600;">
+      <div>${tx('Fecha','Date')}</div><div>${tx('Partidos','Matches')}</div><div>${tx('Real','Result')}</div><div style="color:${COL.Claude}">Claude</div><div style="color:${COL.ChatGPT}">ChatGPT</div><div style="color:${COL.Gemini}">Gemini</div><div style="color:${COL.Consenso}">Consenso</div>
+    </div>
+    <div id="h2h-out"></div>
   </div>
 
   ${drawRateAnchor()}
@@ -829,7 +899,7 @@ function renderConsenso(){
 
   <div class="section-title">${tx('Cómo se construye el consenso','How the consensus is built')}</div>
   <p class="lead">${tx(`Combina las versiones más avanzadas de las tres IAs. Para el título usa la <b>${term('mediana','El valor del medio de las tres IAs: si un modelo se va a un extremo, no arrastra el resultado.')}</b> de las tres; para los grupos, los <b>${term('puntos esperados','Promedio de puntos que sumaría cada equipo en sus 3 partidos de grupo, según las probabilidades de cada resultado.')}</b> de los 72 partidos; y para cada partido, el promedio de probabilidades con el marcador más votado. El <b>índice de confianza</b> de cada partido aparece explicado al pasar el cursor sobre su cifra.`,`It combines the most advanced versions of the three AIs. For the title it uses the <b>${term('median','The middle value of the three AIs: if one model goes to an extreme, it does not drag the result.')}</b> of the three; for the groups, the <b>${term('expected points','Average points each team would earn in its 3 group matches, given the probability of each result.')}</b> from the 72 matches; and for each match, the average of the probabilities with the most-voted scoreline. The <b>confidence index</b> for each match is explained on hover over its figure.`)}</p>`;
-  _h2hAuto=true; applyH2HDefault();
+  _h2hAuto=true; h2hRenderTable();
 }
 
 function renderClaude(){
@@ -1024,8 +1094,8 @@ function _normResults(j){ return Array.isArray(j) ? j : (j && j.results ? j.resu
 function loadResults(){
   fetch('./results.json?ts='+Date.now())
     .then(r=>r.ok?r.json():Promise.reject())
-    .then(j=>{ REAL_RESULTS=_normResults(j); renderAccuracy(); if(_h2hAuto&&document.getElementById('h2h-sel')) applyH2HDefault(); })
-    .catch(()=>{ REAL_RESULTS=_normResults(RESULTS_FALLBACK); renderAccuracy(); if(_h2hAuto&&document.getElementById('h2h-sel')) applyH2HDefault(); });  // respaldo embebido
+    .then(j=>{ REAL_RESULTS=_normResults(j); renderAccuracy(); if(_h2hAuto) h2hRenderTable(); })
+    .catch(()=>{ REAL_RESULTS=_normResults(RESULTS_FALLBACK); renderAccuracy(); if(_h2hAuto) h2hRenderTable(); });  // respaldo embebido
 }
 
 
