@@ -256,10 +256,34 @@ font-family:inherit;font-size:14.5px;color:var(--deep-blue);font-weight:700;back
 .h2h-filters input,.h2h-filters select{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);color:var(--text);}
 .h2h-filters label{font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;}
 .h2h-table{margin-top:12px;max-height:600px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;}
-.h2h-row-compact{display:grid;grid-template-columns:80px 1fr 60px 60px 60px 60px 60px;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);align-items:center;font-size:12px;}
+.h2h-table-head{display:grid;grid-template-columns:120px 1.4fr 50px 2.4fr;gap:8px;}
+.h2h-table-head .preds-head{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.h2h-row-compact{display:grid;grid-template-columns:120px 1.4fr 50px 2.4fr;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);align-items:center;font-size:12px;}
 .h2h-row-compact:hover{background:var(--hover);cursor:pointer;}
-.h2h-row-compact .date{color:var(--muted);font-weight:600;} .h2h-row-compact .teams{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.h2h-row-compact .score{font-weight:800;color:var(--deep-blue);text-align:center;} .h2h-row-compact .pred{font-size:11px;text-align:center;padding:2px 4px;border-radius:4px;}
+.h2h-row-compact .date{color:var(--muted);font-weight:600;} .h2h-row-compact .date .venue{font-weight:400;font-size:10px;color:var(--muted);opacity:.8;margin-top:2px;line-height:1.2;}
+.h2h-row-compact .teams{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.h2h-row-compact .score{font-weight:700;color:var(--muted);text-align:center;}
+.h2h-row-compact.played{background:var(--hover);} .h2h-row-compact.played .score{font-weight:900;color:var(--deep-blue);font-size:14px;}
+.h2h-row-compact .preds{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.h2h-row-compact .pred{font-size:11px;text-align:center;padding:2px 4px;border-radius:4px;}
+.h2h-row-compact .plabel{display:none;}
+.h2h-row-compact .pred.exact{background:#e6f7ee;color:#1a9e5c;font-weight:800;border:1px solid #1a9e5c;}
+.h2h-row-compact .pred.out{background:#fff8e1;color:#b58900;font-weight:700;border:1px solid #e0b400;}
+.h2h-row-compact .pred.miss{background:#fdecea;color:#c0392b;border:1px solid #d9534f;}
+[data-theme="dark"] .h2h-row-compact .pred.exact{background:rgba(26,158,92,.16);}
+[data-theme="dark"] .h2h-row-compact .pred.out{background:rgba(224,180,0,.14);}
+[data-theme="dark"] .h2h-row-compact .pred.miss{background:rgba(217,83,79,.16);}
+@media(max-width:640px){
+  .h2h-table-head{display:none;}
+  .h2h-row-compact{grid-template-columns:1fr auto;grid-template-areas:"date score" "teams score" "preds preds";gap:4px 10px;padding:12px;align-items:center;}
+  .h2h-row-compact .date{grid-area:date;font-size:11px;}
+  .h2h-row-compact .teams{grid-area:teams;white-space:normal;font-size:13.5px;font-weight:600;}
+  .h2h-row-compact .score{grid-area:score;font-size:20px;align-self:center;justify-self:end;}
+  .h2h-row-compact.played .score{font-size:22px;}
+  .h2h-row-compact .preds{grid-area:preds;margin-top:8px;}
+  .h2h-row-compact .pred{padding:5px 4px;}
+  .h2h-row-compact .plabel{display:block;font-size:9px;font-weight:700;opacity:.65;margin-bottom:2px;}
+}
 .h2h-filters-clear{font-size:12px;color:var(--link);cursor:pointer;text-decoration:underline;margin-top:-6px;}
 .rich{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
 .rich .m{background:var(--soft-lilac);border:1px solid var(--border);border-radius:12px;padding:10px 12px;}
@@ -688,19 +712,17 @@ function applyH2HDefault(){
   renderH2H(i);
 }
 // filtros del comparador
-let h2h_filters = {group: '', matchday: '', team: ''};
+let h2h_filters = {group: '', team: ''};
 function h2hApplyFilters(){
   const gv = document.getElementById('h2h-group')?.value || '';
-  const mv = document.getElementById('h2h-matchday')?.value || '';
   const tv = document.getElementById('h2h-team')?.value || '';
-  h2h_filters = {group: gv, matchday: mv, team: tv.toLowerCase()};
+  h2h_filters = {group: gv, team: tv.toLowerCase()};
   h2hRenderTable();
 }
-function h2hClearFilters(){ document.getElementById('h2h-group').value=''; document.getElementById('h2h-matchday').value=''; document.getElementById('h2h-team').value=''; h2h_filters={group:'',matchday:'',team:''}; h2hRenderTable(); }
+function h2hClearFilters(){ document.getElementById('h2h-group').value=''; document.getElementById('h2h-team').value=''; h2h_filters={group:'',team:''}; h2hRenderTable(); }
 function h2hRenderTable(){
   let rows = DATA.consensus.matches.filter(m=>{
     if(h2h_filters.group && (m.grp||m.group)!==h2h_filters.group) return false;
-    if(h2h_filters.matchday && (m.md||m.matchday)!==parseInt(h2h_filters.matchday)) return false;
     if(h2h_filters.team && !(m.a.toLowerCase().includes(h2h_filters.team) || m.b.toLowerCase().includes(h2h_filters.team))) return false;
     return true;
   });
@@ -708,18 +730,22 @@ function h2hRenderTable(){
   rows.forEach((m,i)=>{
     const g=m.by['Gemini']||{}; const c=m.by['Claude']||{}; const ch=m.by['ChatGPT']||{};
     const rz = REAL_RESULTS?.find(r=>(r.a===m.a&&r.b===m.b)||(r.a===m.b&&r.b===m.a));
-    const sc = rz ? `${rz.ga}-${rz.gb}` : '—';
-    html+=`<div class="h2h-row-compact" onclick="h2hShowDetail(${DATA.consensus.matches.indexOf(m)})">
-      <div class="date">${m.date||'—'}</div>
+    const jugado = rz && rz.ga!=null && rz.gb!=null;
+    const sc = jugado ? `${rz.ga}-${rz.gb}` : '';            // en blanco si no se ha jugado
+    const ven = m.venue ? `<div class="venue">📍 ${m.venue}</div>` : '';
+    html+=`<div class="h2h-row-compact${jugado?' played':''}" onclick="h2hShowDetail(${DATA.consensus.matches.indexOf(m)})">
+      <div class="date">${m.date||''}${ven}</div>
       <div class="teams"><b>${tf(m.a)}</b> vs <b>${tf(m.b)}</b></div>
       <div class="score">${sc}</div>
-      <div class="pred" style="background:${COL.Claude}20;color:${COL.Claude}">${c.score||'—'}</div>
-      <div class="pred" style="background:${COL.ChatGPT}20;color:${COL.ChatGPT}">${ch.score||'—'}</div>
-      <div class="pred" style="background:${COL.Gemini}20;color:${COL.Gemini}">${g.score||'—'}</div>
-      <div class="pred" style="background:${COL.Consenso}20;color:${COL.Consenso}">${m.score||'—'}</div>
+      <div class="preds">
+        <div class="pred" style="background:${COL.Claude}20;color:${COL.Claude}"><span class="plabel">Claude</span>${c.score||'—'}</div>
+        <div class="pred" style="background:${COL.ChatGPT}20;color:${COL.ChatGPT}"><span class="plabel">ChatGPT</span>${ch.score||'—'}</div>
+        <div class="pred" style="background:${COL.Gemini}20;color:${COL.Gemini}"><span class="plabel">Gemini</span>${g.score||'—'}</div>
+        <div class="pred" style="background:${COL.Consenso}20;color:${COL.Consenso}"><span class="plabel">Consenso</span>${m.score||'—'}</div>
+      </div>
     </div>`;
   });
-  html+=`</div><div style="margin-top:8px;font-size:11px;color:var(--muted);">${rows.length} de ${DATA.consensus.matches.length} partidos</div>`;
+  html+=`</div><div style="margin-top:8px;font-size:11px;color:var(--muted);">${rows.length} ${tx('de','of')} ${DATA.consensus.matches.length} ${tx('partidos','matches')}</div>`;
   document.getElementById('h2h-out').innerHTML = html;
 }
 function h2hShowDetail(idx){ _h2hAuto=false; renderH2H(idx); window.scrollTo({top: document.querySelector('.h2h-big')?.offsetTop - 100, behavior:'smooth'}); }
@@ -865,22 +891,14 @@ function renderConsenso(){
         </select>
       </div>
       <div>
-        <label>${tx('Jornada','Matchday')}</label>
-        <select id="h2h-matchday" onchange="h2hApplyFilters()">
-          <option value="">${tx('Todas','All')}</option>
-          <option value="1">${tx('Jornada 1','Matchday 1')}</option>
-          <option value="2">${tx('Jornada 2','Matchday 2')}</option>
-          <option value="3">${tx('Jornada 3','Matchday 3')}</option>
-        </select>
-      </div>
-      <div>
         <label>${tx('Búsqueda (equipo)','Search (team)')}</label>
         <input id="h2h-team" type="text" placeholder="${tx('ej: Brasil','e.g.: Brazil')}" onchange="h2hApplyFilters()" oninput="h2hApplyFilters()">
       </div>
     </div>
     <div class="h2h-filters-clear" onclick="h2hClearFilters()">${tx('Limpiar filtros','Clear filters')}</div>
-    <div style="font-size:11px;color:var(--muted);margin-top:12px;margin-bottom:8px;display:grid;grid-template-columns:80px 1fr 60px 60px 60px 60px 60px;gap:8px;padding:0 12px;font-weight:600;">
-      <div>${tx('Fecha','Date')}</div><div>${tx('Partidos','Matches')}</div><div>${tx('Real','Result')}</div><div style="color:${COL.Claude}">Claude</div><div style="color:${COL.ChatGPT}">ChatGPT</div><div style="color:${COL.Gemini}">Gemini</div><div style="color:${COL.Consenso}">Consenso</div>
+    <div class="h2h-table-head" style="font-size:11px;color:var(--muted);margin-top:12px;margin-bottom:8px;padding:0 12px;font-weight:600;">
+      <div>${tx('Fecha · Sede','Date · Venue')}</div><div>${tx('Partidos','Matches')}</div><div>${tx('Real','Result')}</div>
+      <div class="preds-head"><div style="color:${COL.Claude}">Claude</div><div style="color:${COL.ChatGPT}">ChatGPT</div><div style="color:${COL.Gemini}">Gemini</div><div style="color:${COL.Consenso}">Consenso</div></div>
     </div>
     <div id="h2h-out"></div>
   </div>
@@ -1061,18 +1079,31 @@ function renderAccuracy(){
         <span><b>${x.avgRps.toFixed(3)}</b>RPS</span>
       </div></div>`).join('');
   const pctPlayed=100*played.length/Math.max(total,1);
-  // partidos por jornada
-  let prev='', matchHtml='';
-  rows.forEach(({r,cells})=>{
-    const md=`${r.fecha||''} · ${tx('Jornada','Matchday')} ${r.jornada||''}`;
-    if(md!==prev){ matchHtml+=`<div class="acc-md">${md}</div>`; prev=md; }
-    const chips=ACC_MODELS.map(m=>{const ev=cells[m.key]; if(!ev)return `<div class="acc-chip"><span class="cn">${m.name}</span><span class="cs">—</span></div>`;
-      const ico=ev.exact?'✓':(ev.outHit?'◐':'✗');
-      return `<div class="acc-chip ${ev.cls}"><span class="cn">${m.name}</span><span class="cs">${ev.score}</span><span class="ico">${ico}</span></div>`;}).join('');
-    matchHtml+=`<div class="acc-match">
-      <div class="top"><span class="nm l">${tf(r.a)}</span><span class="sc">${r.ga}–${r.gb}</span><span class="nm r">${tf(r.b)}</span></div>
-      <div class="acc-chips">${chips}</div></div>`;
+  // tabla compacta — solo partidos finalizados, con semáforo por IA
+  const cellFor=(cells,key,label)=>{ const ev=cells[key]; if(!ev) return `<div class="pred"><span class="plabel">${label}</span>—</div>`;
+    const ico=ev.exact?'✓':(ev.outHit?'◐':'✗');
+    return `<div class="pred ${ev.cls}"><span class="plabel">${label}</span>${ev.score} ${ico}</div>`; };
+  let tableRows='';
+  // orden inverso por hora real: el más reciente en cerrarse arriba; la inauguración (México vs Sudáfrica) al final
+  const ordered=[...rows].sort((x,y)=>{
+    const kx=x.r.kickoff||x.r.iso||'', ky=y.r.kickoff||y.r.iso||'';
+    return kx<ky?-1:(kx>ky?1:0);
+  }).reverse();
+  ordered.forEach(({r,cells})=>{
+    const ven = r.venue ? `<div class="venue">📍 ${r.venue}</div>` : '';
+    tableRows+=`<div class="h2h-row-compact played">
+      <div class="date">${r.fecha||''}${ven}</div>
+      <div class="teams"><b>${tf(r.a)}</b> vs <b>${tf(r.b)}</b></div>
+      <div class="score">${r.ga}-${r.gb}</div>
+      <div class="preds">${cellFor(cells,'claude','Claude')}${cellFor(cells,'chatgpt','ChatGPT')}${cellFor(cells,'gemini','Gemini')}${cellFor(cells,'consenso','Consenso')}</div>
+    </div>`;
   });
+  const matchHtml = `
+    <div class="h2h-table-head" style="font-size:11px;color:var(--muted);margin-top:6px;margin-bottom:8px;padding:0 12px;font-weight:600;">
+      <div>${tx('Fecha · Sede','Date · Venue')}</div><div>${tx('Partidos','Matches')}</div><div>${tx('Real','Result')}</div>
+      <div class="preds-head"><div style="color:${COL.Claude}">Claude</div><div style="color:${COL.ChatGPT}">ChatGPT</div><div style="color:${COL.Gemini}">Gemini</div><div style="color:${COL.Consenso}">Consenso</div></div>
+    </div>
+    <div class="h2h-table">${tableRows}</div>`;
   host.innerHTML=`
     <div class="acc-hero">
       <h2>🏆 ${tx('Mundial de las IAs · predicción vs realidad','AI World Cup · prediction vs reality')}</h2>
