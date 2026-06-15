@@ -188,8 +188,8 @@
    "fecha": "Jun 15",
    "a": "España",
    "b": "Cabo Verde",
-   "ga": null,
-   "gb": null,
+   "ga": 0,
+   "gb": 0,
    "iso": "2026-06-15",
    "kickoff": "2026-06-15T12:00:00-04:00",
    "venue": "Atlanta"
