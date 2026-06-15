@@ -152,8 +152,8 @@
    "fecha": "Jun 15",
    "a": "Bélgica",
    "b": "Egipto",
-   "ga": null,
-   "gb": null,
+   "ga": 1,
+   "gb": 1,
    "iso": "2026-06-15",
    "kickoff": "2026-06-15T12:00:00-07:00",
    "venue": "Seattle"
