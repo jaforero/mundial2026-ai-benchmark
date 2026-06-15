@@ -140,8 +140,8 @@
    "fecha": "Jun 14",
    "a": "Suecia",
    "b": "Túnez",
-   "ga": null,
-   "gb": null,
+   "ga": 5,
+   "gb": 1,
    "iso": "2026-06-14",
    "kickoff": "2026-06-14T20:00:00-06:00",
    "venue": "Monterrey (Guadalupe)"
