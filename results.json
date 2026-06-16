@@ -164,8 +164,8 @@
    "fecha": "Jun 15",
    "a": "Irán",
    "b": "Nueva Zelanda",
-   "ga": null,
-   "gb": null,
+   "ga": 2,
+   "gb": 2,
    "iso": "2026-06-15",
    "kickoff": "2026-06-15T18:00:00-07:00",
    "venue": "Los Angeles (Inglewood)"
