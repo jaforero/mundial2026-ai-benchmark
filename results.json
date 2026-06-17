@@ -1,5 +1,5 @@
 {
- "updated": "2026-06-16",
+ "updated": "2026-06-17",
  "note": "Marcadores oficiales FIFA. ga=goles equipo A, gb=goles equipo B. null = aún no jugado.",
  "results": [
   {
@@ -212,8 +212,8 @@
    "fecha": "Jun 16",
    "a": "Iraq",
    "b": "Noruega",
-   "ga": null,
-   "gb": null,
+   "ga": 1,
+   "gb": 4,
    "iso": "2026-06-16",
    "kickoff": "2026-06-16T18:00:00-04:00",
    "venue": "Boston (Foxborough)"
