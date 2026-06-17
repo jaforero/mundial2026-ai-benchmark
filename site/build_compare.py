@@ -394,6 +394,61 @@ padding:10px 0;border-bottom:1px solid var(--border);}
 .mtab{font-size:11.5px;} .tab{padding:9px 14px;font-size:13px;}
 table{font-size:12px;} .reachscroll{max-height:440px;}}
 @media(max-width:430px){.takeaways{grid-template-columns:1fr;} .podium{gap:8px;} .pod{padding:11px 6px;}}
+/* ===== Bracket (Camino a la final) ===== */
+.bk-seltabs{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 16px;}
+.bk-seltab{border:1.5px solid var(--border);background:var(--white);border-radius:999px;padding:7px 15px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;color:var(--deep-blue);transition:all .15s;}
+.bk-seltab .dot{width:10px;height:10px;border-radius:50%;}
+.bk-seltab.on{color:#fff;border-color:transparent;}
+.bk-champ{border-radius:16px;padding:15px 19px;margin:0 0 18px;display:flex;align-items:center;gap:13px;color:#fff;}
+.bk-champ .cup{font-size:29px} .bk-champ .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.07em;opacity:.85}
+.bk-champ .nm{font-size:22px;font-weight:800} .bk-champ .ru{font-size:12px;opacity:.85;margin-top:2px}
+.bk-elobox{background:var(--soft-lilac);border:1px solid var(--border);border-radius:12px;padding:12px 15px;margin:0 0 16px;font-size:12.5px;color:var(--muted);line-height:1.55;}
+.bk-elobox b{color:var(--deep-blue);}
+.bk-scroll{overflow-x:auto;padding-bottom:14px;-webkit-overflow-scrolling:touch;}
+.bk-board{display:flex;gap:14px;align-items:stretch;min-width:1080px;}
+.bk-side{display:flex;gap:14px;flex:1;}
+.bk-col{display:flex;flex-direction:column;justify-content:space-around;gap:9px;flex:1;min-width:124px;}
+.bk-rhead{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:3px;}
+.bk-match{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:7px 9px;position:relative;box-shadow:0 1px 3px rgba(4,28,89,.05);}
+.bk-match.prov{border-style:dashed;border-color:var(--range);background:transparent;}
+.bk-code{position:absolute;top:-7px;left:8px;color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:6px;}
+.bk-team{display:flex;align-items:center;gap:6px;padding:3px 2px;font-size:12px;border-radius:5px;color:var(--deep-blue);}
+.bk-team+.bk-team{margin-top:2px;border-top:1px dashed var(--border);padding-top:5px;}
+.bk-team.w{font-weight:800;}
+.bk-seed{font-size:9px;color:var(--muted);min-width:30px;font-weight:700;}
+.bk-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bk-final{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:0 4px;}
+.bk-fmatch{background:var(--deep-blue);color:#fff;border-radius:12px;padding:10px 12px;min-width:120px;}
+[data-theme="dark"] .bk-fmatch{background:#1a2138;}
+.bk-fmatch .bk-team{color:#fff} .bk-fmatch .bk-code{background:#ffd84d;color:#041c59}
+.bk-fmatch .bk-team.w{background:rgba(255,255,255,.16);color:#ffd84d;}
+.bk-legend{font-size:11px;color:var(--muted);margin-top:8px}
+.bk-note{font-size:12px;color:var(--muted);margin-top:18px;line-height:1.55;border-top:1px solid var(--border);padding-top:13px;}
+.bk-note b{color:var(--deep-blue);}
+/* leaderboard estructural */
+.strb{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:18px 18px;margin:8px 0 22px;}
+.strb h3{margin:0 0 4px;font-size:16px;color:var(--deep-blue);}
+.strb .desc{font-size:12.5px;color:var(--muted);margin:0 0 14px;line-height:1.5;}
+.strb-rules{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px;}
+.strb-rule{background:var(--soft-lilac);border-radius:8px;padding:5px 10px;font-size:11.5px;color:var(--deep-blue);font-weight:600;}
+.strb-pend{background:var(--soft-lilac);border:1px dashed var(--range);border-radius:12px;padding:18px;text-align:center;color:var(--muted);font-size:13px;line-height:1.55;}
+.strb-pend .big{font-size:26px;margin-bottom:6px;}
+.strb-prog{height:8px;background:var(--bartrack);border-radius:6px;overflow:hidden;margin:12px auto 4px;max-width:340px;}
+.strb-prog>span{display:block;height:100%;background:var(--purple);border-radius:6px;}
+.strb-row{display:grid;grid-template-columns:30px 1fr 70px;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid var(--border);}
+.strb-row:last-child{border-bottom:none;}
+.strb-rank{font-weight:800;color:var(--muted);text-align:center;}
+.strb-name{font-weight:700;color:var(--deep-blue);display:flex;align-items:center;gap:8px;}
+.strb-name .dot{width:10px;height:10px;border-radius:50%;}
+.strb-pts{font-weight:800;text-align:right;font-size:15px;}
+@media(max-width:760px){.bk-champ .nm{font-size:19px}}
+.bk-metric{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px;}
+.bk-metric-lbl{font-size:12px;font-weight:700;color:var(--deep-blue);}
+.bk-mbtn{border:1.5px solid var(--border);background:var(--white);border-radius:999px;padding:5px 14px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--muted);transition:all .15s;}
+.bk-mbtn.on{background:var(--deep-blue);color:#fff;border-color:transparent;}
+[data-theme="dark"] .bk-mbtn.on{background:var(--purple);}
+.bk-metric-note{flex-basis:100%;font-size:11.5px;color:var(--muted);line-height:1.45;background:#fff7e6;border:1px solid #ffe2a8;border-radius:8px;padding:7px 10px;margin-top:2px;}
+[data-theme="dark"] .bk-metric-note{background:#2a2410;border-color:#5a4a1a;color:#e8d9a8;}
 </style></head>
 <body><div class="wrap">
 
@@ -424,6 +479,7 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
   <button class="tab" data-t="claude"><span class="dotc" style="background:var(--c-claude)"></span>Claude</button>
   <button class="tab" data-t="chatgpt"><span class="dotc" style="background:var(--c-chatgpt)"></span>ChatGPT</button>
   <button class="tab" data-t="gemini"><span class="dotc" style="background:var(--c-gemini)"></span>Gemini</button>
+  <button class="tab" data-t="bracket"><span data-en="🗺️ Road to the final">🗺️ Camino a la final</span></button>
 </div>
 
 <div id="precision" class="panel active"></div>
@@ -431,6 +487,7 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 <div id="claude" class="panel"></div>
 <div id="chatgpt" class="panel"></div>
 <div id="gemini" class="panel"></div>
+<div id="bracket" class="panel"></div>
 
 <div class="footer">
   <div data-en="Javier Forero · Statistician and AI & Analytics Consultant">Javier Forero · Estadístico y consultor en IA y Analítica</div>
@@ -444,6 +501,7 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 const DATA = __BLOB__;
 const COL = {Claude:'#D9622D', ChatGPT:'#10a37f', Gemini:'#1A73E8', Consenso:'#4e00ff'};
 const ELO = DATA.elo || {};
+const FIFA = DATA.fifa || {};
 const fmt = x => (x==null?'—':(Math.round(x*10)/10).toFixed(1)+'%');
 
 /* ============ i18n ============ */
@@ -1145,8 +1203,8 @@ function _normResults(j){ return Array.isArray(j) ? j : (j && j.results ? j.resu
 function loadResults(){
   fetch('./results.json?ts='+Date.now())
     .then(r=>r.ok?r.json():Promise.reject())
-    .then(j=>{ REAL_RESULTS=_normResults(j); renderAccuracy(); if(_h2hAuto) h2hRenderTable(); })
-    .catch(()=>{ REAL_RESULTS=_normResults(RESULTS_FALLBACK); renderAccuracy(); if(_h2hAuto) h2hRenderTable(); });  // respaldo embebido
+    .then(j=>{ REAL_RESULTS=_normResults(j); renderAccuracy(); renderBracket(); if(_h2hAuto) h2hRenderTable(); })
+    .catch(()=>{ REAL_RESULTS=_normResults(RESULTS_FALLBACK); renderAccuracy(); renderBracket(); if(_h2hAuto) h2hRenderTable(); });  // respaldo embebido
 }
 
 
@@ -1182,6 +1240,193 @@ function setupScorersTracking(){
   });
 }
 
+/* ============ BRACKET · Camino a la final ============ */
+const BK_MODELS=['Consenso','Claude','ChatGPT','Gemini'];
+const BK_COL={Consenso:'var(--c-cons)',Claude:'var(--c-claude)',ChatGPT:'var(--c-chatgpt)',Gemini:'var(--c-gemini)'};
+const BK_THIRD_SLOTS={M74:'ABCDF',M77:'CDFGH',M79:'CEFHI',M80:'EHIJK',M81:'BEFIJ',M82:'AEHIJ',M85:'EFGIJ',M87:'DEIJL'};
+const BK_R32=[['M74','1E','3'],['M77','1I','3'],['M73','2A','2B'],['M75','1F','2C'],
+  ['M83','2K','2L'],['M84','1H','2J'],['M81','1D','3'],['M82','1G','3'],
+  ['M76','1C','2F'],['M78','2E','2I'],['M79','1A','3'],['M80','1L','3'],
+  ['M86','1J','2H'],['M88','2D','2G'],['M85','1B','3'],['M87','1K','3']];
+const BK_NEXT=[['M89','M74','M77'],['M90','M73','M75'],['M93','M83','M84'],['M94','M81','M82'],
+  ['M91','M76','M78'],['M92','M79','M80'],['M95','M86','M88'],['M96','M85','M87'],
+  ['M97','M89','M90'],['M98','M93','M94'],['M99','M91','M92'],['M100','M95','M96'],
+  ['M101','M97','M98'],['M102','M99','M100'],['M104','M101','M102']];
+const BK_R32C=BK_R32.map(x=>x[0]);
+const BK_LAYOUT={
+  left:[['R32',['M74','M77','M73','M75','M83','M84','M81','M82']],['8vos',['M89','M90','M93','M94']],['4tos',['M97','M98']],['SF',['M101']]],
+  right:[['R32',['M76','M78','M79','M80','M86','M88','M85','M87']],['8vos',['M91','M92','M95','M96']],['4tos',['M99','M100']],['SF',['M102']]]};
+const BK_RNAME={'R32':['Ronda de 32','Round of 32'],'8vos':['Octavos','Round of 16'],'4tos':['Cuartos','Quarterfinals'],'SF':['Semifinal','Semifinal']};
+let BK_CUR='Consenso';
+let BK_METRIC='elo';
+function bkStrong(metric){
+  if(metric==='fifa') return (a,b)=>((FIFA[a]||999)<=(FIFA[b]||999)?a:b); // menor rango FIFA = más fuerte
+  return (a,b)=>((ELO[a]||1500)>=(ELO[b]||1500)?a:b);                     // mayor Elo = más fuerte
+}
+
+function bkThirdMatch(qual){
+  const slots=Object.keys(BK_THIRD_SLOTS), q=new Set(qual);
+  function solve(i,used,assign){
+    if(i===slots.length) return Object.assign({},assign);
+    const s=slots[i];
+    const elig=[...BK_THIRD_SLOTS[s]].filter(g=>q.has(g)&&!used.has(g)).sort();
+    for(const g of elig){ assign[s]=g; used.add(g);
+      const r=solve(i+1,used,assign); if(r) return r; used.delete(g); delete assign[s]; }
+    return null;
+  }
+  return solve(0,new Set(),{})||{};
+}
+function bkBuild(model,metric){
+  const gp=DATA.group_proj, groups=Object.keys(gp).sort();
+  const st=(g,pos)=>gp[g][model][pos][0];
+  const thirds=groups.map(g=>[g,gp[g][model][2][1]]).sort((a,b)=>b[1]-a[1]).slice(0,8).map(x=>x[0]);
+  const assign=bkThirdMatch(thirds);
+  const strong=bkStrong(metric);
+  const M={}, W={};
+  for(const [code,la,lb] of BK_R32){
+    const resolve=(lab)=>{ if(lab==='3'){const g=assign[code]; return g?[st(g,2),'3º '+g]:['?','3º'];}
+      return [st(lab[1],(+lab[0])-1), lab]; };
+    const [a,sa]=resolve(la),[b,sb]=resolve(lb); const w=strong(a,b);
+    M[code]={a,b,sa,sb,w}; W[code]=w;
+  }
+  for(const [code,fa,fb] of BK_NEXT){ const a=W[fa],b=W[fb],w=strong(a,b); M[code]={a,b,sa:'',sb:'',w}; W[code]=w; }
+  const fm=M['M104']; const ru=(W['M104']===fm.a)?fm.b:fm.a;
+  return {champion:W['M104'],runnerup:ru,matches:M};
+}
+function bkCard(B,model,code,isFinal,prov){
+  const m=B.matches[code], c=BK_COL[model], isR32=BK_R32C.indexOf(code)>=0;
+  const row=(team,seed,win)=>{
+    const sd=(isR32&&seed)?'<span class="bk-seed">'+seed+'</span>':'';
+    const ws=win?(isFinal?'style="background:rgba(255,255,255,.16);color:#ffd84d"':'style="background:'+c+'18;color:'+c+'"'):'';
+    return '<div class="bk-team '+(win?'w':'')+'" '+ws+'>'+sd+'<span class="bk-nm">'+tf(team)+'</span></div>';
+  };
+  const cs=isFinal?'':'style="background:'+(prov?'var(--range)':c)+'"';
+  return '<div class="bk-match '+(isFinal?'bk-fmatch':'')+(prov?' prov':'')+'" title="'+code+'"><div class="bk-code" '+cs+'>'+code+'</div>'+row(m.a,m.sa,m.w===m.a)+row(m.b,m.sb,m.w===m.b)+'</div>';
+}
+function bkCols(B,model,side){
+  let h='';
+  for(const [key,codes] of BK_LAYOUT[side]){
+    const prov=key!=='R32', name=BK_RNAME[key][LANG==='en'?1:0];
+    const hc=prov?'var(--muted)':BK_COL[model];
+    const tag=prov?' <span style="font-weight:600;opacity:.85">· '+tx('prov.','prov.')+'</span>':'';
+    let cards=''; for(const code of codes) cards+=bkCard(B,model,code,false,prov);
+    h+='<div class="bk-col"><div class="bk-rhead" style="color:'+hc+'">'+name+tag+'</div>'+cards+'</div>';
+  }
+  return h;
+}
+/* ---- standings reales por grupo (desde resultados oficiales) ---- */
+function bkStandings(){
+  const res=REAL_RESULTS||[], G=DATA.groups, out={};
+  for(const g of Object.keys(G)){
+    const tbl={}; G[g].forEach(t=>tbl[t]={t,pts:0,gf:0,ga:0});
+    let played=0;
+    for(const r of res){
+      if(r.grupo!==g||r.ga==null||r.gb==null||!tbl[r.a]||!tbl[r.b]) continue;
+      played++; tbl[r.a].gf+=r.ga; tbl[r.a].ga+=r.gb; tbl[r.b].gf+=r.gb; tbl[r.b].ga+=r.ga;
+      if(r.ga>r.gb) tbl[r.a].pts+=3; else if(r.ga<r.gb) tbl[r.b].pts+=3; else {tbl[r.a].pts++; tbl[r.b].pts++;}
+    }
+    const rows=Object.values(tbl).sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf);
+    out[g]={rows,complete:played>=6};
+  }
+  return out;
+}
+/* ---- puntaje estructural (1º=3, 2º=2, 3º=2 si entra entre los 8 mejores, orden completo +2) ---- */
+function bkStructural(){
+  const stand=bkStandings(), gp=DATA.group_proj, groups=Object.keys(gp).sort();
+  const complete=groups.filter(g=>stand[g].complete);
+  const scores={}; BK_MODELS.forEach(m=>scores[m]=0);
+  let best8=null;
+  if(complete.length===groups.length){
+    const thirds=groups.map(g=>({g,r:stand[g].rows[2]})).map(o=>({g:o.g,t:o.r.t,pts:o.r.pts,gd:o.r.gf-o.r.ga,gf:o.r.gf}))
+      .sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf);
+    best8=new Set(thirds.slice(0,8).map(o=>o.t));
+  }
+  for(const g of complete){
+    const real=stand[g].rows.map(r=>r.t);
+    for(const m of BK_MODELS){
+      const pred=gp[g][m].map(x=>x[0]); let s=0;
+      if(pred[0]===real[0]) s+=3;
+      if(pred[1]===real[1]) s+=2;
+      if(pred[2]===real[2] && (best8===null || best8.has(real[2]))) s+=2;
+      if(pred[0]===real[0]&&pred[1]===real[1]&&pred[2]===real[2]) s+=2;
+      scores[m]+=s;
+    }
+  }
+  return {scores,done:complete.length,total:groups.length};
+}
+function bkStructuralHTML(){
+  const S=bkStructural();
+  const rules='<div class="strb-rules">'+
+    '<span class="strb-rule">'+tx('1º del grupo','Group 1st')+': +3</span>'+
+    '<span class="strb-rule">'+tx('2º','2nd')+': +2</span>'+
+    '<span class="strb-rule">'+tx('3º (entre los 8 mejores)','3rd (among best 8)')+': +2</span>'+
+    '<span class="strb-rule">'+tx('orden 1-2-3 completo','full 1-2-3 order')+': +2</span></div>';
+  let body;
+  if(S.done<S.total){
+    const pct=Math.round(100*S.done/S.total);
+    body='<div class="strb-pend"><div class="big">⏳</div>'+
+      tx('Se activa al cerrar la fase de grupos (27 jun). Aquí se puntuará a cada IA por <b>acertar el orden final de cada grupo</b>, comparado con los resultados oficiales.',
+         'Activates when the group stage ends (Jun 27). Each AI will be scored for <b>correctly predicting each group\'s final order</b> against the official results.')+
+      '<div class="strb-prog"><span style="width:'+pct+'%"></span></div>'+
+      '<div style="font-size:12px;margin-top:4px">'+tx('Grupos definidos','Groups decided')+': '+S.done+'/'+S.total+'</div></div>';
+  } else {
+    const ord=BK_MODELS.slice().sort((a,b)=>S.scores[b]-S.scores[a]);
+    body=ord.map((m,i)=>'<div class="strb-row"><div class="strb-rank">'+(i+1)+'</div>'+
+      '<div class="strb-name"><span class="dot" style="background:'+BK_COL[m]+'"></span>'+m+'</div>'+
+      '<div class="strb-pts" style="color:'+BK_COL[m]+'">'+S.scores[m]+'</div></div>').join('');
+  }
+  return '<div class="strb"><h3>📐 '+tx('Predicción estructural','Structural prediction')+'</h3>'+
+    '<p class="desc">'+tx('Tablero separado del «Mundial de las IAs». Mide qué tan bien cada IA anticipó el <b>orden de los grupos</b> (no los marcadores sueltos).',
+        'A board separate from the «AI World Cup». It measures how well each AI anticipated the <b>group order</b> (not individual scorelines).')+'</p>'+
+    rules+body+'</div>';
+}
+function renderBracket(){
+  const host=document.getElementById('bracket'); if(!host) return;
+  const model=BK_CUR, c=BK_COL[model], metric=BK_METRIC, B=bkBuild(model,metric);
+  const metricName = metric==='fifa' ? tx('Ranking FIFA','FIFA Ranking') : 'Elo';
+  const tabs='<div class="bk-seltabs">'+BK_MODELS.map(m=>
+    '<button class="bk-seltab '+(m===model?'on':'')+'" '+(m===model?'style="background:'+BK_COL[m]+'"':'')+' data-bk="'+m+'"><span class="dot" style="background:'+BK_COL[m]+'"></span>'+m+'</button>').join('')+'</div>';
+  const mtoggle='<div class="bk-metric"><span class="bk-metric-lbl">'+tx('Métrica de avance','Advancement metric')+':</span>'+
+    '<button class="bk-mbtn '+(metric==='elo'?'on':'')+'" data-metric="elo">Elo</button>'+
+    '<button class="bk-mbtn '+(metric==='fifa'?'on':'')+'" data-metric="fifa">'+tx('Ranking FIFA','FIFA Ranking')+'</button>'+
+    '<span class="bk-metric-note">⚠️ '+tx('No es predicción: solo muestra quién <b>avanzaría según ese ranking</b>, sin los demás factores que las IAs decidirán tras el 27 jun.',
+       'Not a prediction: it only shows who <b>would advance per that ranking</b>, without the other factors the AIs will weigh after Jun 27.')+'</span></div>';
+  const champ='<div class="bk-champ" style="background:linear-gradient(135deg,#041c59,'+c+' 78%)">'+
+    '<span class="cup">🏆</span><div><div class="lbl">'+tx('Campeón proyectado','Projected champion')+' · '+model+' · '+metricName+'</div>'+
+    '<div class="nm">'+tf(B.champion)+'</div><div class="ru">'+tx('Subcampeón','Runner-up')+': '+tf(B.runnerup)+'</div></div></div>';
+  const advText = metric==='fifa'
+    ? tx('aún no las predicen las IAs. Aquí avanza la selección <b>mejor ubicada en el Ranking FIFA</b> (oficial, 11 jun). Es solo el ranking, no una predicción de cada IA.',
+         'not yet predicted by the AIs. Here the team <b>higher in the FIFA Ranking</b> (official, 11 Jun) advances. It is just the ranking, not each AI\'s prediction.')
+    : tx('aún no las predicen las IAs. Se rellenan por <b>Elo</b> — un número que mide la fuerza de cada selección según su historial; avanza el de mayor Elo. Es solo una estimación de fuerza, no una predicción de cada IA.',
+         'not yet predicted by the AIs. They are filled by <b>Elo</b> — a number rating each team\'s strength from its track record; the higher-Elo team advances. It is only a strength estimate, not each AI\'s prediction.');
+  const elobox='<div class="bk-elobox"><b>'+tx('Ronda de 32','Round of 32')+':</b> '+
+    tx('predicción firme de cada IA — sale de su orden de grupos proyectado y sus 8 mejores terceros (por puntos esperados).',
+       'each AI\'s firm prediction — from its projected group order and its 8 best third-placed teams (by expected points).')+
+    '<br><b>'+tx('Octavos → Final','Round of 16 → Final')+':</b> '+advText+
+    '<br>📌 <b>'+tx('Importante','Important')+':</b> '+
+    tx('cuando termine el último partido de la fase de grupos (27 jun), cada IA volverá a pronosticar estas fases con marcadores reales, y el bracket se actualizará con sus predicciones.',
+       'once the last group match is played (Jun 27), each AI will re-forecast these rounds with real scores, and the bracket will update with their predictions.')+
+    '<br><span style="font-size:11.5px;opacity:.85">🔎 '+
+    tx('El <b>Elo</b> (eloratings.net, previo al Mundial) y el <b>Ranking FIFA</b> (oficial, 11 jun) son sistemas distintos: por Elo, España es nº1; por FIFA, Argentina es nº1. Cambia la métrica arriba para comparar. Para predecir partidos, el Elo suele ser más fiable.',
+       'Both <b>Elo</b> (eloratings.net, pre-tournament) and the <b>FIFA Ranking</b> (official, 11 Jun) are different systems: by Elo, Spain is no.1; by FIFA, Argentina is no.1. Switch the metric above to compare. For match prediction, Elo tends to be more reliable.')+'</span></div>';
+  const fm=bkCard(B,model,'M104',true,false);
+  const board='<div class="bk-scroll"><div class="bk-board">'+
+    '<div class="bk-side">'+bkCols(B,model,'left')+'</div>'+
+    '<div class="bk-final"><div class="bk-rhead" style="color:var(--deep-blue)">'+tx('Final','Final')+'</div>'+fm+'</div>'+
+    '<div class="bk-side" style="flex-direction:row-reverse">'+bkCols(B,model,'right')+'</div></div></div>';
+  const legend='<div class="bk-legend">'+tx('Resaltado = avanza según ','Highlighted = advances per ')+metricName+
+    tx('. Etiquetas (1A, 2B, 3º X) = origen del clasificado. Desliza horizontalmente para ver todo el bracket.',
+       '. Labels (1A, 2B, 3rd X) = the qualifier\'s origin. Scroll horizontally to see the full bracket.')+'</div>';
+  const note='<p class="bk-note"><b>'+tx('Es una proyección, no el bracket oficial.','It is a projection, not the official bracket.')+'</b> '+
+    tx('La asignación de los terceros sigue una matriz oficial FIFA de 495 combinaciones; aquí se usa una asignación válida que respeta los grupos elegibles de cada casilla y puede diferir de la oficial en algún caso.',
+       'The third-placed allocation follows an official FIFA matrix of 495 combinations; here a valid assignment is used that respects each slot\'s eligible groups and may differ from the official one in some cases.')+'</p>';
+  host.innerHTML=bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
+  const sel=host.querySelector('.bk-seltabs');
+  if(sel) sel.addEventListener('click',e=>{const b=e.target.closest('[data-bk]'); if(!b)return; BK_CUR=b.dataset.bk; renderBracket(); gaEvent('bracket_model',{model:BK_CUR});});
+  const mt=host.querySelector('.bk-metric');
+  if(mt) mt.addEventListener('click',e=>{const b=e.target.closest('[data-metric]'); if(!b)return; BK_METRIC=b.dataset.metric; renderBracket(); gaEvent('bracket_metric',{metric:BK_METRIC});});
+}
+
 /* ============ TABS ============ */
 function goTab(id){
   const b=document.querySelector('.tab[data-t="'+id+'"]'); if(!b)return;
@@ -1209,7 +1454,7 @@ function applyLang(lang){
     el.innerHTML = lang==='en' ? el.getAttribute('data-en') : el._es;
   });
   document.querySelectorAll('#langSeg .seg-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
-  renderConsenso(); renderClaude(); renderChatGPT(); renderGemini(); renderAccuracy();
+  renderConsenso(); renderClaude(); renderChatGPT(); renderGemini(); renderAccuracy(); renderBracket();
   try{localStorage.setItem('jf_lang',lang)}catch(e){}
 }
 document.querySelectorAll('#langSeg .seg-btn').forEach(b=>b.addEventListener('click',()=>{applyLang(b.dataset.lang); gaEvent('toggle_language',{language:b.dataset.lang}); setupScorersTracking();}));

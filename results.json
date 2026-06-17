@@ -1,5 +1,5 @@
 {
- "updated": "2026-06-17",
+ "updated": "2026-06-14",
  "note": "Marcadores oficiales FIFA. ga=goles equipo A, gb=goles equipo B. null = aún no jugado.",
  "results": [
   {
@@ -104,8 +104,8 @@
    "fecha": "Jun 14",
    "a": "Alemania",
    "b": "Curazao",
-   "ga": 7,
-   "gb": 1,
+   "ga": null,
+   "gb": null,
    "iso": "2026-06-14",
    "kickoff": "2026-06-14T12:00:00-05:00",
    "venue": "Houston"
@@ -116,8 +116,8 @@
    "fecha": "Jun 14",
    "a": "Costa de Marfil",
    "b": "Ecuador",
-   "ga": 1,
-   "gb": 0,
+   "ga": null,
+   "gb": null,
    "iso": "2026-06-14",
    "kickoff": "2026-06-14T19:00:00-04:00",
    "venue": "Philadelphia"
@@ -128,8 +128,8 @@
    "fecha": "Jun 14",
    "a": "Países Bajos",
    "b": "Japón",
-   "ga": 2,
-   "gb": 2,
+   "ga": null,
+   "gb": null,
    "iso": "2026-06-14",
    "kickoff": "2026-06-14T15:00:00-05:00",
    "venue": "Dallas (Arlington)"
@@ -140,8 +140,8 @@
    "fecha": "Jun 14",
    "a": "Suecia",
    "b": "Túnez",
-   "ga": 5,
-   "gb": 1,
+   "ga": null,
+   "gb": null,
    "iso": "2026-06-14",
    "kickoff": "2026-06-14T20:00:00-06:00",
    "venue": "Monterrey (Guadalupe)"
@@ -152,8 +152,8 @@
    "fecha": "Jun 15",
    "a": "Bélgica",
    "b": "Egipto",
-   "ga": 1,
-   "gb": 1,
+   "ga": null,
+   "gb": null,
    "iso": "2026-06-15",
    "kickoff": "2026-06-15T12:00:00-07:00",
    "venue": "Seattle"
@@ -164,8 +164,8 @@
    "fecha": "Jun 15",
    "a": "Irán",
    "b": "Nueva Zelanda",
-   "ga": 2,
-   "gb": 2,
+   "ga": null,
+   "gb": null,
    "iso": "2026-06-15",
    "kickoff": "2026-06-15T18:00:00-07:00",
    "venue": "Los Angeles (Inglewood)"
@@ -176,8 +176,8 @@
    "fecha": "Jun 15",
    "a": "Arabia Saudí",
    "b": "Uruguay",
-   "ga": 1,
-   "gb": 1,
+   "ga": null,
+   "gb": null,
    "iso": "2026-06-15",
    "kickoff": "2026-06-15T18:00:00-04:00",
    "venue": "Miami (Miami Gardens)"
@@ -188,8 +188,8 @@
    "fecha": "Jun 15",
    "a": "España",
    "b": "Cabo Verde",
-   "ga": 0,
-   "gb": 0,
+   "ga": null,
+   "gb": null,
    "iso": "2026-06-15",
    "kickoff": "2026-06-15T12:00:00-04:00",
    "venue": "Atlanta"
@@ -200,8 +200,8 @@
    "fecha": "Jun 16",
    "a": "Francia",
    "b": "Senegal",
-   "ga": 3,
-   "gb": 1,
+   "ga": null,
+   "gb": null,
    "iso": "2026-06-16",
    "kickoff": "2026-06-16T15:00:00-04:00",
    "venue": "New York/New Jersey (East Rutherford)"
@@ -212,8 +212,8 @@
    "fecha": "Jun 16",
    "a": "Iraq",
    "b": "Noruega",
-   "ga": 1,
-   "gb": 4,
+   "ga": null,
+   "gb": null,
    "iso": "2026-06-16",
    "kickoff": "2026-06-16T18:00:00-04:00",
    "venue": "Boston (Foxborough)"
