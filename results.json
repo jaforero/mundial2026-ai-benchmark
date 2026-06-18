@@ -1,5 +1,5 @@
 {
- "updated": "2026-06-17",
+ "updated": "2026-06-18",
  "note": "Marcadores oficiales FIFA. ga=goles equipo A, gb=goles equipo B. null = aún no jugado.",
  "results": [
   {
@@ -260,8 +260,8 @@
    "fecha": "Jun 17",
    "a": "Uzbekistán",
    "b": "Colombia",
-   "ga": null,
-   "gb": null,
+   "ga": 1,
+   "gb": 3,
    "iso": "2026-06-17",
    "kickoff": "2026-06-17T20:00:00-06:00",
    "venue": "Mexico City"
@@ -272,8 +272,8 @@
    "fecha": "Jun 17",
    "a": "Ghana",
    "b": "Panamá",
-   "ga": null,
-   "gb": null,
+   "ga": 1,
+   "gb": 0,
    "iso": "2026-06-17",
    "kickoff": "2026-06-17T19:00:00-04:00",
    "venue": "Toronto"
