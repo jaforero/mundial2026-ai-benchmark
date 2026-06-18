@@ -320,8 +320,8 @@
    "fecha": "Jun 18",
    "a": "Bosnia",
    "b": "Suiza",
-   "ga": null,
-   "gb": null,
+   "ga": 1,
+   "gb": 4,
    "iso": "2026-06-18",
    "kickoff": "2026-06-18T12:00:00-07:00",
    "venue": "Los Angeles (Inglewood)"
