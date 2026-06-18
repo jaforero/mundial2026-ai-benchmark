@@ -308,8 +308,8 @@
    "fecha": "Jun 18",
    "a": "Sudáfrica",
    "b": "Chequia",
-   "ga": null,
-   "gb": null,
+   "ga": 1,
+   "gb": 1,
    "iso": "2026-06-18",
    "kickoff": "2026-06-18T12:00:00-04:00",
    "venue": "Atlanta"
