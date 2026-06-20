@@ -380,8 +380,8 @@
    "fecha": "Jun 19",
    "a": "Paraguay",
    "b": "Türkiye",
-   "ga": null,
-   "gb": null,
+   "ga": 1,
+   "gb": 0,
    "iso": "2026-06-19",
    "kickoff": "2026-06-19T20:00:00-07:00",
    "venue": "San Francisco Bay Area (Santa Clara)"
