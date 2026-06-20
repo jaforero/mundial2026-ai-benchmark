@@ -1,5 +1,5 @@
 {
- "updated": "2026-06-19",
+ "updated": "2026-06-20",
  "note": "Marcadores oficiales FIFA. ga=goles equipo A, gb=goles equipo B. null = aún no jugado.",
  "results": [
   {
@@ -356,8 +356,8 @@
    "fecha": "Jun 19",
    "a": "Marruecos",
    "b": "Escocia",
-   "ga": null,
-   "gb": null,
+   "ga": 1,
+   "gb": 0,
    "iso": "2026-06-19",
    "kickoff": "2026-06-19T18:00:00-04:00",
    "venue": "Boston (Foxborough)"
