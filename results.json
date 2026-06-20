@@ -428,8 +428,8 @@
    "fecha": "Jun 20",
    "a": "Países Bajos",
    "b": "Suecia",
-   "ga": null,
-   "gb": null,
+   "ga": 5,
+   "gb": 1,
    "iso": "2026-06-20",
    "kickoff": "2026-06-20T12:00:00-05:00",
    "venue": "Houston"
