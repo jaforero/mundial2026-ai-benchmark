@@ -440,8 +440,8 @@
    "fecha": "Jun 21",
    "a": "Bélgica",
    "b": "Irán",
-   "ga": null,
-   "gb": null,
+   "ga": 0,
+   "gb": 0,
    "iso": "2026-06-21",
    "kickoff": "2026-06-21T12:00:00-07:00",
    "venue": "Los Angeles (Inglewood)"
