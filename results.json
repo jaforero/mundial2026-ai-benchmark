@@ -1,5 +1,5 @@
 {
- "updated": "2026-06-20",
+ "updated": "2026-06-21",
  "note": "Marcadores oficiales FIFA. ga=goles equipo A, gb=goles equipo B. null = aún no jugado.",
  "results": [
   {
@@ -404,8 +404,8 @@
    "fecha": "Jun 20",
    "a": "Curazao",
    "b": "Ecuador",
-   "ga": null,
-   "gb": null,
+   "ga": 0,
+   "gb": 0,
    "iso": "2026-06-20",
    "kickoff": "2026-06-20T19:00:00-05:00",
    "venue": "Kansas City"
