@@ -416,8 +416,8 @@
    "fecha": "Jun 20",
    "a": "Japón",
    "b": "Túnez",
-   "ga": null,
-   "gb": null,
+   "ga": 4,
+   "gb": 0,
    "iso": "2026-06-20",
    "kickoff": "2026-06-20T22:00:00-06:00",
    "venue": "Monterrey (Guadalupe)"
