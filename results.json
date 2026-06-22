@@ -452,8 +452,8 @@
    "fecha": "Jun 21",
    "a": "Egipto",
    "b": "Nueva Zelanda",
-   "ga": null,
-   "gb": null,
+   "ga": 3,
+   "gb": 1,
    "iso": "2026-06-21",
    "kickoff": "2026-06-21T18:00:00-07:00",
    "venue": "Vancouver"
