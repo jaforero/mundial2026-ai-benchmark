@@ -1,5 +1,5 @@
 {
- "updated": "2026-06-21",
+ "updated": "2026-06-22",
  "note": "Marcadores oficiales FIFA. ga=goles equipo A, gb=goles equipo B. null = aún no jugado.",
  "results": [
   {
@@ -464,8 +464,8 @@
    "fecha": "Jun 21",
    "a": "Cabo Verde",
    "b": "Uruguay",
-   "ga": null,
-   "gb": null,
+   "ga": 2,
+   "gb": 2,
    "iso": "2026-06-21",
    "kickoff": "2026-06-21T18:00:00-04:00",
    "venue": "Miami (Miami Gardens)"
