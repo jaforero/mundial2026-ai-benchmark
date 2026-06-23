@@ -572,8 +572,8 @@
    "fecha": "Jun 23",
    "a": "Inglaterra",
    "b": "Ghana",
-   "ga": null,
-   "gb": null,
+   "ga": 0,
+   "gb": 0,
    "iso": "2026-06-23",
    "kickoff": "2026-06-23T16:00:00-04:00",
    "venue": "Boston (Foxborough)"
