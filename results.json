@@ -500,8 +500,8 @@
    "fecha": "Jun 22",
    "a": "Senegal",
    "b": "Noruega",
-   "ga": null,
-   "gb": null,
+   "ga": 2,
+   "gb": 3,
    "iso": "2026-06-22",
    "kickoff": "2026-06-22T20:00:00-04:00",
    "venue": "New York/New Jersey (East Rutherford)"
@@ -512,8 +512,8 @@
    "fecha": "Jun 22",
    "a": "Argelia",
    "b": "Jordania",
-   "ga": null,
-   "gb": null,
+   "ga": 2,
+   "gb": 1,
    "iso": "2026-06-22",
    "kickoff": "2026-06-22T20:00:00-07:00",
    "venue": "San Francisco Bay Area (Santa Clara)"
