@@ -608,8 +608,8 @@
    "fecha": "Jun 24",
    "a": "Bosnia",
    "b": "Qatar",
-   "ga": null,
-   "gb": null,
+   "ga": 3,
+   "gb": 1,
    "iso": "2026-06-24",
    "kickoff": "2026-06-24T12:00:00-07:00",
    "venue": "Seattle"
@@ -620,8 +620,8 @@
    "fecha": "Jun 24",
    "a": "Canadá",
    "b": "Suiza",
-   "ga": null,
-   "gb": null,
+   "ga": 1,
+   "gb": 2,
    "iso": "2026-06-24",
    "kickoff": "2026-06-24T12:00:00-07:00",
    "venue": "Vancouver"
