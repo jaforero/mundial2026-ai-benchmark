@@ -680,8 +680,8 @@
    "fecha": "Jun 25",
    "a": "Alemania",
    "b": "Ecuador",
-   "ga": null,
-   "gb": null,
+   "ga": 1,
+   "gb": 2,
    "iso": "2026-06-25",
    "kickoff": "2026-06-25T16:00:00-04:00",
    "venue": "New York/New Jersey (East Rutherford)"
@@ -692,8 +692,8 @@
    "fecha": "Jun 25",
    "a": "Curazao",
    "b": "Costa de Marfil",
-   "ga": null,
-   "gb": null,
+   "ga": 0,
+   "gb": 2,
    "iso": "2026-06-25",
    "kickoff": "2026-06-25T16:00:00-04:00",
    "venue": "Philadelphia"
