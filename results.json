@@ -776,8 +776,8 @@
    "fecha": "Jun 26",
    "a": "Francia",
    "b": "Noruega",
-   "ga": null,
-   "gb": null,
+   "ga": 4,
+   "gb": 1,
    "iso": "2026-06-26",
    "kickoff": "2026-06-26T15:00:00-04:00",
    "venue": "Boston (Foxborough)"
