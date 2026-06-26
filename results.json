@@ -656,8 +656,8 @@
    "fecha": "Jun 25",
    "a": "Estados Unidos",
    "b": "Türkiye",
-   "ga": null,
-   "gb": null,
+   "ga": 2,
+   "gb": 3,
    "iso": "2026-06-25",
    "kickoff": "2026-06-25T19:00:00-07:00",
    "venue": "Los Angeles (Inglewood)"
@@ -668,8 +668,8 @@
    "fecha": "Jun 25",
    "a": "Paraguay",
    "b": "Australia",
-   "ga": null,
-   "gb": null,
+   "ga": 0,
+   "gb": 0,
    "iso": "2026-06-25",
    "kickoff": "2026-06-25T19:00:00-07:00",
    "venue": "San Francisco Bay Area (Santa Clara)"
