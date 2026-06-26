@@ -788,8 +788,8 @@
    "fecha": "Jun 26",
    "a": "Senegal",
    "b": "Iraq",
-   "ga": null,
-   "gb": null,
+   "ga": 5,
+   "gb": 0,
    "iso": "2026-06-26",
    "kickoff": "2026-06-26T15:00:00-04:00",
    "venue": "Toronto"
