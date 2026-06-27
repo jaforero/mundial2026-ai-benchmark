@@ -848,8 +848,8 @@
    "fecha": "Jun 27",
    "a": "Croacia",
    "b": "Ghana",
-   "ga": null,
-   "gb": null,
+   "ga": 2,
+   "gb": 1,
    "iso": "2026-06-27",
    "kickoff": "2026-06-27T17:00:00-04:00",
    "venue": "Philadelphia"
@@ -860,8 +860,8 @@
    "fecha": "Jun 27",
    "a": "Inglaterra",
    "b": "Panamá",
-   "ga": null,
-   "gb": null,
+   "ga": 2,
+   "gb": 0,
    "iso": "2026-06-27",
    "kickoff": "2026-06-27T17:00:00-04:00",
    "venue": "New York/New Jersey (East Rutherford)"
