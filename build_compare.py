@@ -1132,6 +1132,68 @@ function computeAccuracy(){
   });
   return {played, agg, rows, total:(REAL_RESULTS||[]).length};
 }
+// posiciones de grupo: orden ORIGINAL predicho (group_proj) vs orden real final (DATA.real_standings)
+// 3 pts por clasificado (1º/2º) en posición exacta, 1 pt por no-clasificado (3º/4º) en posición exacta
+function computeStandings(){
+  const RS=DATA.real_standings||{}, W=[3,3,1,1];
+  const agg={}; ACC_MODELS.forEach(m=>agg[m.key]={pts:0,pos:0,win:0,qual:0,groups:0});
+  Object.keys(RS).forEach(g=>{
+    const real=RS[g], gpg=DATA.group_proj[g]; if(!real||!gpg) return;
+    ACC_MODELS.forEach(m=>{
+      const proj=gpg[m.name]; if(!proj) return;
+      const pred=proj.map(x=>x[0]), A=agg[m.key]; A.groups++;
+      for(let i=0;i<4;i++){ if(pred[i]===real[i]){A.pts+=W[i]; A.pos++; if(i===0)A.win++;} }
+      if(pred[0]===real[0]&&pred[1]===real[1]) A.qual++;
+    });
+  });
+  return agg;
+}
+// === ELIMINATORIAS: clasificado (3) + marcador 90' exacto (2) / resultado (1) — máx 5/llave ===
+const KO_FIELD={consenso:'cons',claude:'pred',chatgpt:'cg',gemini:'gm'};
+function computeKO(){
+  const KR=DATA.ko_real||[], RES=DATA.ko_results||[];
+  const real={}; RES.forEach(r=>{ if(r&&r.code&&r.ga!=null&&r.gb!=null) real[r.code]=r; });
+  const agg={}; ACC_MODELS.forEach(m=>agg[m.key]={pts:0,qual:0,exact:0,res:0,n:0});
+  const rows=[];
+  KR.forEach(s=>{
+    const r=real[s.code]; if(!r) return;
+    const realSc=r.ga+'-'+r.gb, realSign=Math.sign(r.ga-r.gb), rw=r.winner;
+    const row={code:s.code,a:s.a,b:s.b,real:realSc,rw};
+    ACC_MODELS.forEach(m=>{
+      const p=s[KO_FIELD[m.key]]; if(!p){row[m.key]=null;return;}
+      const A=agg[m.key]; A.n++;
+      let qp=0,sp=0;
+      if(p.winner===rw){qp=3;A.qual++;}
+      const pr=(p.sc90||'').split('-'), pa=parseInt(pr[0],10), pb=parseInt(pr[1],10);
+      if(p.sc90===realSc){sp=2;A.exact++;}
+      else if(!isNaN(pa)&&Math.sign(pa-pb)===realSign){sp=1;A.res++;}
+      A.pts+=qp+sp;
+      row[m.key]={sc:p.sc90,w:p.winner,qp,sp,tot:qp+sp};
+    });
+    rows.push(row);
+  });
+  return {agg,rows,played:Object.keys(real).length,total:KR.length};
+}
+function koScoreHTML(){
+  const {agg,rows,played,total}=computeKO();
+  const head=`<div class="acc-hero" style="margin-top:18px"><h2>🥊 ${tx('Eliminatorias · predicción vs realidad','Knockouts · prediction vs reality')}</h2>
+    <p>${tx('Dieciseisavos en adelante. Cada IA suma por <b>acertar el clasificado</b> (3 pts) y por el <b>marcador a 90′</b>: exacto (2 pts) o solo el resultado —gana/empata/pierde— aunque falle el marcador (1 pt). Máximo 5 pts por llave.','From the Round of 32 onward. Each AI scores for <b>the correct qualifier</b> (3 pts) and the <b>90-minute score</b>: exact (2 pts) or just the outcome (1 pt). Max 5 pts per tie.')}</p></div>`;
+  if(played===0){
+    return head+`<div class="acc-empty"><div class="big">⚽</div>${tx('Aún no se juegan los dieciseisavos. Este tablero se activa solo con el primer resultado oficial, comparando las predicciones ya congeladas de las cuatro contendientes (las 3 IAs y el consenso).','The Round of 32 has not started. This board activates with the first official result, comparing the already-frozen predictions of the four contenders (the 3 AIs and the consensus).')}</div>`;
+  }
+  const medals=['🥇','🥈','🥉',''];
+  const board=ACC_MODELS.map(m=>({...m,...agg[m.key]})).filter(x=>x.n>0).sort((a,b)=>b.pts-a.pts||b.qual-a.qual||b.exact-a.exact);
+  const cards=board.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}"><div class="rank">${medals[i]||''}</div><div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.pts}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.qual}/${x.n}</b>${tx('clasificados','qualifiers')}</span><span><b>${x.exact}</b>${tx('exactos','exact')}</span></div></div>`).join('');
+  const cell=(r,k)=>{const c=r[k];if(!c)return '<span style="color:var(--muted)">—</span>';const ic=c.qp===3?(c.sp===2?'★':(c.sp===1?'✓':'◓')):(c.sp>=1?'◐':'✗');return `${tf(c.w)} ${c.sc} <b>${ic}${c.tot}</b>`;};
+  const tr=rows.map(r=>`<div style="border-top:1px solid var(--border);padding:8px 2px;font-size:12px">
+    <div style="font-weight:700;margin-bottom:3px">${r.code} · ${tf(r.a)}–${tf(r.b)} <span style="color:var(--purple)">${tx('real','real')}: ${tf(r.rw)} ${r.real}</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 10px">
+      <span style="color:var(--c-claude)">Claude: ${cell(r,'claude')}</span><span style="color:var(--c-chatgpt)">ChatGPT: ${cell(r,'chatgpt')}</span>
+      <span style="color:var(--c-gemini)">Gemini: ${cell(r,'gemini')}</span><span style="color:var(--c-cons)">Consenso: ${cell(r,'consenso')}</span></div></div>`).join('');
+  return head+`<div class="acc-progress"><div class="track"><div class="fill" style="width:${Math.round(100*played/total)}%"></div></div><div class="lbl">${played}/${total} ${tx('llaves jugadas','ties played')}</div></div>
+    <div class="lb-grid">${cards}</div>
+    <div style="font-size:11px;color:var(--muted);margin:6px 2px">★ ${tx('clasificado + marcador exacto','qualifier + exact')} (5) · ✓ ${tx('clasificado + resultado','qualifier + outcome')} (4) · ◓ ${tx('solo clasificado','qualifier only')} (3) · ◐ ${tx('solo marcador/resultado','score/outcome only')} · ✗ ${tx('fallo','miss')}</div>${tr}`;
+}
 function renderAccuracy(){
   const host=document.getElementById('precision'); if(!host) return;
   if(REAL_RESULTS===null){ host.innerHTML=`<div class="acc-empty"><div class="big">⏳</div>${tx('Cargando resultados oficiales…','Loading official results…')}</div>`; return; }
@@ -1182,6 +1244,18 @@ function renderAccuracy(){
       <div class="preds-head"><div style="color:${COL.Claude}">Claude</div><div style="color:${COL.ChatGPT}">ChatGPT</div><div style="color:${COL.Gemini}">Gemini</div><div style="color:${COL.Consenso}">Consenso</div></div>
     </div>
     <div class="h2h-table">${tableRows}</div>`;
+  // === paneles nuevos: posiciones de grupo + ranking consolidado ===
+  const sAgg=computeStandings();
+  const nClosed=Object.keys(DATA.real_standings||{}).filter(g=>DATA.group_proj[g]).length;
+  let standingsBlock='', combinedBlock='';
+  if(nClosed>0){
+    const sBoard=ACC_MODELS.map(m=>({...m,...sAgg[m.key]})).sort((a,b)=>b.pts-a.pts||b.win-a.win);
+    const sCards=sBoard.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}"><div class="rank">${medals[i]||''}</div><div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.pts}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.win}/${x.groups}</b>${tx('1ºs de grupo','group winners')}</span><span><b>${x.pos}/${x.groups*4}</b>${tx('posiciones','positions')}</span></div></div>`).join('');
+    standingsBlock=`<div class="acc-hero" style="margin-top:18px"><h2>📊 ${tx('Aciertos de posiciones de grupo','Group standings accuracy')}</h2><p>${tx('El orden 1º-2º-3º-4º que cada IA pronosticó <b>originalmente</b> se compara con la tabla final real: 3 pts por cada clasificado (1º/2º) en posición exacta y 1 pt por cada no-clasificado. <b>'+nClosed+' grupos cerrados.</b>','The order each AI predicted <b>originally</b> is compared with the real final table: 3 pts per qualifier (1st/2nd) in exact position, 1 pt per non-qualifier. <b>'+nClosed+' groups closed.</b>')}</p></div><div class="lb-grid">${sCards}</div>`;
+    const cBoard=ACC_MODELS.map(m=>({...m,mpts:agg[m.key].pts,spts:sAgg[m.key].pts,tot:agg[m.key].pts+sAgg[m.key].pts})).sort((a,b)=>b.tot-a.tot);
+    const cCards=cBoard.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}"><div class="rank">${medals[i]||''}</div><div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.tot}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.mpts}</b>${tx('partidos','matches')}</span><span><b>${x.spts}</b>${tx('posiciones','positions')}</span></div></div>`).join('');
+    combinedBlock=`<div class="acc-hero" style="margin-top:18px"><h2>🏆 ${tx('Ranking consolidado · gran total','Combined ranking · grand total')}</h2><p>${tx('Suma de los puntos por <b>acertar partidos</b> más los puntos por <b>predecir las posiciones de grupo</b>.','Sum of <b>match accuracy</b> points plus <b>group standings</b> points.')}</p></div><div class="lb-grid">${cCards}</div>`;
+  }
   host.innerHTML=`
     <div class="acc-hero">
       <h2>🏆 ${tx('Mundial de las IAs · predicción vs realidad','AI World Cup · prediction vs reality')}</h2>
@@ -1196,7 +1270,7 @@ function renderAccuracy(){
       <span>✗ <b style="color:#c0392b">${tx('fallo','miss')}</b> (0)</span>
       <span>RPS = ${tx('error probabilístico (menor es mejor)','probabilistic error (lower is better)')}</span>
     </div>
-    ${matchHtml}`;
+    ${standingsBlock}${combinedBlock}${koScoreHTML()}${matchHtml}`;
 }
 const RESULTS_FALLBACK = __RESULTS_FALLBACK__;
 function _normResults(j){ return Array.isArray(j) ? j : (j && j.results ? j.results : []); }
@@ -1275,6 +1349,68 @@ function bkThirdMatch(qual){
     return null;
   }
   return solve(0,new Set(),{})||{};
+}
+function bkR32RealHTML(){
+  const KR=DATA.ko_real||[]; if(!KR.length) return '';
+  const lab=s=>s==='3'?tx('3.º (mejor tercero)','3rd (best third)'):(s[0]+'.º '+s[1]);
+  const tbd=`<span style="color:var(--muted);font-style:italic">${tx('Por definir','TBD')}</span>`;
+  const base='background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;';
+  const card=s=>{
+    if(s.status==='confirmed'){
+      const ps=[['Claude','var(--c-claude)',s.pred],['ChatGPT','var(--c-chatgpt)',s.cg],['Gemini','var(--c-gemini)',s.gm]].filter(x=>x[2]);
+      const ex=q=>(q&&(q.et==='Sí'||q.et==='Yes')?' '+tx('+pró','+ET'):'')+(q&&(q.pens==='Sí'||q.pens==='Yes')?' '+tx('+pen','+pk'):'');
+      const lines=ps.map(([lbl,col,q])=>`<div style="font-size:12px;margin-top:2px"><span style="color:${col};font-weight:800">${lbl}</span> ${q.sc90} → <b>${tf(q.winner)}</b> <span style="color:var(--muted)">${q.conf}%${ex(q)}</span></div>`).join('');
+      const cnt={}; ps.forEach(x=>cnt[x[2].winner]=(cnt[x[2].winner]||0)+1);
+      const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0], unan=top[1]===ps.length;
+      const badge=`<span style="font-size:10px;font-weight:700;color:${unan?'#1a9e5c':'#b58900'}">${unan?'✓ '+tx('los 3 coinciden','all 3 agree'):top[1]+'-'+(ps.length-top[1])+' '+tf(top[0])}</span>`;
+      return `<div style="${base}border-left:4px solid var(--purple)">
+        <div style="font-size:11px;color:var(--purple);font-weight:800;margin-bottom:4px;display:flex;justify-content:space-between;gap:6px">${s.code} · ${tx('CONFIRMADO','CONFIRMED')} ${badge}</div>
+        <div style="font-weight:700;margin-bottom:2px"><b>${tf(s.a)}</b> <span style="color:var(--muted);font-weight:400">vs</span> <b>${tf(s.b)}</b></div>
+        ${lines}</div>`;
+    }
+    const side=(t,sl)=>(t?`<b>${tf(t)}</b>`:tbd)+` <span style="font-size:11px;color:var(--muted)">(${lab(sl)})</span>`;
+    return `<div style="${base}opacity:${s.status==='pending'?0.6:1}">
+      <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:4px">${s.code}</div>
+      <div>${side(s.a,s.sa)} <span style="color:var(--muted)">vs</span> ${side(s.b,s.sb)}</div></div>`;
+  };
+  const nC=KR.filter(s=>s.status==='confirmed').length;
+  return `<div style="margin-bottom:20px">
+    <h3 style="margin:0 0 4px">⚽ ${tx('Dieciseisavos de final · cuadro oficial','Round of 32 · official bracket')} <span style="font-size:13px;color:var(--muted);font-weight:600">(${nC}/16 ${tx('confirmados','confirmed')})</span></h3>
+    <p style="margin:0 0 10px;font-size:13px;color:var(--muted)">${tx('Los 16 cruces oficiales tras el cierre de los 12 grupos. Cada llave compara el pronóstico de las tres IAs (Claude · ChatGPT · Gemini) con el clasificado por consenso. Las tres coinciden en 14 de 16; las únicas divididas son Países Bajos–Marruecos y Australia–Egipto, donde Gemini se separa por su submodelo de penaltis.','The 16 official ties after all 12 groups closed. Each tie compares the three AIs (Claude · ChatGPT · Gemini) with the consensus qualifier. All three agree on 14 of 16; the only splits are Netherlands–Morocco and Australia–Egypt, where Gemini diverges via its penalty submodel.')}</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">${KR.map(card).join('')}</div></div>`;
+}
+function bkR16HTML(){
+  const W=DATA.ko_r32_win||{}; if(!Object.keys(W).length) return '';
+  const base='background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;';
+  const NEXT=[['M89','M74','M77'],['M90','M73','M75'],['M91','M76','M78'],['M92','M79','M80'],
+              ['M93','M83','M84'],['M94','M81','M82'],['M95','M86','M88'],['M96','M85','M87']];
+  const CONF={M73:1,M74:1,M75:1,M76:1,M77:1,M78:1,M79:1,M80:1,M81:1,M82:1,M83:1,M84:1,M85:1,M86:1,M87:1,M88:1};
+  const AIs=[['claude','Claude','var(--c-claude)'],['chatgpt','ChatGPT','var(--c-chatgpt)'],['gemini','Gemini','var(--c-gemini)']];
+  const cards=NEXT.map(([slot,f1,f2])=>{
+    const rows=AIs.map(([k,lbl,col])=>{
+      const w=W[k]||{}, a=w[f1], b=w[f2];
+      const t=(a&&b)?`<b>${tf(a)}</b> <span style="color:var(--muted);font-weight:400">vs</span> <b>${tf(b)}</b>`
+                    :`<span style="color:var(--muted);font-style:italic">${tx('por definir','TBD')}</span>`;
+      return `<div style="font-size:12px;margin-top:2px"><span style="color:${col};font-weight:800">${lbl}</span> ${t}</div>`;
+    }).join('');
+    const sigs=AIs.map(([k])=>{const w=W[k]||{};return (w[f1]&&w[f2])?[w[f1],w[f2]].slice().sort().join(' / '):null}).filter(Boolean);
+    const uniq=[...new Set(sigs)];
+    const flag = sigs.length>=2
+      ? (uniq.length===1?`<span style="font-size:10px;color:#1a9e5c;font-weight:700">✓ ${tx('mismo cruce','same tie')}</span>`
+                        :`<span style="font-size:10px;color:#b58900;font-weight:700">⚠ ${tx('cruces distintos','different ties')}</span>`)
+      : '';
+    const conf=(f1 in CONF)&&(f2 in CONF);
+    return `<div style="${base}border-left:4px solid ${conf?'var(--blue)':'var(--border)'}">
+      <div style="font-size:11px;color:var(--blue);font-weight:800;margin-bottom:2px;display:flex;justify-content:space-between;gap:6px">${slot}${conf?' · '+tx('formable','formable'):''} ${flag}</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${tx('ganador','winner')} ${f1} × ${tx('ganador','winner')} ${f2}</div>
+      ${rows}</div>`;
+  }).join('');
+  const cov=AIs.map(([k,lbl])=>{const w=W[k]||{};const n=NEXT.filter(([s,a,b])=>w[a]&&w[b]).length;return `${lbl} ${n}/8`;}).join(' · ');
+  return `<div style="margin-bottom:20px">
+    <h3 style="margin:0 0 4px">🔗 ${tx('Octavos de final · cruce proyectado por cada IA','Round of 16 · projected tie per AI')}</h3>
+    <p style="margin:0 0 6px;font-size:13px;color:var(--muted)">${tx('Enganche derivado de los <b>ganadores de dieciseisavos</b> de cada IA, independiente de las predicciones de grupos, para trazabilidad completa. Un cruce solo se forma si la IA pronosticó ambos clasificados; si no, queda «por definir».','Hookup derived from the <b>Round-of-32 winners</b> of each AI, independent of the group-stage predictions, for full traceability. A tie forms only if the AI predicted both qualifiers; otherwise it stays TBD.')}</p>
+    <p style="margin:0 0 10px;font-size:12px;color:var(--muted)">${tx('Cobertura','Coverage')}: ${cov}</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">${cards}</div></div>`;
 }
 function bkBuild(model,metric){
   const gp=DATA.group_proj, groups=Object.keys(gp).sort();
@@ -1420,7 +1556,7 @@ function renderBracket(){
   const note='<p class="bk-note"><b>'+tx('Es una proyección, no el bracket oficial.','It is a projection, not the official bracket.')+'</b> '+
     tx('La asignación de los terceros sigue una matriz oficial FIFA de 495 combinaciones; aquí se usa una asignación válida que respeta los grupos elegibles de cada casilla y puede diferir de la oficial en algún caso.',
        'The third-placed allocation follows an official FIFA matrix of 495 combinations; here a valid assignment is used that respects each slot\'s eligible groups and may differ from the official one in some cases.')+'</p>';
-  host.innerHTML=bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
+  host.innerHTML=bkR32RealHTML()+bkR16HTML()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
   const sel=host.querySelector('.bk-seltabs');
   if(sel) sel.addEventListener('click',e=>{const b=e.target.closest('[data-bk]'); if(!b)return; BK_CUR=b.dataset.bk; renderBracket(); gaEvent('bracket_model',{model:BK_CUR});});
   const mt=host.querySelector('.bk-metric');
