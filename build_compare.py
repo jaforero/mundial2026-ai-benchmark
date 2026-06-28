@@ -600,11 +600,15 @@ function all48(titleObj){ return Object.entries(titleObj).sort((a,b)=>b[1]-a[1])
 // panel desplegable con la metodología completa de una IA
 function methPanel(aiKey){
   const m = DATA.meth[aiKey]; if(!m) return '';
-  return `<details class="meth"><summary>${tx('Ver metodología y algoritmo completos','View full methodology and algorithm')} · ${(LANG==='en'&&m.title_en)?m.title_en:m.title}</summary><div class="methbody">${(LANG==='en'&&m.html_en)?m.html_en:m.html}</div></details>`;
+  const title=(LANG==='en'&&m.title_en)?m.title_en:m.title;
+  const html=(LANG==='en'&&m.html_en)?m.html_en:m.html;
+  return `<div style="margin-top:12px"><div style="font-weight:700;font-size:12.5px;color:var(--deep-blue);margin-bottom:6px;padding-top:10px;border-top:1px solid var(--border)">⚙️ ${tx('Algoritmo y metodología completa','Full algorithm and methodology')} · ${title}</div><div class="methbody">${html}</div></div>`;
 }
 function backtestPanel(aiKey){
   const b = (DATA.backtest||{})[aiKey]; if(!b) return '';
-  return `<details class="meth"><summary>${tx('Ver backtesting y validación estadística','View backtesting and statistical validation')} · ${(LANG==='en'&&b.title_en)?b.title_en:b.title}</summary><div class="methbody">${(LANG==='en'&&b.html_en)?b.html_en:b.html}</div></details>`;
+  const title=(LANG==='en'&&b.title_en)?b.title_en:b.title;
+  const html=(LANG==='en'&&b.html_en)?b.html_en:b.html;
+  return `<div style="margin-top:12px"><div style="font-weight:700;font-size:12.5px;color:var(--deep-blue);margin-bottom:6px;padding-top:10px;border-top:1px solid var(--border)">📊 ${tx('Backtesting y validación estadística','Backtesting and statistical validation')} · ${title}</div><div class="methbody">${html}</div></div>`;
 }
 
 /* ---------- champion bars (per AI) ---------- */
@@ -940,9 +944,11 @@ function renderConsenso(){
   ${consensusVerdict()}
   ${keyTakeaways()}
 
+  ${consensusExplainer()}
+
   ${koSection('cons','var(--c-cons)',tx('Consenso','Consensus'))}
 
-  ${titleEvolution()}
+  ${titleConsolidated()}
 
   <div class="section-title">${tx('Probabilidad de campeón — las 3 IAs y el consenso','Champion probability — the 3 AIs and the consensus')}</div>
   <div class="card">
@@ -1023,38 +1029,80 @@ function champTop3Highlight(title,color){
   const t=sortByTitle(title).slice(0,3), m=['🥇','🥈','🥉'];
   return `<div class="card" style="padding:10px 14px;margin-bottom:10px"><span style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.04em">${tx('TOP 3 AL TÍTULO · pronóstico previo al Mundial','TOP 3 TO WIN · pre-tournament forecast')}</span><div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:5px">${t.map((x,i)=>`<span style="font-weight:700">${m[i]} ${tf(x[0])} <span style="color:${color};font-weight:800">${fmt(x[1])}</span></span>`).join('')}</div></div>`;
 }
-// evolución de la probabilidad de título: pre-Mundial vs actual (v4-MAX, cuadro real)
-function titleEvolution(){
-  const T=DATA.title_now; if(!T||!T.rows||!T.rows.length) return '';
-  const map={}; T.rows.forEach(r=>map[r.t]=r); const g=(t,k)=>fmt((map[t]||{})[k]||0);
-  const rows=T.rows.filter(r=>r.now>=0.5||Math.abs(r.d)>=0.5).slice(0,14);
-  const mx=Math.max.apply(null,rows.map(r=>Math.max(r.now,r.pre)));
+// nota interpretativa por IA para el panel de evolución de título
+function aiTitleNote(aiKey){
+  if(aiKey==='claude') return tx('El gran salto es <b>Argentina</b>, favorita clara para Claude. Se confirma que <b>España baja</b> y <b>Francia sube</b>; aun así, el modelo de Claude todavía ubica a España por encima de Francia (Elo interno: España 2184 vs Francia 2142), a diferencia de ChatGPT, Gemini y el ranking oficial FIFA, que ya colocan a Francia por delante.','The big jump is <b>Argentina</b>, a clear favorite for Claude. It confirms that <b>Spain falls</b> and <b>France rises</b>; even so, the Claude model still ranks Spain above France (internal Elo: Spain 2184 vs France 2142), unlike ChatGPT, Gemini and the official FIFA ranking, which already place France ahead.');
+  if(aiKey==='chatgpt') return tx('ChatGPT coincide en <b>Argentina</b> como favorita y es el más optimista con <b>Francia</b>, que sube al 2.º puesto por encima de España. Sus mayores caídas: España, Portugal y Marruecos.','ChatGPT agrees on <b>Argentina</b> as favorite and is the most optimistic about <b>France</b>, which rises to 2nd above Spain. Its biggest drops: Spain, Portugal and Morocco.');
+  if(aiKey==='gemini') return tx('Gemini reparte más la probabilidad: <b>Argentina</b> favorita, pero ubica a <b>Inglaterra</b> (2.ª) y <b>Brasil</b> (3.º) por encima de Francia y España. Es el más conservador con Argentina (18.5 % frente al 25–33 % de los otros).','Gemini spreads probability more: <b>Argentina</b> favorite, but it places <b>England</b> (2nd) and <b>Brazil</b> (3rd) above France and Spain. It is the most conservative on Argentina (18.5% vs 25-33% from the others).');
+  return '';
+}
+// evolución de la probabilidad de título de UNA IA: pre-Mundial → actual (tras fase de grupos)
+function titleEvolutionAI(aiKey,color,label){
+  const ev=DATA.title_evo&&DATA.title_evo.ais&&DATA.title_evo.ais[aiKey]; if(!ev||!ev.now) return '';
+  const pre=DATA[aiKey].title||{}, now=ev.now;
+  let rows=Object.keys(now).map(t=>({t,pre:pre[t]||0,now:now[t],d:now[t]-(pre[t]||0)}))
+            .filter(r=>r.now>=0.5||Math.abs(r.d)>=0.5).sort((a,b)=>b.now-a.now).slice(0,14);
+  const mx=Math.max.apply(null,rows.map(r=>Math.max(r.now,r.pre)))||1;
   const bar=(v,c)=>`<div style="height:8px;width:${(v/mx*100).toFixed(1)}%;min-width:2px;background:${c};border-radius:3px"></div>`;
   const body=rows.map(r=>{
     const up=r.d>0.3, dn=r.d<-0.3, col=up?'#16a34a':(dn?'#dc2626':'var(--muted)'), arr=up?'▲':(dn?'▼':'–');
     return `<div style="display:grid;grid-template-columns:128px 1fr 92px;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)">
       <div style="font-weight:700;font-size:12.5px">${tf(r.t)}</div>
-      <div style="display:flex;flex-direction:column;gap:3px">${bar(r.pre,'var(--border)')}${bar(r.now,'var(--purple)')}</div>
+      <div style="display:flex;flex-direction:column;gap:3px">${bar(r.pre,'var(--border)')}${bar(r.now,color)}</div>
       <div style="text-align:right;font-size:12px"><b>${fmt(r.now)}</b> <span style="color:${col};font-weight:700">${arr}${Math.abs(r.d).toFixed(1)}</span></div>
     </div>`;
   }).join('');
-  return `<div class="section-title" style="margin-top:6px">📈 ${tx('Probabilidad de título · evolución tras fase de grupos','Title probability · evolution after the group stage')}</div>
-  <p class="note">${tx('Probabilidad de ser campeón <b>antes del Mundial</b> (Claude v7, simulación pre-sorteo) frente a la <b>actual</b> (modelo v4-MAX propagando el cuadro real de eliminatorias con el Elo actualizado por los 72 resultados de la fase de grupos). Barra clara = pre-Mundial · barra morada = actual.','Champion probability <b>before the World Cup</b> (Claude v7, pre-draw simulation) versus the <b>current</b> one (v4-MAX model propagating the real knockout bracket with Elo updated by the 72 group-stage results). Light bar = pre-tournament · purple bar = current.')}</p>
+  const note=aiTitleNote(aiKey);
+  return `<div class="section-title" style="margin-top:6px">📈 ${tx('Probabilidad de título · '+label+' · pre-Mundial → actual','Title probability · '+label+' · pre-tournament → current')}</div>
+  <p class="note">${tx('Probabilidad de ser campeón según '+label+': barra clara = pronóstico <b>pre-Mundial</b> (línea base fija, sin cambios) · barra de color = <b>actual</b> tras la fase de grupos, propagando el cuadro real de eliminatorias. La cifra y la flecha muestran la probabilidad actual y su cambio en puntos porcentuales.','Champion probability per '+label+': light bar = <b>pre-tournament</b> forecast (fixed baseline) · colored bar = <b>current</b> after the group stage, propagating the real knockout bracket. The number and arrow show the current probability and its change in percentage points.')}</p>
   <div class="card">
-    <div style="display:flex;gap:16px;font-size:11px;color:var(--muted);margin-bottom:8px"><span>⬜ ${tx('pre-Mundial','pre-tournament')}</span><span style="color:var(--purple)">🟪 ${tx('actual · v4-MAX','current · v4-MAX')}</span></div>
+    <div style="display:flex;gap:16px;font-size:11px;color:var(--muted);margin-bottom:8px"><span>⬜ ${tx('pre-Mundial','pre-tournament')}</span><span style="color:${color}">▮ ${tx('actual','current')}</span></div>
     ${body}
-    <p style="font-size:11.5px;color:var(--muted);margin:10px 0 0;line-height:1.55">${tx('El gran movimiento es <b>Argentina</b> (de '+g('Argentina','pre')+' a '+g('Argentina','now')+'): cerró primera con 9 puntos y +7, su Elo es el más alto del torneo y heredó un cuarto de cuadro blando. Se confirma además que <b>España baja</b> (de '+g('España','pre')+' a '+g('España','now')+': comparte mitad con Portugal, Brasil y Argentina) y <b>Francia sube</b> (de '+g('Francia','pre')+' a '+g('Francia','now')+'). El cambio mezcla información nueva, el sorteo ya conocido y una diferencia de motor (v7→v4-MAX): las direcciones son sólidas, las magnitudes cargan algo del cambio de modelo. La estimación «actual» es del motor de Claude — ChatGPT y Gemini no simulan hacia adelante.','The big mover is <b>Argentina</b> (from '+g('Argentina','pre')+' to '+g('Argentina','now')+'): it finished first with 9 points and +7, holds the highest Elo in the field and inherited a soft quarter. It also confirms <b>Spain falls</b> (from '+g('España','pre')+' to '+g('España','now')+': it shares a half with Portugal, Brazil and Argentina) and <b>France rises</b> (from '+g('Francia','pre')+' to '+g('Francia','now')+'). The change blends new information, the now-known draw and an engine difference (v7→v4-MAX): directions are solid, magnitudes carry some model change. The «current» estimate is from the Claude engine — ChatGPT and Gemini do not simulate forward.')}</p>
+    ${note?`<p style="font-size:11.5px;color:var(--muted);margin:10px 0 0;line-height:1.55">${note}</p>`:''}
+  </div>`;
+}
+// recuadro que explica con claridad qué es el consenso (varias personas preguntan)
+function consensusExplainer(){
+  return `<div class="card" style="border-left:4px solid var(--purple)">
+    <div style="font-weight:800;font-size:14px;margin-bottom:6px">🤝 ${tx('¿Qué es el «consenso»?','What is the «consensus»?')}</div>
+    <p style="margin:0;font-size:12.5px;line-height:1.65">${tx('El consenso <b>combina a las tres IAs (Claude, ChatGPT y Gemini) en una sola visión</b>, para no depender de un único modelo. Se calcula de dos maneras, según el dato:<br>&nbsp;&nbsp;•&nbsp;<b>En quién clasifica y el marcador</b> (dieciseisavos, octavos…): es lo que eligen <b>la mayoría</b> de las IAs —2 de 3, o las 3— con el marcador más repetido.<br>&nbsp;&nbsp;•&nbsp;<b>En la probabilidad de campeón</b>: es el <b>promedio</b> de las probabilidades de las tres IAs para cada selección.<br>No es una cuarta IA ni una predicción propia: es <b>el punto de encuentro</b> de las tres.','The consensus <b>combines the three AIs (Claude, ChatGPT and Gemini) into one view</b>, so it does not depend on a single model. It is computed two ways, depending on the figure:<br>&nbsp;&nbsp;•&nbsp;<b>For who advances and the score</b> (Round of 32/16…): it is what <b>most</b> AIs pick —2 of 3, or all 3— with the most repeated scoreline.<br>&nbsp;&nbsp;•&nbsp;<b>For champion probability</b>: it is the <b>average</b> of the three AIs probabilities for each team.<br>It is not a fourth AI nor its own prediction: it is <b>where the three meet</b>.')}</p>
+  </div>`;
+}
+// consolidado: las 3 IAs (pre-Mundial → actual) + consenso por promedio, ordenado por consenso actual
+function titleConsolidated(){
+  const E=DATA.title_evo&&DATA.title_evo.ais; if(!E) return '';
+  const ais=['claude','chatgpt','gemini'];
+  const consNow=t=>{const v=ais.map(a=>(E[a].now||{})[t]).filter(x=>x!=null); return v.length?v.reduce((s,x)=>s+x,0)/v.length:null;};
+  const consPre=t=>{const v=ais.map(a=>(DATA[a].title||{})[t]).filter(x=>x!=null); return v.length?v.reduce((s,x)=>s+x,0)/v.length:0;};
+  let teams={}; ais.forEach(a=>Object.keys(E[a].now||{}).forEach(t=>teams[t]=true));
+  let rows=Object.keys(teams).map(t=>({t,cn:consNow(t),cp:consPre(t)})).filter(r=>r.cn!=null&&r.cn>=0.5).sort((a,b)=>b.cn-a.cn).slice(0,14);
+  const cell=v=>v==null?'<td style="text-align:center;color:var(--muted)">—</td>':`<td style="text-align:center">${fmt(v)}</td>`;
+  const body=rows.map(r=>{
+    const d=r.cn-r.cp, up=d>0.3, dn=d<-0.3, col=up?'#16a34a':(dn?'#dc2626':'var(--muted)'), arr=up?'▲':(dn?'▼':'–');
+    return `<tr style="border-bottom:1px solid var(--border)"><td style="text-align:left;font-weight:700;white-space:nowrap;padding:6px 4px">${tf(r.t)}</td>${cell(r.cp)}${cell((E.claude.now||{})[r.t])}${cell((E.chatgpt.now||{})[r.t])}${cell((E.gemini.now||{})[r.t])}<td style="text-align:center;font-weight:800;color:var(--purple)">${fmt(r.cn)}</td><td style="text-align:center;color:${col};font-weight:700;white-space:nowrap">${arr}${Math.abs(d).toFixed(1)}</td></tr>`;
+  }).join('');
+  return `<div class="section-title" style="margin-top:6px">🏆 ${tx('Probabilidad de campeón · consolidado de las 3 IAs','Champion probability · consolidated across the 3 AIs')}</div>
+  <p class="note">${tx('Probabilidad <b>actual</b> de ser campeón (tras la fase de grupos, ya con el cuadro real) según cada IA, y el <b>consenso</b> = promedio de las tres. La columna <b>Pre</b> es la línea base pre-Mundial (promedio de las tres IAs antes del torneo) y <b>Δ</b> es el cambio del consenso frente a esa base. Ordenado por consenso actual.','<b>Current</b> champion probability (after the group stage, with the real bracket) per AI, and the <b>consensus</b> = average of the three. The <b>Pre</b> column is the pre-tournament baseline (average of the three AIs before the tournament) and <b>Δ</b> is the change of the consensus versus that baseline. Sorted by current consensus.')}</p>
+  <div class="card" style="overflow-x:auto">
+    <table style="width:100%;min-width:460px;border-collapse:collapse;font-size:12px">
+      <thead><tr style="border-bottom:2px solid var(--border);font-size:11px;color:var(--muted)">
+        <th style="text-align:left;padding:4px">${tx('Equipo','Team')}</th><th style="padding:4px">Pre</th>
+        <th style="padding:4px;color:var(--c-claude)">Claude</th><th style="padding:4px;color:var(--c-chatgpt)">ChatGPT</th><th style="padding:4px;color:var(--c-gemini)">Gemini</th>
+        <th style="padding:4px;color:var(--purple)">${tx('Consenso','Consensus')}</th><th style="padding:4px">Δ</th>
+      </tr></thead><tbody>${body}</tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--muted);margin:10px 0 0;line-height:1.6">${tx('Las tres IAs y el ranking oficial FIFA coinciden en lo esencial: <b>Argentina es la favorita</b> tras ganar su grupo con autoridad — el consenso la sube de ~11 % a ~26 %. <b>España cae</b> del primer grupo de favoritas, y a nivel de consenso <b>Francia queda apenas por encima de España</b>, igual que el ranking FIFA (aunque Claude, por sí solo, todavía las invierte). Donde más difieren las IAs: Argentina (18.5–33.3 %), Francia (8.5–16.8 %) e Inglaterra (7.6–15.2 %), señal de que el favoritismo es claro pero su magnitud no.','The three AIs and the official FIFA ranking agree on the essentials: <b>Argentina is the favorite</b> after winning its group convincingly — the consensus lifts it from ~11% to ~26%. <b>Spain drops</b> out of the top favorites tier, and at the consensus level <b>France edges just above Spain</b>, like the FIFA ranking (though Claude alone still inverts them). Where the AIs differ most: Argentina (18.5-33.3%), France (8.5-16.8%) and England (7.6-15.2%), a sign that the favorite is clear but its magnitude is not.')}</p>
   </div>`;
 }
 // apertura/cierre del panel desplegable de metodología
-function methOpen(){ return `<details style="margin:8px 0 16px;border:1px solid var(--border);border-radius:12px;background:var(--card);overflow:hidden"><summary style="cursor:pointer;padding:12px 16px;font-weight:700;color:var(--ink);font-size:13px;list-style:none">📐 ${tx('Metodología y backtesting','Methodology & backtesting')} <span style="font-weight:400;color:var(--muted)">· ${tx('toca para desplegar','tap to expand')}</span></summary><div style="padding:0 16px 8px">`; }
+function methOpen(){ return `<details style="margin:8px 0 16px;border:1px solid var(--border);border-radius:12px;background:var(--card);overflow:hidden"><summary style="cursor:pointer;padding:12px 16px;font-weight:700;color:var(--ink);font-size:13px;list-style:none">📐 ${tx('Metodología completa del modelo — algoritmo y backtesting','Full model methodology — algorithm and backtesting')} <span style="font-weight:400;color:var(--muted)">· ${tx('toca para desplegar','tap to expand')}</span></summary><div style="padding:0 16px 8px">`; }
 function methClose(){ return `</div></details>`; }
 function renderClaude(){
   const d=DATA.claude;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('claude').innerHTML = `${DATA.claude.j3_note?`<div class="card" style="border-left:4px solid var(--c-claude);margin-bottom:10px"><p style="margin:0;font-size:12.5px;line-height:1.5"><b style="color:var(--c-claude)">⟳ </b>${DATA.claude.j3_note}</p></div>`:''}
-  ${champTop3Highlight(d.title,'var(--c-claude)')}
   ${koSection('pred','var(--c-claude)','Claude')}
+  ${titleEvolutionAI('claude','var(--c-claude)','Claude')}
   ${methOpen()}
   <div class="insight"><p>${tx(`<b>Recalibración v7 (Fase 7), auditada con datos.</b> Probamos las transformaciones contra <b>192 partidos reales</b> de Mundiales pasados (2010–2022, validación fuera de muestra). El resultado fue revelador: el motor base <b>ya está bien calibrado</b> (RPS 0.2002, 17% mejor que el azar) y los ajustes por criterio <b>no se sostenían</b> —inflar el empate empeoraba el acierto (el modelo ya sobre-predice empates) y el encogimiento no mejoraba nada—. Así que los <b>retiramos</b>: las probabilidades que ves son las del motor validado, sin maquillaje. Lo que sí aporta valor y se conserva: la <b>bandera de incertidumbre</b> por partido y el <b>desglose de riesgos</b> por goleador. Todo se expresa como probabilidad, no como certeza.`,`<b>Recalibration v7 (Phase 7), data-audited.</b> We tested the transformations against <b>192 real matches</b> from past World Cups (2010–2022, out-of-sample). The result was telling: the base engine is <b>already well-calibrated</b> (RPS 0.2002, 17% better than chance) and the criterion-based tweaks <b>did not hold up</b> —inflating draws made accuracy worse (the model already over-predicts draws) and shrinking helped nothing—. So we <b>removed them</b>: the probabilities you see come straight from the validated engine, unembellished. What does add value and stays: the per-match <b>uncertainty flag</b> and the per-scorer <b>risk breakdown</b>. Everything is expressed as probability, not certainty.`)}</p></div>
   <div class="section-title">${tx('Metodología','Methodology')} · Claude <span style="color:var(--c-claude)">v7</span></div>
@@ -1092,8 +1140,8 @@ function renderChatGPT(){
   const d=DATA.chatgpt;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('chatgpt').innerHTML = `${DATA.chatgpt.j3_note?`<div class="card" style="border-left:4px solid var(--c-chatgpt);margin-bottom:10px"><p style="margin:0;font-size:12.5px;line-height:1.5"><b style="color:var(--c-chatgpt)">⟳ </b>${DATA.chatgpt.j3_note}</p></div>`:''}
-  ${champTop3Highlight(d.title,'var(--c-chatgpt)')}
   ${koSection('cg','var(--c-chatgpt)','ChatGPT')}
+  ${titleEvolutionAI('chatgpt','var(--c-chatgpt)','ChatGPT')}
   ${methOpen()}
   <div class="section-title">${tx('Metodología','Methodology')} · ChatGPT <span style="color:var(--c-chatgpt)">v8.5</span></div>
   <div class="card methclassic">
@@ -1124,8 +1172,8 @@ function renderGemini(){
   const d=DATA.gemini;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('gemini').innerHTML = `${DATA.gemini.j3_note?`<div class="card" style="border-left:4px solid var(--c-gemini);margin-bottom:10px"><p style="margin:0;font-size:12.5px;line-height:1.5"><b style="color:var(--c-gemini)">⟳ </b>${DATA.gemini.j3_note}</p></div>`:''}
-  ${champTop3Highlight(d.title,'var(--c-gemini)')}
   ${koSection('gm','var(--c-gemini)','Gemini')}
+  ${titleEvolutionAI('gemini','var(--c-gemini)','Gemini')}
   ${methOpen()}
   <div class="section-title">${tx('Metodología','Methodology')} · Gemini <span style="color:var(--c-gemini)">v10</span></div>
   <div class="card methclassic">
