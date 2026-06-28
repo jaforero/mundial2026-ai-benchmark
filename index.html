@@ -978,6 +978,8 @@ function renderConsenso(){
   <div class="section-title">${tx('Proyección de grupos — quién pasa','Group projection — who advances')}</div>
   ${groupProjection()}
 
+  ${koSection('cons','var(--c-cons)',tx('Consenso','Consensus'))}
+
   <div class="section-title">${tx('Camino al título — las 48 selecciones','Road to the title — all 48 teams')}</div>
   <div class="card">${reachTable(c.reach, all48(c.title_median))}
   <p class="legend">${tx('Probabilidad media de las tres IAs de alcanzar cada ronda, de Treintaidosavos a Campeón.','Average probability across the three AIs of reaching each round, from the Round of 32 to Champion.')}</p></div>
@@ -987,6 +989,22 @@ function renderConsenso(){
   _h2hAuto=true; h2hRenderTable();
 }
 
+// tabla de pronóstico de dieciseisavos para una IA (field: pred/cg/gm/cons)
+function koPredHTML(field,color){
+  const KR=DATA.ko_real||[]; if(!KR.length) return '';
+  const ex=q=>(q&&(q.et==='Sí'||q.et==='Yes')?' <span style="color:var(--muted);font-size:11px">'+tx('+pró','+ET')+'</span>':'')+(q&&(q.pens==='Sí'||q.pens==='Yes')?' <span style="color:var(--muted);font-size:11px">'+tx('+pen','+pk')+'</span>':'');
+  const rows=KR.map(s=>{const p=s[field]; if(!p)return '';
+    return `<tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--muted)">${s.code}</td><td style="padding:6px 8px">${tf(s.a)} <span style="color:var(--muted)">vs</span> ${tf(s.b)}</td><td style="padding:6px 8px;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap">${p.sc90}${ex(p)}</td><td style="padding:6px 8px;font-weight:700;color:${color}">${tf(p.winner)}</td><td style="padding:6px 8px;text-align:right;color:var(--muted)">${p.conf}%</td></tr>`;}).join('');
+  return `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px">
+    <thead><tr style="text-align:left;color:var(--muted);font-size:11px;font-weight:600"><th style="padding:4px 8px">#</th><th style="padding:4px 8px">${tx('Cruce','Tie')}</th><th style="padding:4px 8px;text-align:center">90′</th><th style="padding:4px 8px">${tx('Clasifica','Advances')}</th><th style="padding:4px 8px;text-align:right">${tx('Conf.','Conf.')}</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+function koSection(field,color,label){
+  if(!(DATA.ko_real||[]).length) return '';
+  return `<div class="section-title">⚽ ${tx('Dieciseisavos de final · '+label,'Round of 32 · '+label)}</div>
+  <p class="note">${tx('Pronóstico de '+label+' para los 16 cruces oficiales: marcador a 90′, prórroga o penaltis si aplica, selección que clasifica y confianza.','Forecast by '+label+' for the 16 official ties: 90-minute score, extra time or penalties if applicable, the qualifying team and confidence.')}</p>
+  <div class="card">${koPredHTML(field,color)}</div>`;
+}
 function renderClaude(){
   const d=DATA.claude;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
@@ -1016,6 +1034,7 @@ function renderClaude(){
   <p class="note">${tx('El marcador y las probabilidades V/E/D salen de la <b>distribución de Poisson completa</b> del modelo, y se muestra además el <b>xG (goles esperados)</b> de cada selección por partido.','The scoreline and W/D/L probabilities come from the model <b>full Poisson distribution</b>, and the <b>xG (expected goals)</b> of each team per match is also shown.')}</p>
   ${matchTableByAI(d.fixtures.map(f=>({a:f.a,b:f.b,pA:f.pA,pD:f.pD,pB:f.pB,score:f.score,j3:f.j3,xa:f.eg_a,xb:f.eg_b,md:f.md,date:f.date,grp:f.grp})), true)}
 
+  ${koSection('pred','var(--c-claude)','Claude')}
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — Claude v7','Golden Boot · Top 10 scorers — Claude v7')}</div>
   <p class="note">${tx('Modelo nuevo de jugador montado sobre el de selección. Los goles esperados de cada jugador parten de los <b>goles que su equipo proyecta marcar en el torneo</b> (partidos esperados según su avance × goles por partido del modelo) y se reparten por <b>cuota de rol y penales</b>, ajustados por <b>titularidad</b>, <b>disponibilidad física</b> y <b>forma</b>. La Bota de Oro se estima por simulación. Pasa el cursor sobre la ⓘ para ver el detalle de cada jugador.','New player-level model built on top of the team model. Each player expected goals start from the <b>goals their team is projected to score in the tournament</b> (expected matches from its run × goals per match) and are split by <b>role share and penalties</b>, adjusted for <b>starting probability</b>, <b>physical availability</b> and <b>form</b>. The Golden Boot is estimated by simulation. Hover the ⓘ for the detail of each player.')}</p>
   <div class="insight"><p>${tx(`Por qué <b>riesgo físico</b> y <b>forma</b> son factores <b>separados</b>: el ${term('riesgo físico','Lesiones recientes, carga y edad: afecta cuántos minutos juega y si lo reservan para fases finales.')} ajusta los <b>minutos</b> (cuánto juega), mientras que la ${term('forma','Racha goleadora y afinación: afecta su eficacia por minuto cuando sí está en cancha.')} ajusta la <b>tasa</b> de gol por minuto. Un jugador puede estar fino pero con riesgo de rotación, o sano pero frío; mezclarlos en una sola variable perdería esa diferencia.`,`Why <b>physical risk</b> and <b>form</b> are <b>separate</b> factors: ${term('physical risk','Recent injuries, load and age: it affects how many minutes he plays and whether he is rested for later rounds.')} adjusts the <b>minutes</b> (how much he plays), while ${term('form','Scoring streak and sharpness: it affects his efficiency per minute when he is on the pitch.')} adjusts the <b>scoring rate</b> per minute. A player can be sharp but at rotation risk, or fit but cold; merging them into one variable would lose that distinction.`)}</p></div>
@@ -1045,6 +1064,7 @@ function renderChatGPT(){
   <div class="section-title">${tx('Los 72 partidos · ChatGPT v8.5 (8.4B-Consensus · Odds API + SofaScore)','The 72 matches · ChatGPT v8.5 (8.4B-Consensus · Odds API + SofaScore)')}</div>
   ${matchTableByAI(d.matches)}
 
+  ${koSection('cg','var(--c-chatgpt)','ChatGPT')}
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — ChatGPT','Golden Boot · Top 10 scorers — ChatGPT')}</div>
   <p class="note">${tx('Probabilidad de ganar la Bota de Oro por jugador, con sus goles esperados. Pasa el cursor sobre la ⓘ para ver la justificación de cada caso.','Probability of winning the Golden Boot per player, with expected goals. Hover the ⓘ for the rationale of each pick.')}</p>
   <div class="card scorers-track" data-scorers-src="chatgpt">${scorersAI("chatgpt")}</div>`;
@@ -1073,6 +1093,7 @@ function renderGemini(){
   <div class="section-title">${tx('Los 72 partidos · Gemini v10 (Fase 10, ancla 21.88%)','The 72 matches · Gemini v10 (Phase 10, 21.88% anchor)')}</div>
   ${matchTableByAI(d.matches)}
 
+  ${koSection('gm','var(--c-gemini)','Gemini')}
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — Gemini','Golden Boot · Top 10 scorers — Gemini')}</div>
   <p class="note">${tx('Probabilidad de Bota de Oro con ajuste por estado de forma y riesgo de titularidad. Pasa el cursor sobre la ⓘ para ver el análisis de cada jugador.','Golden Boot probability adjusted for form and starting-role risk. Hover the ⓘ for the analysis of each player.')}</p>
   <div class="card scorers-track" data-scorers-src="gemini">${scorersAI("gemini")}</div>`;
@@ -1352,10 +1373,12 @@ function bkR32RealHTML(){
       const cnt={}; ps.forEach(x=>cnt[x[2].winner]=(cnt[x[2].winner]||0)+1);
       const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0], unan=top[1]===ps.length;
       const badge=`<span style="font-size:10px;font-weight:700;color:${unan?'#1a9e5c':'#b58900'}">${unan?'✓ '+tx('los 3 coinciden','all 3 agree'):top[1]+'-'+(ps.length-top[1])+' '+tf(top[0])}</span>`;
+      const cc=s.cons;
+      const consLine=cc?`<div style="font-size:12px;margin-top:5px;padding-top:5px;border-top:1px dashed var(--border)"><span style="color:var(--purple);font-weight:800">${tx('Consenso','Consensus')}</span> ${cc.sc90} → <b>${tf(cc.winner)}</b> <span style="color:var(--muted)">${cc.conf}%${ex(cc)}</span></div>`:'';
       return `<div style="${base}border-left:4px solid var(--purple)">
         <div style="font-size:11px;color:var(--purple);font-weight:800;margin-bottom:4px;display:flex;justify-content:space-between;gap:6px">${s.code} · ${tx('CONFIRMADO','CONFIRMED')} ${badge}</div>
         <div style="font-weight:700;margin-bottom:2px"><b>${tf(s.a)}</b> <span style="color:var(--muted);font-weight:400">vs</span> <b>${tf(s.b)}</b></div>
-        ${lines}</div>`;
+        ${lines}${consLine}</div>`;
     }
     const side=(t,sl)=>(t?`<b>${tf(t)}</b>`:tbd)+` <span style="font-size:11px;color:var(--muted)">(${lab(sl)})</span>`;
     return `<div style="${base}opacity:${s.status==='pending'?0.6:1}">
