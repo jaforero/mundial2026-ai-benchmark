@@ -940,6 +940,10 @@ function renderConsenso(){
   ${consensusVerdict()}
   ${keyTakeaways()}
 
+  ${koSection('cons','var(--c-cons)',tx('Consenso','Consensus'))}
+
+  ${titleEvolution()}
+
   <div class="section-title">${tx('Probabilidad de campeón — las 3 IAs y el consenso','Champion probability — the 3 AIs and the consensus')}</div>
   <div class="card">
     <div class="legend" style="margin-bottom:10px">
@@ -989,8 +993,6 @@ function renderConsenso(){
   <div class="section-title">${tx('Proyección de grupos — quién pasa','Group projection — who advances')}</div>
   ${groupProjection()}
 
-  ${koSection('cons','var(--c-cons)',tx('Consenso','Consensus'))}
-
   <div class="section-title">${tx('Camino al título — las 48 selecciones','Road to the title — all 48 teams')}</div>
   <div class="card">${reachTable(c.reach, all48(c.title_median))}
   <p class="legend">${tx('Probabilidad media de las tres IAs de alcanzar cada ronda, de Treintaidosavos a Campeón.','Average probability across the three AIs of reaching each round, from the Round of 32 to Champion.')}</p></div>
@@ -1012,14 +1014,48 @@ function koPredHTML(field,color){
 }
 function koSection(field,color,label){
   if(!(DATA.ko_real||[]).length) return '';
-  return `<div class="section-title">⚽ ${tx('Dieciseisavos de final · '+label,'Round of 32 · '+label)}</div>
-  <p class="note">${tx('Pronóstico de '+label+' para los 16 cruces oficiales: marcador a 90′, prórroga o penaltis si aplica, selección que clasifica y confianza.','Forecast by '+label+' for the 16 official ties: 90-minute score, extra time or penalties if applicable, the qualifying team and confidence.')}</p>
+  return `<div class="section-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px">⚽ ${tx('Dieciseisavos de final · '+label,'Round of 32 · '+label)} <span style="font-size:10px;font-weight:800;color:#fff;background:var(--purple);padding:2px 9px;border-radius:10px;letter-spacing:.03em">${tx('FASE ACTUAL','LIVE PHASE')}</span></div>
+  <p class="note">${tx('La predicción más reciente — '+label+' para los 16 cruces oficiales de la fase eliminatoria en curso: marcador a 90′, prórroga o penaltis si aplica, clasificado y confianza.','The most recent prediction — '+label+' for the 16 official knockout ties underway: 90-minute score, extra time or penalties if applicable, qualifier and confidence.')}</p>
   <div class="card">${koPredHTML(field,color)}</div>`;
 }
+// destacado compacto: top 3 al título (pronóstico PRE-Mundial de cada IA)
+function champTop3Highlight(title,color){
+  const t=sortByTitle(title).slice(0,3), m=['🥇','🥈','🥉'];
+  return `<div class="card" style="padding:10px 14px;margin-bottom:10px"><span style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.04em">${tx('TOP 3 AL TÍTULO · pronóstico previo al Mundial','TOP 3 TO WIN · pre-tournament forecast')}</span><div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:5px">${t.map((x,i)=>`<span style="font-weight:700">${m[i]} ${tf(x[0])} <span style="color:${color};font-weight:800">${fmt(x[1])}</span></span>`).join('')}</div></div>`;
+}
+// evolución de la probabilidad de título: pre-Mundial vs actual (v4-MAX, cuadro real)
+function titleEvolution(){
+  const T=DATA.title_now; if(!T||!T.rows||!T.rows.length) return '';
+  const map={}; T.rows.forEach(r=>map[r.t]=r); const g=(t,k)=>fmt((map[t]||{})[k]||0);
+  const rows=T.rows.filter(r=>r.now>=0.5||Math.abs(r.d)>=0.5).slice(0,14);
+  const mx=Math.max.apply(null,rows.map(r=>Math.max(r.now,r.pre)));
+  const bar=(v,c)=>`<div style="height:8px;width:${(v/mx*100).toFixed(1)}%;min-width:2px;background:${c};border-radius:3px"></div>`;
+  const body=rows.map(r=>{
+    const up=r.d>0.3, dn=r.d<-0.3, col=up?'#16a34a':(dn?'#dc2626':'var(--muted)'), arr=up?'▲':(dn?'▼':'–');
+    return `<div style="display:grid;grid-template-columns:128px 1fr 92px;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)">
+      <div style="font-weight:700;font-size:12.5px">${tf(r.t)}</div>
+      <div style="display:flex;flex-direction:column;gap:3px">${bar(r.pre,'var(--border)')}${bar(r.now,'var(--purple)')}</div>
+      <div style="text-align:right;font-size:12px"><b>${fmt(r.now)}</b> <span style="color:${col};font-weight:700">${arr}${Math.abs(r.d).toFixed(1)}</span></div>
+    </div>`;
+  }).join('');
+  return `<div class="section-title" style="margin-top:6px">📈 ${tx('Probabilidad de título · evolución tras fase de grupos','Title probability · evolution after the group stage')}</div>
+  <p class="note">${tx('Probabilidad de ser campeón <b>antes del Mundial</b> (Claude v7, simulación pre-sorteo) frente a la <b>actual</b> (modelo v4-MAX propagando el cuadro real de eliminatorias con el Elo actualizado por los 72 resultados de la fase de grupos). Barra clara = pre-Mundial · barra morada = actual.','Champion probability <b>before the World Cup</b> (Claude v7, pre-draw simulation) versus the <b>current</b> one (v4-MAX model propagating the real knockout bracket with Elo updated by the 72 group-stage results). Light bar = pre-tournament · purple bar = current.')}</p>
+  <div class="card">
+    <div style="display:flex;gap:16px;font-size:11px;color:var(--muted);margin-bottom:8px"><span>⬜ ${tx('pre-Mundial','pre-tournament')}</span><span style="color:var(--purple)">🟪 ${tx('actual · v4-MAX','current · v4-MAX')}</span></div>
+    ${body}
+    <p style="font-size:11.5px;color:var(--muted);margin:10px 0 0;line-height:1.55">${tx('El gran movimiento es <b>Argentina</b> (de '+g('Argentina','pre')+' a '+g('Argentina','now')+'): cerró primera con 9 puntos y +7, su Elo es el más alto del torneo y heredó un cuarto de cuadro blando. Se confirma además que <b>España baja</b> (de '+g('España','pre')+' a '+g('España','now')+': comparte mitad con Portugal, Brasil y Argentina) y <b>Francia sube</b> (de '+g('Francia','pre')+' a '+g('Francia','now')+'). El cambio mezcla información nueva, el sorteo ya conocido y una diferencia de motor (v7→v4-MAX): las direcciones son sólidas, las magnitudes cargan algo del cambio de modelo. La estimación «actual» es del motor de Claude — ChatGPT y Gemini no simulan hacia adelante.','The big mover is <b>Argentina</b> (from '+g('Argentina','pre')+' to '+g('Argentina','now')+'): it finished first with 9 points and +7, holds the highest Elo in the field and inherited a soft quarter. It also confirms <b>Spain falls</b> (from '+g('España','pre')+' to '+g('España','now')+': it shares a half with Portugal, Brazil and Argentina) and <b>France rises</b> (from '+g('Francia','pre')+' to '+g('Francia','now')+'). The change blends new information, the now-known draw and an engine difference (v7→v4-MAX): directions are solid, magnitudes carry some model change. The «current» estimate is from the Claude engine — ChatGPT and Gemini do not simulate forward.')}</p>
+  </div>`;
+}
+// apertura/cierre del panel desplegable de metodología
+function methOpen(){ return `<details style="margin:8px 0 16px;border:1px solid var(--border);border-radius:12px;background:var(--card);overflow:hidden"><summary style="cursor:pointer;padding:12px 16px;font-weight:700;color:var(--ink);font-size:13px;list-style:none">📐 ${tx('Metodología y backtesting','Methodology & backtesting')} <span style="font-weight:400;color:var(--muted)">· ${tx('toca para desplegar','tap to expand')}</span></summary><div style="padding:0 16px 8px">`; }
+function methClose(){ return `</div></details>`; }
 function renderClaude(){
   const d=DATA.claude;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('claude').innerHTML = `${DATA.claude.j3_note?`<div class="card" style="border-left:4px solid var(--c-claude);margin-bottom:10px"><p style="margin:0;font-size:12.5px;line-height:1.5"><b style="color:var(--c-claude)">⟳ </b>${DATA.claude.j3_note}</p></div>`:''}
+  ${champTop3Highlight(d.title,'var(--c-claude)')}
+  ${koSection('pred','var(--c-claude)','Claude')}
+  ${methOpen()}
   <div class="insight"><p>${tx(`<b>Recalibración v7 (Fase 7), auditada con datos.</b> Probamos las transformaciones contra <b>192 partidos reales</b> de Mundiales pasados (2010–2022, validación fuera de muestra). El resultado fue revelador: el motor base <b>ya está bien calibrado</b> (RPS 0.2002, 17% mejor que el azar) y los ajustes por criterio <b>no se sostenían</b> —inflar el empate empeoraba el acierto (el modelo ya sobre-predice empates) y el encogimiento no mejoraba nada—. Así que los <b>retiramos</b>: las probabilidades que ves son las del motor validado, sin maquillaje. Lo que sí aporta valor y se conserva: la <b>bandera de incertidumbre</b> por partido y el <b>desglose de riesgos</b> por goleador. Todo se expresa como probabilidad, no como certeza.`,`<b>Recalibration v7 (Phase 7), data-audited.</b> We tested the transformations against <b>192 real matches</b> from past World Cups (2010–2022, out-of-sample). The result was telling: the base engine is <b>already well-calibrated</b> (RPS 0.2002, 17% better than chance) and the criterion-based tweaks <b>did not hold up</b> —inflating draws made accuracy worse (the model already over-predicts draws) and shrinking helped nothing—. So we <b>removed them</b>: the probabilities you see come straight from the validated engine, unembellished. What does add value and stays: the per-match <b>uncertainty flag</b> and the per-scorer <b>risk breakdown</b>. Everything is expressed as probability, not certainty.`)}</p></div>
   <div class="section-title">${tx('Metodología','Methodology')} · Claude <span style="color:var(--c-claude)">v7</span></div>
   <div class="card methclassic">
@@ -1034,6 +1070,7 @@ function renderClaude(){
 
   ${methPanel("claude")}
   ${backtestPanel("claude")}
+  ${methClose()}
   <div class="section-title">${tx('Probabilidad de campeón · Claude','Champion probability · Claude')}</div>
   <div class="card">${champBars(d.title, COL.Claude)}</div>
 
@@ -1045,7 +1082,6 @@ function renderClaude(){
   <p class="note">${tx('El marcador y las probabilidades V/E/D salen de la <b>distribución de Poisson completa</b> del modelo, y se muestra además el <b>xG (goles esperados)</b> de cada selección por partido.','The scoreline and W/D/L probabilities come from the model <b>full Poisson distribution</b>, and the <b>xG (expected goals)</b> of each team per match is also shown.')}</p>
   ${matchTableByAI(d.fixtures.map(f=>({a:f.a,b:f.b,pA:f.pA,pD:f.pD,pB:f.pB,score:f.score,j3:f.j3,xa:f.eg_a,xb:f.eg_b,md:f.md,date:f.date,grp:f.grp})), true)}
 
-  ${koSection('pred','var(--c-claude)','Claude')}
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — Claude v7','Golden Boot · Top 10 scorers — Claude v7')}</div>
   <p class="note">${tx('Modelo nuevo de jugador montado sobre el de selección. Los goles esperados de cada jugador parten de los <b>goles que su equipo proyecta marcar en el torneo</b> (partidos esperados según su avance × goles por partido del modelo) y se reparten por <b>cuota de rol y penales</b>, ajustados por <b>titularidad</b>, <b>disponibilidad física</b> y <b>forma</b>. La Bota de Oro se estima por simulación. Pasa el cursor sobre la ⓘ para ver el detalle de cada jugador.','New player-level model built on top of the team model. Each player expected goals start from the <b>goals their team is projected to score in the tournament</b> (expected matches from its run × goals per match) and are split by <b>role share and penalties</b>, adjusted for <b>starting probability</b>, <b>physical availability</b> and <b>form</b>. The Golden Boot is estimated by simulation. Hover the ⓘ for the detail of each player.')}</p>
   <div class="insight"><p>${tx(`Por qué <b>riesgo físico</b> y <b>forma</b> son factores <b>separados</b>: el ${term('riesgo físico','Lesiones recientes, carga y edad: afecta cuántos minutos juega y si lo reservan para fases finales.')} ajusta los <b>minutos</b> (cuánto juega), mientras que la ${term('forma','Racha goleadora y afinación: afecta su eficacia por minuto cuando sí está en cancha.')} ajusta la <b>tasa</b> de gol por minuto. Un jugador puede estar fino pero con riesgo de rotación, o sano pero frío; mezclarlos en una sola variable perdería esa diferencia.`,`Why <b>physical risk</b> and <b>form</b> are <b>separate</b> factors: ${term('physical risk','Recent injuries, load and age: it affects how many minutes he plays and whether he is rested for later rounds.')} adjusts the <b>minutes</b> (how much he plays), while ${term('form','Scoring streak and sharpness: it affects his efficiency per minute when he is on the pitch.')} adjusts the <b>scoring rate</b> per minute. A player can be sharp but at rotation risk, or fit but cold; merging them into one variable would lose that distinction.`)}</p></div>
@@ -1056,6 +1092,9 @@ function renderChatGPT(){
   const d=DATA.chatgpt;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('chatgpt').innerHTML = `${DATA.chatgpt.j3_note?`<div class="card" style="border-left:4px solid var(--c-chatgpt);margin-bottom:10px"><p style="margin:0;font-size:12.5px;line-height:1.5"><b style="color:var(--c-chatgpt)">⟳ </b>${DATA.chatgpt.j3_note}</p></div>`:''}
+  ${champTop3Highlight(d.title,'var(--c-chatgpt)')}
+  ${koSection('cg','var(--c-chatgpt)','ChatGPT')}
+  ${methOpen()}
   <div class="section-title">${tx('Metodología','Methodology')} · ChatGPT <span style="color:var(--c-chatgpt)">v8.5</span></div>
   <div class="card methclassic">
     <p>${tx(`Ensamble <b>calibrado histórico</b> con los ajustes del <b>Backtesting Nivel 2</b>: refuerza el núcleo <b>FIFA/Elo</b> (sube a 24%), reduce el clima a contextual (4%) y añade una <b>penalización de sesgo de mercado</b> para no sobrevalorar a las ligas europeas más líquidas. Plantilla, player-level, forma y experiencia entran como capas de ajuste, no como dominantes.`,`A <b>historically-calibrated</b> ensemble with the <b>Level 2 Backtesting</b> adjustments: it reinforces the <b>FIFA/Elo</b> core (up to 24%), reduces climate to contextual (4%) and adds a <b>market-bias penalty</b> so the most liquid European leagues are not overvalued. Squad, player-level, form and experience enter as adjustment layers, not as dominant ones.`)}</p>
@@ -1065,6 +1104,7 @@ function renderChatGPT(){
 
   ${methPanel("chatgpt")}
   ${backtestPanel("chatgpt")}
+  ${methClose()}
   <div class="section-title">${tx('Probabilidad de campeón · ChatGPT','Champion probability · ChatGPT')}</div>
   <div class="card">${champBars(d.title, COL.ChatGPT)}</div>
 
@@ -1075,7 +1115,6 @@ function renderChatGPT(){
   <div class="section-title">${tx('Los 72 partidos · ChatGPT v8.5 (8.4B-Consensus · Odds API + SofaScore)','The 72 matches · ChatGPT v8.5 (8.4B-Consensus · Odds API + SofaScore)')}</div>
   ${matchTableByAI(d.matches)}
 
-  ${koSection('cg','var(--c-chatgpt)','ChatGPT')}
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — ChatGPT','Golden Boot · Top 10 scorers — ChatGPT')}</div>
   <p class="note">${tx('Probabilidad de ganar la Bota de Oro por jugador, con sus goles esperados. Pasa el cursor sobre la ⓘ para ver la justificación de cada caso.','Probability of winning the Golden Boot per player, with expected goals. Hover the ⓘ for the rationale of each pick.')}</p>
   <div class="card scorers-track" data-scorers-src="chatgpt">${scorersAI("chatgpt")}</div>`;
@@ -1085,6 +1124,9 @@ function renderGemini(){
   const d=DATA.gemini;
   const champTop=sortByTitle(d.title).slice(0,16).map(x=>x[0]);
   document.getElementById('gemini').innerHTML = `${DATA.gemini.j3_note?`<div class="card" style="border-left:4px solid var(--c-gemini);margin-bottom:10px"><p style="margin:0;font-size:12.5px;line-height:1.5"><b style="color:var(--c-gemini)">⟳ </b>${DATA.gemini.j3_note}</p></div>`:''}
+  ${champTop3Highlight(d.title,'var(--c-gemini)')}
+  ${koSection('gm','var(--c-gemini)','Gemini')}
+  ${methOpen()}
   <div class="section-title">${tx('Metodología','Methodology')} · Gemini <span style="color:var(--c-gemini)">v10</span></div>
   <div class="card methclassic">
     <p>${tx(`Ensamble físico-estadístico que <b>abandona la "memoria histórica de los escudos"</b> del v6. Mide la resiliencia por la <b>carga de estrés cognitivo actual</b> de las plantillas (minutos de eliminación directa en Champions/Libertadores = <b>Redes de Presión Local</b>), aplica un <b>Factor de Decaimiento</b> al campeón defensor y reconfigura el <b>Aura de Localía</b> de forma asimétrica, sobre el motor bio-termodinámico UTCI.`,`A physics-statistical ensemble that <b>abandons the v6 "crest historical memory"</b>. It measures resilience via each squad's <b>current cognitive stress load</b> (knockout minutes in the Champions League/Libertadores = <b>Local Pressure Networks</b>), applies a <b>Champion Decay Factor</b> to the defending champion and reshapes the <b>Home Aura</b> asymmetrically, on top of the UTCI bio-thermodynamic engine.`)}</p>
@@ -1094,6 +1136,7 @@ function renderGemini(){
 
   ${methPanel("gemini")}
   ${backtestPanel("gemini")}
+  ${methClose()}
   <div class="section-title">${tx('Probabilidad de campeón · Gemini','Champion probability · Gemini')}</div>
   <div class="card">${champBars(d.title, COL.Gemini)}</div>
 
@@ -1104,7 +1147,6 @@ function renderGemini(){
   <div class="section-title">${tx('Los 72 partidos · Gemini v10 (Fase 10, ancla 21.88%)','The 72 matches · Gemini v10 (Phase 10, 21.88% anchor)')}</div>
   ${matchTableByAI(d.matches)}
 
-  ${koSection('gm','var(--c-gemini)','Gemini')}
   <div class="section-title">🥇 ${tx('Bota de Oro · Top 10 goleadores — Gemini','Golden Boot · Top 10 scorers — Gemini')}</div>
   <p class="note">${tx('Probabilidad de Bota de Oro con ajuste por estado de forma y riesgo de titularidad. Pasa el cursor sobre la ⓘ para ver el análisis de cada jugador.','Golden Boot probability adjusted for form and starting-role risk. Hover the ⓘ for the analysis of each player.')}</p>
   <div class="card scorers-track" data-scorers-src="gemini">${scorersAI("gemini")}</div>`;
