@@ -891,38 +891,54 @@ function renderH2H(idx){
 }
 
 /* ============ RENDER PANELS ============ */
+// ranking de título por consenso (promedio de las 3 IAs): pre-Mundial vs actual
+function consTitleRanks(){
+  const E=DATA.title_evo&&DATA.title_evo.ais; if(!E) return null;
+  const ais=['claude','chatgpt','gemini'];
+  const cn=t=>{const v=ais.map(a=>(E[a].now||{})[t]).filter(x=>x!=null);return v.length?v.reduce((s,x)=>s+x,0)/v.length:null;};
+  const cp=t=>{const v=ais.map(a=>(DATA[a].title||{})[t]).filter(x=>x!=null);return v.length?v.reduce((s,x)=>s+x,0)/v.length:0;};
+  const sp=t=>{const v=ais.map(a=>(E[a].now||{})[t]).filter(x=>x!=null);return v.length?{min:Math.min.apply(null,v),max:Math.max.apply(null,v),d:Math.max.apply(null,v)-Math.min.apply(null,v)}:{min:0,max:0,d:0};};
+  let teams={}; ais.forEach(a=>Object.keys(E[a].now||{}).forEach(t=>teams[t]=true));
+  const arr=Object.keys(teams).map(t=>({t,now:cn(t),pre:cp(t),sp:sp(t)})).filter(x=>x.now!=null);
+  return {arr, nowRank:arr.slice().sort((a,b)=>b.now-a.now), preRank:arr.slice().sort((a,b)=>b.pre-a.pre)};
+}
 function consensusVerdict(){
-  const c=DATA.consensus;
-  const top=Object.entries(c.title_median).sort((a,b)=>b[1]-a[1]).slice(0,3);
-  const t1=top[0],t2=top[1],t3=top[2];
-  // ¿cuán abierto? nº de selecciones con ≥5% de título
-  const contenders=Object.values(c.title_median).filter(v=>v>=5).length;
-  const verdict=tx(`Las tres IAs coinciden: <b>${tn(t1[0])}</b> es la favorita al título (${fmt(t1[1])}), por delante de ${tn(t2[0])} y ${tn(t3[0])} — pero es un Mundial <b>muy abierto</b>, con ${contenders} selecciones en pelea real por la copa.`,`The three AIs agree: <b>${tn(t1[0])}</b> is the title favorite (${fmt(t1[1])}), ahead of ${tn(t2[0])} and ${tn(t3[0])} — but it is a <b>wide-open</b> World Cup, with ${contenders} teams in genuine contention for the trophy.`);
-  const pod=(rk,t,cls)=>`<div class="pod ${cls}"><div class="rk">${rk}</div><div class="tm">${tf(t[0])}</div><div class="pc">${fmt(t[1])}</div><div class="pl">${tx('campeón','champion')}</div></div>`;
+  const c=DATA.consensus, R=consTitleRanks();
+  if(!R){ // respaldo: comportamiento anterior si no hay title_evo
+    const top=Object.entries(c.title_median).sort((a,b)=>b[1]-a[1]).slice(0,3), t1=top[0],t2=top[1],t3=top[2];
+    const cont=Object.values(c.title_median).filter(v=>v>=5).length;
+    const pod0=(rk,t,cls)=>`<div class="pod ${cls}"><div class="rk">${rk}</div><div class="tm">${tf(t[0])}</div><div class="pc">${fmt(t[1])}</div><div class="pl">${tx('campeón','champion')}</div></div>`;
+    return `<div class="verdict"><p class="vlead">${tx('El veredicto del consenso · Mundial 2026','The consensus verdict · World Cup 2026')}</p><p class="vmain">${tx(`Las tres IAs coinciden: <b>${tn(t1[0])}</b> es la favorita (${fmt(t1[1])}).`,`The three AIs agree: <b>${tn(t1[0])}</b> is the favorite (${fmt(t1[1])}).`)}</p><div class="podium">${pod0('🥈',t2,'p2')}${pod0('🥇',t1,'p1')}${pod0('🥉',t3,'p3')}</div></div>`;
+  }
+  const preFav=R.preRank[0], now=R.nowRank, n1=now[0],n2=now[1],n3=now[2];
+  const same=preFav.t===n1.t;
+  const verdict = same
+    ? tx(`Antes y después de la fase de grupos, las tres IAs coinciden: <b>${tn(n1.t)}</b> es la favorita al título. Con resultados y cuadro reales, el consenso la sitúa en <b>${fmt(n1.now)}</b> (era ${fmt(preFav.pre)} pre-Mundial), por delante de ${tn(n2.t)} y ${tn(n3.t)}.`,`Before and after the group stage, the three AIs agree: <b>${tn(n1.t)}</b> is the title favorite. With real results and bracket, the consensus puts it at <b>${fmt(n1.now)}</b> (was ${fmt(preFav.pre)} pre-tournament), ahead of ${tn(n2.t)} and ${tn(n3.t)}.`)
+    : tx(`<b>Pre-Mundial</b>, las tres IAs daban como favorita a <b>${tn(preFav.t)}</b> (${fmt(preFav.pre)}). <b>Tras la fase de grupos</b>, con resultados y cuadro reales, el consenso actualizado pone al frente a <b>${tn(n1.t)}</b> (${fmt(n1.now)}), por delante de ${tn(n2.t)} y ${tn(n3.t)}. Sigue siendo un Mundial abierto.`,`<b>Pre-tournament</b>, the three AIs had <b>${tn(preFav.t)}</b> as favorite (${fmt(preFav.pre)}). <b>After the group stage</b>, with real results and bracket, the updated consensus puts <b>${tn(n1.t)}</b> in front (${fmt(n1.now)}), ahead of ${tn(n2.t)} and ${tn(n3.t)}. It remains an open World Cup.`);
+  const pod=(rk,x,cls)=>{const d=x.now-x.pre,up=d>0.3,dn=d<-0.3,col=up?'#7CFFB2':(dn?'#FF9C9C':'rgba(255,255,255,.6)'),arr=up?'▲':(dn?'▼':'–');
+    return `<div class="pod ${cls}"><div class="rk">${rk}</div><div class="tm">${tf(x.t)}</div><div class="pc">${fmt(x.now)}</div><div class="pl">${tx('campeón · actual','champion · now')}</div><div style="font-size:10.5px;color:${col};margin-top:3px;font-weight:700">${arr}${Math.abs(d).toFixed(1)} · ${tx('pre','pre')} ${fmt(x.pre)}</div></div>`;};
   return `<div class="verdict">
-    <p class="vlead">${tx('El veredicto del consenso · Mundial 2026','The consensus verdict · World Cup 2026')}</p>
+    <p class="vlead">${tx('El veredicto del consenso · Mundial 2026 · actualizado tras la fase de grupos','The consensus verdict · World Cup 2026 · updated after the group stage')}</p>
     <p class="vmain">${verdict}</p>
-    <div class="podium">${pod('🥈',t2,'p2')}${pod('🥇',t1,'p1')}${pod('🥉',t3,'p3')}</div>
+    <div class="podium">${pod('🥈',n2,'p2')}${pod('🥇',n1,'p1')}${pod('🥉',n3,'p3')}</div>
   </div>`;
 }
 function keyTakeaways(){
-  const c=DATA.consensus;
-  const fav=Object.entries(c.title_median).sort((a,b)=>b[1]-a[1])[0];
-  let dis=null;
-  for(const t in c.title_stat){ const s=c.title_stat[t];
-    if(s.median<3) continue; const sp=s.max-s.min;
-    if(!dis||sp>dis.sp) dis={t,sp,min:s.min,max:s.max};
+  const c=DATA.consensus, R=consTitleRanks();
+  if(!R){ // respaldo anterior
+    const fav=Object.entries(c.title_median).sort((a,b)=>b[1]-a[1])[0];
+    let dis=null; for(const t in c.title_stat){const s=c.title_stat[t]; if(s.median<3)continue; const sp=s.max-s.min; if(!dis||sp>dis.sp)dis={t,sp,min:s.min,max:s.max};}
+    let safe=null,coin=null; for(const m of c.matches){if(!safe||m.conf_idx>safe.conf_idx)safe=m; if(!coin||m.conf_idx<coin.conf_idx)coin=m;}
+    return `<div class="takeaways"><div class="tk blue"><div class="lab">${tx('Favorito del consenso','Consensus favorite')}</div><div class="big">${tf(fav[0])}</div><div class="sub">${fmt(fav[1])}</div></div><div class="tk"><div class="lab">${tx('Mayor desacuerdo','Biggest disagreement')}</div><div class="big">${tf(dis.t)}</div><div class="sub">${fmt(dis.min)}–${fmt(dis.max)}</div></div><div class="tk green"><div class="lab">${tx('Más seguro','Safest')}</div><div class="big">${tf(safe.a)} vs ${tf(safe.b)}</div><div class="sub">${safe.conf_idx}/100</div></div><div class="tk red"><div class="lab">${tx('Moneda al aire','Coin flip')}</div><div class="big">${tf(coin.a)} vs ${tf(coin.b)}</div><div class="sub">${coin.conf_idx}/100</div></div></div>`;
   }
-  let safe=null,coin=null;
-  for(const m of c.matches){
-    if(!safe||m.conf_idx>safe.conf_idx) safe=m;
-    if(!coin||m.conf_idx<coin.conf_idx) coin=m;
-  }
+  const preFav=R.preRank[0], nowFav=R.nowRank[0];
+  const faller=R.arr.slice().sort((a,b)=>(a.now-a.pre)-(b.now-b.pre))[0];
+  const dis=R.arr.filter(x=>x.now>=3).slice().sort((a,b)=>b.sp.d-a.sp.d)[0]||R.arr[0];
   return `<div class="takeaways">
-    <div class="tk blue"><div class="lab">${tx('Favorito del consenso','Consensus favorite')}</div><div class="big">${tf(fav[0])}</div><div class="sub">${fmt(fav[1])} ${tx('de probabilidad de título','title probability')}</div></div>
-    <div class="tk"><div class="lab">${tx('Mayor desacuerdo entre IAs','Biggest disagreement between AIs')}</div><div class="big">${tf(dis.t)}</div><div class="sub">${tx('entre','between')} ${fmt(dis.min)} ${tx('y','and')} ${fmt(dis.max)} ${tx('según el modelo','depending on the model')}</div></div>
-    <div class="tk green"><div class="lab">${tx('Pronóstico más seguro','Safest forecast')}</div><div class="big">${tf(safe.a)} vs ${tf(safe.b)}</div><div class="sub">${tx('confianza','confidence')} ${safe.conf_idx}/100 · ${tx('marcador','score')} ${safe.score}</div></div>
-    <div class="tk red"><div class="lab">${tx('Moneda al aire','Coin flip')}</div><div class="big">${tf(coin.a)} vs ${tf(coin.b)}</div><div class="sub">${tx('confianza','confidence')} ${coin.conf_idx}/100 · ${tx('muy igualado','razor-thin')}</div></div>
+    <div class="tk"><div class="lab">${tx('Favorito PRE-MUNDIAL','Pre-tournament favorite')}</div><div class="big">${tf(preFav.t)}</div><div class="sub">${fmt(preFav.pre)} ${tx('· antes del torneo','· before the tournament')}</div></div>
+    <div class="tk blue"><div class="lab">${tx('Favorito ACTUAL · tras grupos','Current favorite · after groups')}</div><div class="big">${tf(nowFav.t)}</div><div class="sub">${fmt(nowFav.now)} · ${tx('era','was')} ${fmt(nowFav.pre)} ▲</div></div>
+    <div class="tk red"><div class="lab">${tx('Mayor caída tras grupos','Biggest drop after groups')}</div><div class="big">${tf(faller.t)}</div><div class="sub">${tx('de','from')} ${fmt(faller.pre)} ${tx('a','to')} ${fmt(faller.now)} ▼</div></div>
+    <div class="tk green"><div class="lab">${tx('Mayor desacuerdo entre IAs','Biggest disagreement between AIs')}</div><div class="big">${tf(dis.t)}</div><div class="sub">${fmt(dis.sp.min)} ${tx('a','to')} ${fmt(dis.sp.max)} ${tx('· actual','· current')}</div></div>
   </div>`;
 }
 function renderConsenso(){
@@ -1251,7 +1267,7 @@ function computeKO(){
   KR.forEach(s=>{
     const r=real[s.code]; if(!r) return;
     const realSc=r.ga+'-'+r.gb, realSign=Math.sign(r.ga-r.gb), rw=r.winner;
-    const row={code:s.code,a:s.a,b:s.b,real:realSc,rw};
+    const row={code:s.code,a:s.a,b:s.b,real:realSc,rw,fecha:r.fecha||'',venue:r.venue||''};
     ACC_MODELS.forEach(m=>{
       const p=s[KO_FIELD[m.key]]; if(!p){row[m.key]=null;return;}
       const A=agg[m.key]; A.n++;
@@ -1277,15 +1293,25 @@ function koScoreHTML(){
   const medals=['🥇','🥈','🥉',''];
   const board=ACC_MODELS.map(m=>({...m,...agg[m.key]})).filter(x=>x.n>0).sort((a,b)=>b.pts-a.pts||b.qual-a.qual||b.exact-a.exact);
   const cards=board.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}"><div class="rank">${medals[i]||''}</div><div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.pts}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.qual}/${x.n}</b>${tx('clasificados','qualifiers')}</span><span><b>${x.exact}</b>${tx('exactos','exact')}</span></div></div>`).join('');
-  const cell=(r,k)=>{const c=r[k];if(!c)return '<span style="color:var(--muted)">—</span>';const ic=c.qp===3?(c.sp===2?'★':(c.sp===1?'✓':'◓')):(c.sp>=1?'◐':'✗');return `${tf(c.w)} ${c.sc} <b>${ic}${c.tot}</b>`;};
-  const tr=rows.map(r=>`<div style="border-top:1px solid var(--border);padding:8px 2px;font-size:12px">
-    <div style="font-weight:700;margin-bottom:3px">${r.code} · ${tf(r.a)}–${tf(r.b)} <span style="color:var(--purple)">${tx('real','real')}: ${tf(r.rw)} ${r.real}</span></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 10px">
-      <span style="color:var(--c-claude)">Claude: ${cell(r,'claude')}</span><span style="color:var(--c-chatgpt)">ChatGPT: ${cell(r,'chatgpt')}</span>
-      <span style="color:var(--c-gemini)">Gemini: ${cell(r,'gemini')}</span><span style="color:var(--c-cons)">Consenso: ${cell(r,'consenso')}</span></div></div>`).join('');
+  const cell=(r,k,label)=>{const c=r[k];if(!c)return `<div class="pred"><span class="plabel">${label}</span>—</div>`;
+    const ic=c.qp===3?(c.sp===2?'★':(c.sp===1?'✓':'◓')):(c.sp>=1?'◐':'✗');
+    const cls=c.tot>=4?'exact':(c.tot>=1?'out':'miss');
+    return `<div class="pred ${cls}"><span class="plabel">${label}</span>${c.sc} ${ic}</div>`;};
+  const koHead=`<div class="h2h-table-head" style="font-size:11px;color:var(--muted);margin-top:6px;margin-bottom:8px;padding:0 12px;font-weight:600;">
+      <div>${tx('Fecha · Sede','Date · Venue')}</div><div>${tx('Partidos','Matches')}</div><div>${tx('Real','Result')}</div>
+      <div class="preds-head"><div style="color:${COL.Claude}">Claude</div><div style="color:${COL.ChatGPT}">ChatGPT</div><div style="color:${COL.Gemini}">Gemini</div><div style="color:${COL.Consenso}">Consenso</div></div>
+    </div>`;
+  const koRows=rows.map(r=>{const ven=r.venue?`<div class="venue">📍 ${r.venue}</div>`:'';
+    return `<div class="h2h-row-compact played">
+      <div class="date">${r.fecha||''}${ven}</div>
+      <div class="teams"><b>${tf(r.a)}</b> vs <b>${tf(r.b)}</b></div>
+      <div class="score">${r.real}</div>
+      <div class="preds">${cell(r,'claude','Claude')}${cell(r,'chatgpt','ChatGPT')}${cell(r,'gemini','Gemini')}${cell(r,'consenso','Consenso')}</div>
+    </div>`;}).join('');
   return head+`<div class="acc-progress"><div class="track"><div class="fill" style="width:${Math.round(100*played/total)}%"></div></div><div class="lbl">${played}/${total} ${tx('llaves jugadas','ties played')}</div></div>
     <div class="lb-grid">${cards}</div>
-    <div style="font-size:11px;color:var(--muted);margin:6px 2px">★ ${tx('clasificado + marcador exacto','qualifier + exact')} (5) · ✓ ${tx('clasificado + resultado','qualifier + outcome')} (4) · ◓ ${tx('solo clasificado','qualifier only')} (3) · ◐ ${tx('solo marcador/resultado','score/outcome only')} · ✗ ${tx('fallo','miss')}</div>${tr}`;
+    <div class="acc-legend"><span>★ <b style="color:#1a9e5c">${tx('clasificado + marcador exacto','qualifier + exact')}</b> (5)</span><span>✓ <b style="color:#1a9e5c">${tx('clasificado + resultado','qualifier + outcome')}</b> (4)</span><span>◓ <b style="color:#b58900">${tx('solo clasificado','qualifier only')}</b> (3)</span><span>◐ <b style="color:#b58900">${tx('solo marcador','score only')}</b></span><span>✗ <b style="color:#c0392b">${tx('fallo','miss')}</b></span></div>
+    ${koHead}<div class="h2h-table">${koRows}</div>`;
 }
 function renderAccuracy(){
   const host=document.getElementById('precision'); if(!host) return;
