@@ -950,7 +950,8 @@ function renderConsenso(){
 
   ${titleConsolidated()}
 
-  <div class="section-title">${tx('Probabilidad de campeón — las 3 IAs y el consenso','Champion probability — the 3 AIs and the consensus')}</div>
+  <div class="section-title">${tx('Probabilidad de campeón PRE-MUNDIAL — las 3 IAs y el consenso','Champion probability PRE-TOURNAMENT — the 3 AIs and the consensus')}</div>
+  <p class="note">${tx('Esta es la línea base <b>previa al Mundial</b> (antes del sorteo y de cualquier partido). La probabilidad <b>actual</b>, ya con resultados y cuadro real, está en el cuadro «Probabilidad de campeón · consolidado» de más arriba.','This is the <b>pre-tournament</b> baseline (before the draw and any match). The <b>current</b> probability, with real results and bracket, is in the «Champion probability · consolidated» panel above.')}</p>
   <div class="card">
     <div class="legend" style="margin-bottom:10px">
       <span class="dotleg" style="background:var(--c-claude)"></span>Claude
@@ -1119,9 +1120,6 @@ function renderClaude(){
   ${methPanel("claude")}
   ${backtestPanel("claude")}
   ${methClose()}
-  <div class="section-title">${tx('Probabilidad de campeón · Claude','Champion probability · Claude')}</div>
-  <div class="card">${champBars(d.title, COL.Claude)}</div>
-
   <div class="section-title">${tx('Camino al título · Claude · las 48 selecciones','Road to the title · Claude · all 48 teams')}</div>
   <div class="card">${reachTable(d.reach, all48(d.title))}</div>
 
@@ -1153,9 +1151,6 @@ function renderChatGPT(){
   ${methPanel("chatgpt")}
   ${backtestPanel("chatgpt")}
   ${methClose()}
-  <div class="section-title">${tx('Probabilidad de campeón · ChatGPT','Champion probability · ChatGPT')}</div>
-  <div class="card">${champBars(d.title, COL.ChatGPT)}</div>
-
   <div class="section-title">${tx('Camino al título · ChatGPT · las 48 selecciones','Road to the title · ChatGPT · all 48 teams')}</div>
   <div class="card">${reachTable(d.reach, all48(d.title))}</div>
 
@@ -1185,9 +1180,6 @@ function renderGemini(){
   ${methPanel("gemini")}
   ${backtestPanel("gemini")}
   ${methClose()}
-  <div class="section-title">${tx('Probabilidad de campeón · Gemini','Champion probability · Gemini')}</div>
-  <div class="card">${champBars(d.title, COL.Gemini)}</div>
-
   <div class="section-title">${tx('Camino al título · Gemini · las 48 selecciones','Road to the title · Gemini · all 48 teams')}</div>
   <div class="card">${reachTable(d.reach, all48(d.title))}</div>
 
@@ -1202,6 +1194,7 @@ function renderGemini(){
 
 /* ============ PRECISIÓN: predicción vs resultado real ============ */
 let REAL_RESULTS = null;   // se carga desde results.json
+let KO_RESULTS = null;     // se carga en vivo desde ko_results.json (resultados de eliminatorias)
 const ACC_MODELS = [
   {key:'consenso', name:'Consenso', color:'var(--c-cons)',    get:()=>DATA.consensus.matches},
   {key:'claude',   name:'Claude',   color:'var(--c-claude)',  get:()=>DATA.claude.fixtures},
@@ -1262,7 +1255,7 @@ function computeStandings(){
 // === ELIMINATORIAS: clasificado (3) + marcador 90' exacto (2) / resultado (1) — máx 5/llave ===
 const KO_FIELD={consenso:'cons',claude:'pred',chatgpt:'cg',gemini:'gm'};
 function computeKO(){
-  const KR=DATA.ko_real||[], RES=DATA.ko_results||[];
+  const KR=DATA.ko_real||[], RES=((typeof KO_RESULTS!=='undefined'&&KO_RESULTS!=null)?KO_RESULTS:(DATA.ko_results||[]));
   const real={}; RES.forEach(r=>{ if(r&&r.code&&r.ga!=null&&r.gb!=null) real[r.code]=r; });
   const agg={}; ACC_MODELS.forEach(m=>agg[m.key]={pts:0,qual:0,exact:0,res:0,n:0});
   const rows=[];
@@ -1386,10 +1379,13 @@ function renderAccuracy(){
 const RESULTS_FALLBACK = __RESULTS_FALLBACK__;
 function _normResults(j){ return Array.isArray(j) ? j : (j && j.results ? j.results : []); }
 function loadResults(){
-  fetch('./results.json?ts='+Date.now())
-    .then(r=>r.ok?r.json():Promise.reject())
-    .then(j=>{ REAL_RESULTS=_normResults(j); renderAccuracy(); renderBracket(); if(_h2hAuto) h2hRenderTable(); })
-    .catch(()=>{ REAL_RESULTS=_normResults(RESULTS_FALLBACK); renderAccuracy(); renderBracket(); if(_h2hAuto) h2hRenderTable(); });  // respaldo embebido
+  const fj=fetch('./results.json?ts='+Date.now()).then(r=>r.ok?r.json():Promise.reject()).catch(()=>RESULTS_FALLBACK);
+  const fk=fetch('./ko_results.json?ts='+Date.now()).then(r=>r.ok?r.json():Promise.reject()).catch(()=>null);
+  Promise.all([fj,fk]).then(([j,k])=>{
+    REAL_RESULTS=_normResults(j);
+    if(Array.isArray(k)) KO_RESULTS=k;            // resultados de eliminatorias en vivo (sin regenerar el sitio)
+    renderAccuracy(); renderBracket(); if(_h2hAuto) h2hRenderTable();
+  });
 }
 
 
