@@ -189,7 +189,14 @@ border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;margin:2px 4
 .anchor-row .stat.in{background:#e6f7ee;color:#1a9e5c;}
 .anchor-row .stat.hi{background:#fff3da;color:#b58900;}
 .anchor-row .stat.lo{background:#e6efff;color:#0048ff;}
-@media(max-width:640px){.anchor-row{grid-template-columns:70px 1fr 50px;}.anchor-row .stat{display:none;}}
+.anchor-row .stat.real{background:var(--deep-blue);color:#fff;}
+.anchor-row .stat.under{background:#fdeaea;color:#c0392b;}
+.anchor-row .stat.close{background:#e6f7ee;color:#1a9e5c;}
+.anchor-row.anchor-real{background:linear-gradient(90deg,rgba(4,28,89,.08),rgba(4,28,89,0));border-radius:8px;}
+.anchor-bar .real-line{position:absolute;top:-4px;bottom:-4px;width:0;border-left:2px dashed var(--deep-blue);opacity:.5;transform:translateX(-1px);}
+.anchor-bar .marker.real{width:9px;height:20px;top:-5px;background:var(--deep-blue);box-shadow:0 0 0 2px var(--card),0 0 0 3px rgba(4,28,89,.22);}
+.anchor-row .ai .closeflag{font-size:9.5px;font-weight:800;color:#1a9e5c;white-space:nowrap;}
+@media(max-width:640px){.anchor-row{grid-template-columns:70px 1fr 50px;}.anchor-row .stat{display:none;}.anchor-row .ai .closeflag{display:none;}}
 /* ===== panel de precisión (predicción vs realidad) ===== */
 .acc-hero{background:linear-gradient(135deg,var(--purple),var(--deep-blue));color:#fff;border-radius:18px;padding:20px 22px;margin-bottom:16px;}
 .acc-hero h2{margin:0 0 4px;font-size:20px;font-weight:800;}
@@ -653,6 +660,8 @@ function groupProjection(){
 /* ---------- ANCLA: tasa de empates histórica vs proyección ---------- */
 function drawRateAnchor(){
   const meanD = arr => arr.reduce((s,m)=>s+m.pD,0)/arr.length;
+  // Resultado real de la fase de grupos 2026 (completa, 72/72, verificada): 20 empates.
+  const REAL_DRAWS=20, REAL_PLAYED=72, REAL=100*REAL_DRAWS/REAL_PLAYED; // 27.78 %
   const items = [
     {name:'Claude',  v: meanD(DATA.claude.fixtures), c:'var(--c-claude)'},
     {name:'ChatGPT', v: meanD(DATA.chatgpt.matches), c:'var(--c-chatgpt)'},
@@ -661,31 +670,42 @@ function drawRateAnchor(){
   ];
   const MIN=15, MAX=32, BLO=19.44, BHI=24.10;
   const pct = v => Math.max(0,Math.min(100, 100*(v-MIN)/(MAX-MIN)));
-  const status = v => v>=BLO && v<=BHI ? ['in', tx('en banda','in band')]
-                    : v>BHI ? ['hi', tx('sobre banda','above band')]
-                            : ['lo', tx('bajo banda','below band')];
+  let best=items[0]; items.forEach(it=>{ if(Math.abs(it.v-REAL)<Math.abs(best.v-REAL)) best=it; }); // modelo + cercano al real
   const rows = items.map(it=>{
-    const [cls,lbl] = status(it.v);
+    const d = it.v-REAL;                                            // negativo = subestimó
+    const dTxt = (d>=0?'+':'−')+Math.abs(d).toFixed(1)+' pp';
     return `<div class="anchor-row">
-      <span class="ai" style="color:${it.c}">${it.name}</span>
+      <span class="ai" style="color:${it.c}">${it.name}${it===best?' <span class="closeflag">◀ '+tx('+ cercano','closest')+'</span>':''}</span>
       <div class="anchor-bar">
         <div class="band" style="left:${pct(BLO)}%;right:${100-pct(BHI)}%"></div>
+        <div class="real-line" style="left:${pct(REAL)}%"></div>
         <div class="marker" style="left:${pct(it.v)}%;background:${it.c}"></div>
       </div>
       <span class="val">${it.v.toFixed(1)}%</span>
-      <span class="stat ${cls}">${lbl}</span>
+      <span class="stat ${it===best?'close':'under'}" title="${tx('vs real','vs actual')}">${dTxt}</span>
     </div>`;
   }).join('');
+  const realRow = `<div class="anchor-row anchor-real">
+      <span class="ai" style="color:var(--deep-blue);font-weight:800">${tx('Real 2026','Actual 2026')}</span>
+      <div class="anchor-bar">
+        <div class="band" style="left:${pct(BLO)}%;right:${100-pct(BHI)}%"></div>
+        <div class="marker real" style="left:${pct(REAL)}%"></div>
+      </div>
+      <span class="val">${REAL.toFixed(1)}%</span>
+      <span class="stat real">${REAL_DRAWS}/${REAL_PLAYED}</span>
+    </div>`;
   return `<div class="anchor-card">
     <div class="anchor-title">🎯 ${tx('Tasa de empates · ancla histórica de los Mundiales','Draw rate · historical anchor of the World Cups')}</div>
     <div class="anchor-band-text">${tx(
-      'Fase de grupos · era moderna 1998–2022 (336 partidos, 81 empates): <b>banda empírica 19.4 % – 24.1 %</b>. La tendencia contemporánea (2014–2022) está en 19.4 % y la del periodo completo en 24.1 %. La franja verde de cada fila marca ese rango; el marcador muestra cuántos empates proyecta cada modelo en los 72 partidos.',
-      'Group stage · modern era 1998–2022 (336 matches, 81 draws): <b>empirical band 19.4 % – 24.1 %</b>. The contemporary trend (2014–2022) sits at 19.4 % and the full-period one at 24.1 %. The green band on each row marks that range; the marker shows how many draws each model projects across the 72 matches.'
+      'Fase de grupos · era moderna 1998–2022 (336 partidos, 81 empates): <b>banda empírica 19.4 % – 24.1 %</b>. <b>Resultado real del Mundial 2026: 27.8 % (20/72)</b> — la fase de grupos más empatada del siglo XXI, por encima de Sudáfrica 2010 (27.08 %) y solo superada en la era moderna por Francia 1998 (33.33 %). Los cuatro modelos quedaron por debajo del dato real: la línea punteada marca el 27.8 % real y el marcador, lo que proyectó cada uno.',
+      'Group stage · modern era 1998–2022 (336 matches, 81 draws): <b>empirical band 19.4 % – 24.1 %</b>. <b>Actual 2026 result: 27.8 % (20/72)</b> — the draw-heaviest group stage of the 21st century, above South Africa 2010 (27.08 %) and surpassed in the modern era only by France 1998 (33.33 %). All four models landed below the real figure: the dashed line marks the real 27.8 % and each marker shows what each one projected.'
     )}</div>
+    ${realRow}
     ${rows}
-    <details style="margin-top:10px"><summary style="cursor:pointer;font-size:12px;color:var(--muted)">${tx('Desglose por Mundial · 1998–2022','Breakdown by World Cup · 1998–2022')}</summary>
+    <details style="margin-top:10px"><summary style="cursor:pointer;font-size:12px;color:var(--muted)">${tx('Desglose por Mundial · 1998–2026','Breakdown by World Cup · 1998–2026')}</summary>
       <div style="margin-top:6px;font-size:12px;color:var(--muted);line-height:1.7">
-        Francia 1998 — 33.33 % (16/48) · ${tx('Corea–Japón','Korea–Japan')} 2002 — 25.00 % (12/48) · ${tx('Alemania','Germany')} 2006 — 25.00 % (12/48) · ${tx('Sudáfrica','South Africa')} 2010 — 27.08 % (13/48) · ${tx('Brasil','Brazil')} 2014 — 18.75 % (9/48) · ${tx('Rusia','Russia')} 2018 — 18.75 % (9/48) · Qatar 2022 — 20.83 % (10/48).
+        Francia 1998 — 33.33 % (16/48) · ${tx('Corea–Japón','Korea–Japan')} 2002 — 25.00 % (12/48) · ${tx('Alemania','Germany')} 2006 — 25.00 % (12/48) · ${tx('Sudáfrica','South Africa')} 2010 — 27.08 % (13/48) · ${tx('Brasil','Brazil')} 2014 — 18.75 % (9/48) · ${tx('Rusia','Russia')} 2018 — 18.75 % (9/48) · Qatar 2022 — 20.83 % (10/48) · <b style="color:var(--deep-blue)">${tx('Canadá–EE.UU.–México','Canada–USA–Mexico')} 2026 — 27.78 % (20/72)</b>.
+        <br><br>${tx('El dato real de 2026 (27.78 %) cae por encima de la banda histórica y de lo que proyectó cualquier modelo: el más cercano fue Gemini (25.3 %) y el más alejado, ChatGPT (22.6 %); el delta de cada modelo frente al 27.8 % real aparece a la derecha de su fila. Por jornada: J1 fue la más empatada (9 de 24), seguida de J3 (6) y J2 (5). Nota metodológica: 2026 estrena el formato de 48 selecciones (72 partidos de grupos), frente a los 48 partidos por edición de 1998–2022; la tasa es comparable, pero el cambio de formato y el mayor tamaño de muestra son factores a considerar.','The real 2026 figure (27.78 %) lands above the historical band and above every model: closest was Gemini (25.3 %), furthest ChatGPT (22.6 %); each model’s gap to the real 27.8 % is shown at the right of its row. By matchday: MD1 was the most drawn (9 of 24), then MD3 (6) and MD2 (5). Methodological note: 2026 debuts the 48-team format (72 group matches) versus 48 matches per edition in 1998–2022; the rate is comparable, but the format change and larger sample are factors to weigh.')}
         <br><br>${tx('Subconjuntos relevantes: contemporáneo 2014–2022 = 19.4 % (28/144); siglo XXI sin 1998 = 22.6 % (65/288); global 1930–2022 (incluye eliminación a 90′) = 22.0 % (198/900).','Relevant subsets: contemporary 2014–2022 = 19.4 % (28/144); 21st century without 1998 = 22.6 % (65/288); historical global 1930–2022 (includes knockouts at 90′) = 22.0 % (198/900).')}
       </div>
     </details>
