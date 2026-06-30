@@ -1,1 +1,26 @@
-[{"code":"M73","ga":0,"gb":1,"winner":"Canadá","fecha":"28 Jun","venue":"SoFi Stadium · LA"}]
+[
+ {
+  "code": "M73",
+  "ga": 0,
+  "gb": 1,
+  "winner": "Canadá",
+  "fecha": "28 Jun",
+  "venue": "Los Angeles (Inglewood)"
+ },
+ {
+  "code": "M74",
+  "ga": 1,
+  "gb": 1,
+  "winner": "Paraguay",
+  "fecha": "29 Jun",
+  "venue": "Boston (Foxborough)"
+ },
+ {
+  "code": "M76",
+  "ga": 2,
+  "gb": 1,
+  "winner": "Brasil",
+  "fecha": "29 Jun",
+  "venue": "Houston"
+ }
+]
