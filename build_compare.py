@@ -404,7 +404,7 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 /* ===== Bracket (Camino a la final) ===== */
 .bk-seltabs{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 16px;}
 .bk-seltab{border:1.5px solid var(--border);background:var(--white);border-radius:999px;padding:7px 15px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;color:var(--deep-blue);transition:all .15s;}
-.bk-seltab .dot{width:10px;height:10px;border-radius:50%;}
+.bk-seltab .dot{width:10px;height:10px;border-radius:50%;position:static;top:auto;transform:none;}
 .bk-seltab.on{color:#fff;border-color:transparent;}
 .bk-champ{border-radius:16px;padding:15px 19px;margin:0 0 18px;display:flex;align-items:center;gap:13px;color:#fff;}
 .bk-champ .cup{font-size:29px} .bk-champ .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.07em;opacity:.85}
@@ -446,7 +446,7 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 .strb-row:last-child{border-bottom:none;}
 .strb-rank{font-weight:800;color:var(--muted);text-align:center;}
 .strb-name{font-weight:700;color:var(--deep-blue);display:flex;align-items:center;gap:8px;}
-.strb-name .dot{width:10px;height:10px;border-radius:50%;}
+.strb-name .dot{width:10px;height:10px;border-radius:50%;position:static;top:auto;transform:none;}
 .strb-pts{font-weight:800;text-align:right;font-size:15px;}
 @media(max-width:760px){.bk-champ .nm{font-size:19px}}
 .bk-metric{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px;}
@@ -482,11 +482,11 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 
 <div class="tabs" id="tabs">
   <button class="tab active" data-t="precision"><span data-en="🏆 AI World Cup">🏆 Mundial de las IAs</span></button>
+  <button class="tab" data-t="bracket"><span data-en="🗺️ Road to the final">🗺️ Camino a la final</span></button>
   <button class="tab" data-t="consenso"><span class="dotc" style="background:var(--c-cons)"></span><span data-en="Consensus">Consenso</span></button>
   <button class="tab" data-t="claude"><span class="dotc" style="background:var(--c-claude)"></span>Claude</button>
   <button class="tab" data-t="chatgpt"><span class="dotc" style="background:var(--c-chatgpt)"></span>ChatGPT</button>
   <button class="tab" data-t="gemini"><span class="dotc" style="background:var(--c-gemini)"></span>Gemini</button>
-  <button class="tab" data-t="bracket"><span data-en="🗺️ Road to the final">🗺️ Camino a la final</span></button>
 </div>
 
 <div id="precision" class="panel active"></div>
@@ -1656,8 +1656,8 @@ function bkStructuralHTML(){
   if(S.done<S.total){
     const pct=Math.round(100*S.done/S.total);
     body='<div class="strb-pend"><div class="big">⏳</div>'+
-      tx('Se activa al cerrar la fase de grupos (27 jun). Aquí se puntuará a cada IA por <b>acertar el orden final de cada grupo</b>, comparado con los resultados oficiales.',
-         'Activates when the group stage ends (Jun 27). Each AI will be scored for <b>correctly predicting each group\'s final order</b> against the official results.')+
+      tx('Se activa al cerrar la fase de grupos. Aquí se puntúa a cada IA por <b>acertar el orden final de cada grupo</b>, comparado con los resultados oficiales.',
+         'Activates when the group stage ends. Each AI is scored for <b>correctly predicting each group\'s final order</b> against the official results.')+
       '<div class="strb-prog"><span style="width:'+pct+'%"></span></div>'+
       '<div style="font-size:12px;margin-top:4px">'+tx('Grupos definidos','Groups decided')+': '+S.done+'/'+S.total+'</div></div>';
   } else {
@@ -1680,23 +1680,24 @@ function renderBracket(){
   const mtoggle='<div class="bk-metric"><span class="bk-metric-lbl">'+tx('Métrica de avance','Advancement metric')+':</span>'+
     '<button class="bk-mbtn '+(metric==='elo'?'on':'')+'" data-metric="elo">Elo</button>'+
     '<button class="bk-mbtn '+(metric==='fifa'?'on':'')+'" data-metric="fifa">'+tx('Ranking FIFA','FIFA Ranking')+'</button>'+
-    '<span class="bk-metric-note">⚠️ '+tx('No es predicción: solo muestra quién <b>avanzaría según ese ranking</b>, sin los demás factores que las IAs decidirán tras el 27 jun.',
-       'Not a prediction: it only shows who <b>would advance per that ranking</b>, without the other factors the AIs will weigh after Jun 27.')+'</span></div>';
+    '<span class="bk-metric-note">⚠️ '+tx('No es predicción: solo muestra quién <b>avanzaría según ese ranking</b>, sin los demás factores de un pronóstico completo. El cuadro de abajo es una referencia de fuerza <b>pre-Mundial</b>.',
+       'Not a prediction: it only shows who <b>would advance per that ranking</b>, without the other factors of a full forecast. The bracket below is a <b>pre-tournament</b> strength reference.')+'</span></div>';
   const champ='<div class="bk-champ" style="background:linear-gradient(135deg,#041c59,'+c+' 78%)">'+
-    '<span class="cup">🏆</span><div><div class="lbl">'+tx('Campeón proyectado','Projected champion')+' · '+model+' · '+metricName+'</div>'+
+    '<span class="cup">🏆</span><div><div class="lbl">'+tx('Campeón proyectado · pre-Mundial','Projected champion · pre-tournament')+' · '+model+' · '+metricName+'</div>'+
     '<div class="nm">'+tf(B.champion)+'</div><div class="ru">'+tx('Subcampeón','Runner-up')+': '+tf(B.runnerup)+'</div></div></div>';
   const advText = metric==='fifa'
-    ? tx('aún no las predicen las IAs. Aquí avanza la selección <b>mejor ubicada en el Ranking FIFA</b> (oficial, 11 jun). Es solo el ranking, no una predicción de cada IA.',
-         'not yet predicted by the AIs. Here the team <b>higher in the FIFA Ranking</b> (official, 11 Jun) advances. It is just the ranking, not each AI\'s prediction.')
-    : tx('aún no las predicen las IAs. Se rellenan por <b>Elo</b> — un número que mide la fuerza de cada selección según su historial; avanza el de mayor Elo. Es solo una estimación de fuerza, no una predicción de cada IA.',
-         'not yet predicted by the AIs. They are filled by <b>Elo</b> — a number rating each team\'s strength from its track record; the higher-Elo team advances. It is only a strength estimate, not each AI\'s prediction.');
-  const elobox='<div class="bk-elobox"><b>'+tx('Ronda de 32','Round of 32')+':</b> '+
+    ? tx('las IAs no han emitido una predicción actualizada de estas rondas. Aquí avanza la selección <b>mejor ubicada en el Ranking FIFA</b> (oficial, 11 jun) — es una referencia de fuerza, no la predicción de cada IA.',
+         'the AIs have not issued an updated prediction for these rounds. Here the team <b>higher in the FIFA Ranking</b> (official, 11 Jun) advances — a strength reference, not each AI\'s prediction.')
+    : tx('las IAs no han emitido una predicción actualizada de estas rondas. Se rellenan por <b>Elo</b> — un número que mide la fuerza de cada selección según su historial; avanza el de mayor Elo. Es una referencia de fuerza, no la predicción de cada IA.',
+         'the AIs have not issued an updated prediction for these rounds. They are filled by <b>Elo</b> — a number rating each team\'s strength from its track record; the higher-Elo team advances. It is a strength reference, not each AI\'s prediction.');
+  const elobox='<div class="bk-elobox">'+
+    '<div style="background:#fff3da;border:1px solid #f0d98a;color:#7a5b00;border-radius:10px;padding:9px 12px;margin-bottom:10px;font-weight:600;line-height:1.5">⏳ '+
+    tx('Proyección <b>PRE-MUNDIAL</b>: el cuadro de abajo hasta la final usa los <b>grupos que cada IA proyectó antes del torneo</b> y la fuerza Elo/FIFA; <b>no incorpora los resultados reales</b>. La <b>Ronda de 32 de arriba sí es el cuadro oficial</b>; el seguimiento en vivo (resultados y puntajes) está en la pestaña «Mundial de las IAs».',
+       '<b>PRE-TOURNAMENT</b> projection: the bracket below to the final uses the <b>groups each AI projected before the tournament</b> plus Elo/FIFA strength; it <b>does not incorporate the real results</b>. The <b>Round of 32 above is the official bracket</b>; live tracking (results and scores) lives in the «AI World Cup» tab.')+'</div>'+
+    '<b>'+tx('Ronda de 32','Round of 32')+':</b> '+
     tx('predicción firme de cada IA — sale de su orden de grupos proyectado y sus 8 mejores terceros (por puntos esperados).',
        'each AI\'s firm prediction — from its projected group order and its 8 best third-placed teams (by expected points).')+
     '<br><b>'+tx('Octavos → Final','Round of 16 → Final')+':</b> '+advText+
-    '<br>📌 <b>'+tx('Importante','Important')+':</b> '+
-    tx('cuando termine el último partido de la fase de grupos (27 jun), cada IA volverá a pronosticar estas fases con marcadores reales, y el bracket se actualizará con sus predicciones.',
-       'once the last group match is played (Jun 27), each AI will re-forecast these rounds with real scores, and the bracket will update with their predictions.')+
     '<br><span style="font-size:11.5px;opacity:.85">🔎 '+
     tx('El <b>Elo</b> (eloratings.net, previo al Mundial) y el <b>Ranking FIFA</b> (oficial, 11 jun) son sistemas distintos: por Elo, España es nº1; por FIFA, Argentina es nº1. Cambia la métrica arriba para comparar. Para predecir partidos, el Elo suele ser más fiable.',
        'Both <b>Elo</b> (eloratings.net, pre-tournament) and the <b>FIFA Ranking</b> (official, 11 Jun) are different systems: by Elo, Spain is no.1; by FIFA, Argentina is no.1. Switch the metric above to compare. For match prediction, Elo tends to be more reliable.')+'</span></div>';
