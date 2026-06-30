@@ -1,15 +1,16 @@
 name: Actualizar resultados (Mundial de las IAs)
 
-# Trae los marcadores oficiales más recientes a results.json sin intervención manual.
+# Trae los marcadores oficiales más recientes a results.json (grupos) y ko_results.json (eliminatorias)
+# sin intervención manual.
 # Fuente: openfootball/worldcup.json (dominio público, sin API key).
 
 on:
   schedule:
-    - cron: "*/30 * * * *"      # cada 30 minutos (UTC). Suficiente: los resultados aparecen al terminar cada partido.
+    - cron: "*/30 * * * *"      # cada 30 minutos (UTC). Los resultados aparecen al terminar cada partido.
   workflow_dispatch:            # permite ejecutarlo a mano desde la pestaña Actions
 
 permissions:
-  contents: write               # necesario para hacer commit de results.json
+  contents: write               # necesario para hacer commit de los resultados
 
 concurrency:
   group: update-results
@@ -27,18 +28,18 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Actualizar results.json desde el feed oficial
+      - name: Actualizar results.json y ko_results.json desde el feed oficial
         run: python scripts/update_results.py
 
       - name: Commit y push si hubo cambios
         run: |
-          if [[ -n "$(git status --porcelain results.json)" ]]; then
-            git config user.name  "results-bot"
-            git config user.email "actions@users.noreply.github.com"
-            git add results.json
+          git config user.name  "results-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add results.json ko_results.json
+          if git diff --cached --quiet; then
+            echo "Sin cambios: nada que publicar."
+          else
             git commit -m "Resultados: actualización automática $(date -u +'%Y-%m-%d %H:%M UTC')"
             git push
-            echo "results.json actualizado y publicado."
-          else
-            echo "Sin cambios: nada que publicar."
+            echo "Resultados actualizados y publicados."
           fi
