@@ -426,6 +426,15 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 .bk-champ .nm{font-size:22px;font-weight:800} .bk-champ .ru{font-size:12px;opacity:.85;margin-top:2px}
 .bk-elobox{background:var(--soft-lilac);border:1px solid var(--border);border-radius:12px;padding:12px 15px;margin:0 0 16px;font-size:12.5px;color:var(--muted);line-height:1.55;}
 .bk-elobox b{color:var(--deep-blue);}
+.bk-live{margin-bottom:22px;}
+.bk-live-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+.bk-live-head h3{margin:0;font-size:17px;color:var(--deep-blue);}
+.bk-live-desc{margin:0 0 8px;font-size:13px;color:var(--muted);line-height:1.5;}
+.bk-live-stat{margin:0 0 10px;font-size:12.5px;color:var(--deep-blue);}
+.bk-livesc{float:right;font-weight:800;font-size:10px;opacity:.92;}
+.bk-livechamp{background:linear-gradient(135deg,#1a9e5c,#0d6b3c);color:#fff;border-radius:10px;padding:8px 14px;font-size:15px;margin-bottom:10px;font-weight:700;}
+.bk-tbd{color:var(--muted);font-style:italic;}
+.bk-live-leg{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.7;}
 .bk-scroll{overflow-x:auto;padding-bottom:14px;-webkit-overflow-scrolling:touch;}
 .bk-board{display:flex;gap:14px;align-items:stretch;min-width:1080px;}
 .bk-side{display:flex;gap:14px;flex:1;}
@@ -1588,6 +1597,39 @@ function bkR16HTML(){
     <p style="margin:0 0 10px;font-size:12px;color:var(--muted)">${tx('Cobertura','Coverage')}: ${cov}</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">${cards}</div></div>`;
 }
+function bkLiveHTML(){
+  const KR=DATA.ko_real||[]; if(!KR.length) return '';
+  const RES=(typeof KO_RESULTS!=='undefined'&&KO_RESULTS!=null)?KO_RESULTS:(DATA.ko_results||[]);
+  const rByC={}; RES.forEach(r=>{rByC[r.code]=r;});
+  const win={}, teams={};
+  for(const s of KR){ teams[s.code]=[s.a,s.b]; const r=rByC[s.code]; if(r&&r.winner) win[s.code]=r.winner; }
+  for(const [code,f1,f2] of BK_NEXT){ const a=win[f1]||null,b=win[f2]||null; teams[code]=[a,b]; const r=rByC[code]; if(r&&r.winner&&a&&b) win[code]=r.winner; }
+  const R32played=KR.filter(s=>win[s.code]).length;
+  const r16=['M89','M90','M91','M92','M93','M94','M95','M96'];
+  const r16formed=r16.filter(c=>{const p=teams[c]||[];return p[0]&&p[1];}).length;
+  const tbd=`<span class="bk-tbd">${tx('Por definir','TBD')}</span>`;
+  const card=(code,isFinal)=>{
+    const p=teams[code]||[null,null], a=p[0], b=p[1], w=win[code], r=rByC[code];
+    const trow=(t,on)=>`<div class="bk-team${on?' w':''}"${on?' style="background:rgba(26,158,92,.15);color:#128a4f"':''}><span class="bk-nm">${t?tf(t):tbd}</span></div>`;
+    const sc=r?`<span class="bk-livesc">${r.ga}-${r.gb}${r.ga===r.gb?' pk':''}</span>`:'';
+    const cs=isFinal?'':(w?'style="background:#1a9e5c"':(a&&b?'style="background:var(--vibrant-blue)"':'style="background:var(--muted)"'));
+    return `<div class="bk-match${isFinal?' bk-fmatch':''}" title="${code}"><div class="bk-code" ${cs}>${code}${sc}</div>${trow(a,!!w&&w===a)}${trow(b,!!w&&w===b)}</div>`;
+  };
+  const cols=side=>{let h='';for(const [key,codes] of BK_LAYOUT[side]){const name=BK_RNAME[key][LANG==='en'?1:0];let cc='';for(const code of codes)cc+=card(code,false);h+=`<div class="bk-col"><div class="bk-rhead" style="color:var(--deep-blue)">${name}</div>${cc}</div>`;}return h;};
+  const champLine = win['M104'] ? `<div class="bk-livechamp">🏆 ${tx('Campeón','Champion')}: ${tf(win['M104'])}</div>` : '';
+  return `<div class="bk-live">
+    <div class="bk-live-head"><span class="phase-tag live">⚡ ${tx('En vivo','Live')}</span><h3>🗺️ ${tx('Cuadro actual · se arma con los resultados reales','Current bracket · built from real results')}</h3></div>
+    <p class="bk-live-desc">${tx('A medida que se juegan los <b>dieciseisavos</b>, cada clasificado avanza por el cuadro oficial hacia la final. Un cruce se <b>forma</b> cuando sus dos equipos ya están definidos; los demás quedan «por definir». <b>Este cuadro será la base del nuevo pronóstico</b> que pediremos a las tres IAs al cerrar los 16avos.','As the <b>Round of 32</b> is played, each qualifier advances through the official bracket toward the final. A tie is <b>formed</b> once both its teams are known; the rest stay «TBD». <b>This bracket will be the base for the new forecast</b> we\'ll request from the three AIs when the Round of 32 ends.')}</p>
+    <p class="bk-live-stat">${tx('Dieciseisavos jugados','Round-of-32 played')}: <b>${R32played}/16</b> · ${tx('octavos formados','Round-of-16 ties formed')}: <b>${r16formed}/8</b></p>
+    ${champLine}
+    <div class="bk-scroll"><div class="bk-board">
+      <div class="bk-side">${cols('left')}</div>
+      <div class="bk-final"><div class="bk-rhead" style="color:var(--deep-blue)">${tx('Final','Final')}</div>${card('M104',true)}</div>
+      <div class="bk-side" style="flex-direction:row-reverse">${cols('right')}</div>
+    </div></div>
+    <div class="bk-live-leg">${tx('<b style="color:#1a9e5c">■</b> avanzó (resultado real) &nbsp; <b style="color:var(--vibrant-blue)">■</b> cruce formado, aún por jugar &nbsp; <b style="color:var(--muted)">■</b> por definir &nbsp; · &nbsp; «pk» = definido por penales','<b style="color:#1a9e5c">■</b> advanced (real result) &nbsp; <b style="color:var(--vibrant-blue)">■</b> formed tie, not yet played &nbsp; <b style="color:var(--muted)">■</b> TBD &nbsp; · &nbsp; «pk» = decided on penalties')}</div>
+  </div>`;
+}
 function bkBuild(model,metric){
   const gp=DATA.group_proj, groups=Object.keys(gp).sort();
   const st=(g,pos)=>gp[g][model][pos][0];
@@ -1733,7 +1775,7 @@ function renderBracket(){
   const note='<p class="bk-note"><b>'+tx('Es una proyección, no el bracket oficial.','It is a projection, not the official bracket.')+'</b> '+
     tx('La asignación de los terceros sigue una matriz oficial FIFA de 495 combinaciones; aquí se usa una asignación válida que respeta los grupos elegibles de cada casilla y puede diferir de la oficial en algún caso.',
        'The third-placed allocation follows an official FIFA matrix of 495 combinations; here a valid assignment is used that respects each slot\'s eligible groups and may differ from the official one in some cases.')+'</p>';
-  host.innerHTML=bkR32RealHTML()+bkR16HTML()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
+  host.innerHTML=bkLiveHTML()+bkR32RealHTML()+bkR16HTML()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
   const sel=host.querySelector('.bk-seltabs');
   if(sel) sel.addEventListener('click',e=>{const b=e.target.closest('[data-bk]'); if(!b)return; BK_CUR=b.dataset.bk; renderBracket(); gaEvent('bracket_model',{model:BK_CUR});});
   const mt=host.querySelector('.bk-metric');
