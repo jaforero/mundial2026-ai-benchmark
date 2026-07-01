@@ -205,6 +205,21 @@ border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;margin:2px 4
 .acc-progress .track{height:9px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden;}
 .acc-progress .fill{height:100%;background:#ffd84d;border-radius:5px;transition:width .6s ease;}
 .acc-progress .lbl{font-size:12px;margin-top:6px;opacity:.95;}
+/* ===== diferenciación de fases: actual (16avos) vs cerrada (grupos) ===== */
+.acc-hero.ko-live{background:linear-gradient(135deg,#0048ff,#041c59);border:2px solid #ffd84d;}
+.phase-tag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:4px 11px;border-radius:999px;margin-bottom:8px;}
+.phase-tag.live{background:#ffd84d;color:#7a2e00;}
+.phase-sep{display:flex;align-items:center;gap:10px;margin:28px 0 12px;}
+.phase-sep::after{content:"";flex:1;height:1px;background:var(--border);}
+.phase-sep .phase-tag.closed{background:var(--soft-lilac);color:var(--muted);border:1px solid var(--border);margin-bottom:0;}
+details.phase-closed-d{border:1px dashed var(--border);border-radius:12px;background:var(--soft-lilac);margin-top:14px;overflow:hidden;transition:background .2s;}
+details.phase-closed-d>summary{cursor:pointer;font-weight:700;color:var(--deep-blue);font-size:13.5px;padding:12px 14px;list-style:none;display:flex;align-items:center;gap:8px;}
+details.phase-closed-d>summary::-webkit-details-marker{display:none;}
+details.phase-closed-d>summary::before{content:"▸";color:var(--purple);font-size:12px;}
+details.phase-closed-d[open]>summary::before{content:"▾";}
+details.phase-closed-d>summary:hover{background:var(--hover);}
+details.phase-closed-d[open]{padding-bottom:14px;}
+details.phase-closed-d .h2h-table,details.phase-closed-d .h2h-table-head{margin-left:12px;margin-right:12px;}
 .lb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px;}
 .lb-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;position:relative;overflow:hidden;}
 .lb-card.lead{border-color:var(--purple);box-shadow:0 6px 22px rgba(78,0,255,.18);}
@@ -1316,7 +1331,7 @@ function computeKO(){
 }
 function koScoreHTML(){
   const {agg,rows,played,total}=computeKO();
-  const head=`<div class="acc-hero" style="margin-top:18px"><h2>🥊 ${tx('Eliminatorias · predicción vs realidad','Knockouts · prediction vs reality')}</h2>
+  const head=`<div class="acc-hero ko-live" style="margin-top:0"><span class="phase-tag live">⚡ ${tx('Fase actual','Live round')}</span><h2>🥊 ${tx('Eliminatorias · predicción vs realidad','Knockouts · prediction vs reality')}</h2>
     <p>${tx('Dieciseisavos en adelante. Cada IA suma por <b>acertar el clasificado</b> (3 pts) y por el <b>marcador a 90′</b>: exacto (2 pts) o solo el resultado —gana/empata/pierde— aunque falle el marcador (1 pt). Máximo 5 pts por llave.','From the Round of 32 onward. Each AI scores for <b>the correct qualifier</b> (3 pts) and the <b>90-minute score</b>: exact (2 pts) or just the outcome (1 pt). Max 5 pts per tie.')}</p></div>`;
   if(played===0){
     return head+`<div class="acc-empty"><div class="big">⚽</div>${tx('Aún no se juegan los dieciseisavos. Este tablero se activa solo con el primer resultado oficial, comparando las predicciones ya congeladas de las cuatro contendientes (las 3 IAs y el consenso).','The Round of 32 has not started. This board activates with the first official result, comparing the already-frozen predictions of the four contenders (the 3 AIs and the consensus).')}</div>`;
@@ -1410,8 +1425,13 @@ function renderAccuracy(){
     <div class="acc-hero">
       <h2>🏆 ${tx('Mundial de las IAs · predicción vs realidad','AI World Cup · prediction vs reality')}</h2>
       <p>${tx('Cada modelo y el consenso se comparan con el resultado oficial de la FIFA. Se premia tanto acertar el <b>marcador exacto</b> (3 pts) como acertar solo el <b>resultado</b> —ganar, empatar o perder— aunque falle el marcador (1 pt).','Each model and the consensus are compared against the official FIFA result. Points reward both the <b>exact score</b> (3 pts) and getting just the <b>outcome</b> —win, draw or loss— even if the score is wrong (1 pt).')}</p>
+    </div>
+    ${koScoreHTML()}
+    <div class="phase-sep"><span class="phase-tag closed">📋 ${tx('Fase de grupos · cerrada','Group stage · closed')}</span></div>
+    <div class="acc-hero" style="padding:15px 20px;background:linear-gradient(135deg,#5b4a9e,#2a2350)">
+      <p style="margin:0">${tx('Resultados finales de la fase de grupos: qué tan bien cada IA anticipó los <b>marcadores</b> y las <b>posiciones</b> de los 72 partidos ya cerrados.','Final group-stage results: how well each AI anticipated the <b>scores</b> and <b>standings</b> across the 72 closed matches.')}</p>
       <div class="acc-progress"><div class="track"><div class="fill" style="width:${pctPlayed}%"></div></div>
-        <div class="lbl">${played.length} / ${total} ${tx('partidos jugados','matches played')}</div></div>
+        <div class="lbl">${played.length} / ${total} ${tx('partidos de grupos jugados','group matches played')}</div></div>
     </div>
     <div class="lb-grid">${cards}</div>
     <div class="acc-legend">
@@ -1420,7 +1440,8 @@ function renderAccuracy(){
       <span>✗ <b style="color:#c0392b">${tx('fallo','miss')}</b> (0)</span>
       <span>RPS = ${tx('error probabilístico (menor es mejor)','probabilistic error (lower is better)')}</span>
     </div>
-    ${standingsBlock}${combinedBlock}${koScoreHTML()}${matchHtml}`;
+    ${standingsBlock}${combinedBlock}
+    <details class="phase-closed-d"><summary>📅 ${tx('Ver los 72 partidos de la fase de grupos','View all 72 group-stage matches')} · ${played.length}/${total}</summary>${matchHtml}</details>`;
 }
 const RESULTS_FALLBACK = __RESULTS_FALLBACK__;
 function _normResults(j){ return Array.isArray(j) ? j : (j && j.results ? j.results : []); }

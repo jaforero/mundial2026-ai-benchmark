@@ -16,11 +16,43 @@
   "venue": "Boston (Foxborough)"
  },
  {
+  "code": "M75",
+  "ga": 1,
+  "gb": 1,
+  "winner": "Marruecos",
+  "fecha": "29 Jun",
+  "venue": "Monterrey (Guadalupe)"
+ },
+ {
   "code": "M76",
   "ga": 2,
   "gb": 1,
   "winner": "Brasil",
   "fecha": "29 Jun",
   "venue": "Houston"
+ },
+ {
+  "code": "M77",
+  "ga": 3,
+  "gb": 0,
+  "winner": "Francia",
+  "fecha": "30 Jun",
+  "venue": "New York/New Jersey (East Rutherford)"
+ },
+ {
+  "code": "M78",
+  "ga": 1,
+  "gb": 2,
+  "winner": "Noruega",
+  "fecha": "30 Jun",
+  "venue": "Dallas (Arlington)"
+ },
+ {
+  "code": "M79",
+  "ga": 2,
+  "gb": 0,
+  "winner": "México",
+  "fecha": "30 Jun",
+  "venue": "Mexico City"
  }
 ]
