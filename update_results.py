@@ -124,30 +124,38 @@ def update_knockouts(feed, canon):
         code = "M%d" % int(num)
         t1, t2 = canon(mm.get("team1", "")), canon(mm.get("team2", ""))
         g1, g2 = int(ft[0]), int(ft[1])
+        p, et = sc.get("p"), sc.get("et")
+        via, x1, x2 = None, None, None
         # ganador: 90' decisivo, si no prórroga, si no penales
         if g1 > g2:
             win = t1
         elif g2 > g1:
             win = t2
         else:
-            p, et = sc.get("p"), sc.get("et")
             if p and len(p) == 2 and p[0] != p[1]:
                 win = t1 if p[0] > p[1] else t2
+                via, x1, x2 = "pen", int(p[0]), int(p[1])
             elif et and len(et) == 2 and et[0] != et[1]:
                 win = t1 if et[0] > et[1] else t2
+                via, x1, x2 = "et", int(et[0]), int(et[1])
             else:
                 continue  # empate sin desempate registrado: esperar al feed
-        # orientar ga/gb al orden a/b del proyecto
+        # orientar ga/gb (y el marcador del desempate) al orden a/b del proyecto
         s = ko_real.get(code)
-        if s and {canon(s.get("a", "")), canon(s.get("b", ""))} == {t1, t2}:
-            if canon(s.get("a", "")) == t1:
+        if s and {canon(s.get("a") or ""), canon(s.get("b") or "")} == {t1, t2}:
+            if canon(s.get("a") or "") == t1:
                 a, b, ga, gb = t1, t2, g1, g2
             else:
                 a, b, ga, gb = t2, t1, g2, g1
+                if via: x1, x2 = x2, x1
         else:
             a, b, ga, gb = t1, t2, g1, g2
-        out[code] = {"code": code, "ga": ga, "gb": gb, "winner": win,
-                     "fecha": fmt_date(mm.get("date", "")), "venue": mm.get("ground", "")}
+        row = {"code": code, "ga": ga, "gb": gb, "winner": win,
+               "fecha": fmt_date(mm.get("date", "")), "venue": mm.get("ground", "")}
+        if via:
+            row["via"] = via
+            row["xsc"] = f"{x1}-{x2}"
+        out[code] = row
 
     new_list = [out[c] for c in sorted(out, key=lambda c: int(c[1:]))]
     if new_list != existing:

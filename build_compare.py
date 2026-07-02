@@ -1326,7 +1326,7 @@ function computeKO(){
   KR.forEach(s=>{
     const r=real[s.code]; if(!r) return;
     const realSc=r.ga+'-'+r.gb, realSign=Math.sign(r.ga-r.gb), rw=r.winner;
-    const row={code:s.code,ph:s.phase||'R32',a:s.a,b:s.b,real:realSc,rw,fecha:r.fecha||'',venue:r.venue||''};
+    const row={code:s.code,ph:s.phase||'R32',a:s.a,b:s.b,real:realSc,rw,via:r.via||null,xsc:r.xsc||null,fecha:r.fecha||'',venue:r.venue||''};
     ACC_MODELS.forEach(m=>{
       const p=s[KO_FIELD[m.key]]; if(!p){row[m.key]=null;return;}
       const A=agg[m.key]; A.n++;
@@ -1368,7 +1368,7 @@ function koScoreHTML(){
     return div+`<div class="h2h-row-compact played">
       <div class="date">${r.fecha||''}${ven}</div>
       <div class="teams"><b>${tf(r.a)}</b> vs <b>${tf(r.b)}</b></div>
-      <div class="score">${r.real}</div>
+      <div class="score">${r.real}${r.via?`<div style="font-size:9.5px;color:var(--muted);font-weight:600">${r.via==='pen'?tx('pen','pk'):tx('pró','aet')} ${r.xsc||''}</div>`:''}</div>
       <div class="preds">${cell(r,'claude','Claude')}${cell(r,'chatgpt','ChatGPT')}${cell(r,'gemini','Gemini')}${cell(r,'consenso','Consenso')}</div>
     </div>`;}).join('');
   return head+`<div class="acc-progress"><div class="track"><div class="fill" style="width:${Math.round(100*played/total)}%"></div></div><div class="lbl">${played}/${total} ${tx('llaves jugadas','ties played')}</div></div>
@@ -1657,7 +1657,8 @@ function bkLiveHTML(){
   const card=(code,isFinal)=>{
     const p=teams[code]||[null,null], a=p[0], b=p[1], w=win[code], r=rByC[code];
     const trow=(t,on)=>`<div class="bk-team${on?' w':''}"${on?' style="background:rgba(26,158,92,.15);color:#128a4f"':''}><span class="bk-nm">${t?tf(t):tbd}</span></div>`;
-    const sc=r?`<span class="bk-livesc">${r.ga}-${r.gb}${r.ga===r.gb?' pk':''}</span>`:'';
+    const via=r&&r.via?(r.via==='pen'?' <small>'+tx('pen','pk')+' '+(r.xsc||'')+'</small>':' <small>'+tx('pró','aet')+' '+(r.xsc||'')+'</small>'):'';
+    const sc=r?`<span class="bk-livesc">${r.ga}-${r.gb}${via}</span>`:'';
     const cs=isFinal?'':(w?'style="background:#1a9e5c"':(a&&b?'style="background:var(--vibrant-blue)"':'style="background:var(--muted)"'));
     return `<div class="bk-match${isFinal?' bk-fmatch':''}" title="${code}"><div class="bk-code" ${cs}>${code}${sc}</div>${trow(a,!!w&&w===a)}${trow(b,!!w&&w===b)}</div>`;
   };
@@ -1673,7 +1674,7 @@ function bkLiveHTML(){
       <div class="bk-final"><div class="bk-rhead" style="color:var(--deep-blue)">${tx('Final','Final')}</div>${card('M104',true)}</div>
       <div class="bk-side" style="flex-direction:row-reverse">${cols('right')}</div>
     </div></div>
-    <div class="bk-live-leg">${tx('<b style="color:#1a9e5c">■</b> avanzó (resultado real) &nbsp; <b style="color:var(--vibrant-blue)">■</b> cruce formado, aún por jugar &nbsp; <b style="color:var(--muted)">■</b> por definir &nbsp; · &nbsp; «pk» = definido por penales','<b style="color:#1a9e5c">■</b> advanced (real result) &nbsp; <b style="color:var(--vibrant-blue)">■</b> formed tie, not yet played &nbsp; <b style="color:var(--muted)">■</b> TBD &nbsp; · &nbsp; «pk» = decided on penalties')}</div>
+    <div class="bk-live-leg">${tx('<b style="color:#1a9e5c">■</b> avanzó (resultado real) &nbsp; <b style="color:var(--vibrant-blue)">■</b> cruce formado, aún por jugar &nbsp; <b style="color:var(--muted)">■</b> por definir &nbsp; · &nbsp; «pró» = definido en prórroga (marcador a 120′) · «pen» = definido por penales','<b style="color:#1a9e5c">■</b> advanced (real result) &nbsp; <b style="color:var(--vibrant-blue)">■</b> formed tie, not yet played &nbsp; <b style="color:var(--muted)">■</b> TBD &nbsp; · &nbsp; «aet» = decided in extra time (120′ score) · «pk» = decided on penalties')}</div>
   </div>`;
 }
 function bkBuild(model,metric){

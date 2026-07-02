@@ -13,7 +13,9 @@
   "gb": 1,
   "winner": "Paraguay",
   "fecha": "29 Jun",
-  "venue": "Boston (Foxborough)"
+  "venue": "Boston (Foxborough)",
+  "via": "pen",
+  "xsc": "3-4"
  },
  {
   "code": "M75",
@@ -21,7 +23,9 @@
   "gb": 1,
   "winner": "Marruecos",
   "fecha": "29 Jun",
-  "venue": "Monterrey (Guadalupe)"
+  "venue": "Monterrey (Guadalupe)",
+  "via": "pen",
+  "xsc": "2-3"
  },
  {
   "code": "M76",
@@ -77,6 +81,8 @@
   "gb": 2,
   "winner": "Bélgica",
   "fecha": "1 Jul",
-  "venue": "Seattle"
+  "venue": "Seattle",
+  "via": "et",
+  "xsc": "3-2"
  }
 ]
