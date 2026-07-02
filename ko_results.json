@@ -54,5 +54,21 @@
   "winner": "México",
   "fecha": "30 Jun",
   "venue": "Mexico City"
+ },
+ {
+  "code": "M80",
+  "ga": 2,
+  "gb": 1,
+  "winner": "Inglaterra",
+  "fecha": "1 Jul",
+  "venue": "Atlanta"
+ },
+ {
+  "code": "M82",
+  "ga": 2,
+  "gb": 2,
+  "winner": "Bélgica",
+  "fecha": "1 Jul",
+  "venue": "Seattle"
  }
 ]
