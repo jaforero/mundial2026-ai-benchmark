@@ -1073,8 +1073,12 @@ function renderConsenso(){
 function koPredHTML(field,color){
   const KR=DATA.ko_real||[]; if(!KR.length) return '';
   const ex=q=>(q&&(q.et==='Sí'||q.et==='Yes')?' <span style="color:var(--muted);font-size:11px">'+tx('+pró','+ET')+'</span>':'')+(q&&(q.pens==='Sí'||q.pens==='Yes')?' <span style="color:var(--muted);font-size:11px">'+tx('+pen','+pk')+'</span>':'');
+  let _kph=null;
   const rows=KR.map(s=>{const p=s[field]; if(!p)return '';
-    return `<tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--muted)">${s.code}</td><td style="padding:6px 8px">${tf(s.a)} <span style="color:var(--muted)">vs</span> ${tf(s.b)}</td><td style="padding:6px 8px;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap">${p.sc90}${ex(p)}</td><td style="padding:6px 8px;font-weight:700;color:${color}">${tf(p.winner)}</td><td style="padding:6px 8px;text-align:right;color:var(--muted)">${p.conf}%</td></tr>`;}).join('');
+    let div='';
+    const ph=s.phase||'R32';
+    if(ph!==_kph){_kph=ph;const nm=ph==='R16'?tx('Octavos','Round of 16'):(ph==='R32'?tx('Dieciseisavos','Round of 32'):ph);div=`<tr><td colspan="5" style="padding:9px 8px 3px;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--purple)">${nm}</td></tr>`;}
+    return div+`<tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--muted)">${s.code}</td><td style="padding:6px 8px">${tf(s.a)} <span style="color:var(--muted)">vs</span> ${tf(s.b)}</td><td style="padding:6px 8px;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap">${p.sc90}${ex(p)}</td><td style="padding:6px 8px;font-weight:700;color:${color}">${tf(p.winner)}</td><td style="padding:6px 8px;text-align:right;color:var(--muted)">${p.conf}%</td></tr>`;}).join('');
   return `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px">
     <thead><tr style="text-align:left;color:var(--muted);font-size:11px;font-weight:600"><th style="padding:4px 8px">#</th><th style="padding:4px 8px">${tx('Cruce','Tie')}</th><th style="padding:4px 8px;text-align:center">90′</th><th style="padding:4px 8px">${tx('Clasifica','Advances')}</th><th style="padding:4px 8px;text-align:right">${tx('Conf.','Conf.')}</th></tr></thead>
     <tbody>${rows}</tbody></table></div>`;
@@ -1322,7 +1326,7 @@ function computeKO(){
   KR.forEach(s=>{
     const r=real[s.code]; if(!r) return;
     const realSc=r.ga+'-'+r.gb, realSign=Math.sign(r.ga-r.gb), rw=r.winner;
-    const row={code:s.code,a:s.a,b:s.b,real:realSc,rw,fecha:r.fecha||'',venue:r.venue||''};
+    const row={code:s.code,ph:s.phase||'R32',a:s.a,b:s.b,real:realSc,rw,fecha:r.fecha||'',venue:r.venue||''};
     ACC_MODELS.forEach(m=>{
       const p=s[KO_FIELD[m.key]]; if(!p){row[m.key]=null;return;}
       const A=agg[m.key]; A.n++;
@@ -1356,8 +1360,12 @@ function koScoreHTML(){
       <div>${tx('Fecha · Sede','Date · Venue')}</div><div>${tx('Partidos','Matches')}</div><div>${tx('Real','Result')}</div>
       <div class="preds-head"><div style="color:${COL.Claude}">Claude</div><div style="color:${COL.ChatGPT}">ChatGPT</div><div style="color:${COL.Gemini}">Gemini</div><div style="color:${COL.Consenso}">Consenso</div></div>
     </div>`;
+  const PHN={'R32':[ 'Dieciseisavos','Round of 32'],'R16':['Octavos','Round of 16'],'QF':['Cuartos','Quarterfinals'],'SF':['Semifinales','Semifinals'],'F':['Final','Final']};
+  let _ph=null;
   const koRows=rows.map(r=>{const ven=r.venue?`<div class="venue">📍 ${r.venue}</div>`:'';
-    return `<div class="h2h-row-compact played">
+    let div='';
+    if(r.ph!==_ph){_ph=r.ph;const nm=PHN[r.ph]?PHN[r.ph][LANG==='en'?1:0]:r.ph;div=`<div style="font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--purple);padding:10px 12px 4px">${nm}</div>`;}
+    return div+`<div class="h2h-row-compact played">
       <div class="date">${r.fecha||''}${ven}</div>
       <div class="teams"><b>${tf(r.a)}</b> vs <b>${tf(r.b)}</b></div>
       <div class="score">${r.real}</div>
@@ -1534,7 +1542,7 @@ function bkThirdMatch(qual){
   return solve(0,new Set(),{})||{};
 }
 function bkR32RealHTML(){
-  const KR=DATA.ko_real||[]; if(!KR.length) return '';
+  const KR=(DATA.ko_real||[]).filter(s=>(s.phase||'R32')==='R32'); if(!KR.length) return '';
   const lab=s=>s==='3'?tx('3.º (mejor tercero)','3rd (best third)'):(s[0]+'.º '+s[1]);
   const tbd=`<span style="color:var(--muted);font-style:italic">${tx('Por definir','TBD')}</span>`;
   const base='background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;';
@@ -1562,6 +1570,44 @@ function bkR32RealHTML(){
   return `<div style="margin-bottom:20px">
     <h3 style="margin:0 0 4px">⚽ ${tx('Dieciseisavos de final · cuadro oficial','Round of 32 · official bracket')} <span style="font-size:13px;color:var(--muted);font-weight:600">(${nC}/16 ${tx('confirmados','confirmed')})</span></h3>
     <p style="margin:0 0 10px;font-size:13px;color:var(--muted)">${tx('Los 16 cruces oficiales tras el cierre de los 12 grupos. Cada llave compara el pronóstico de las tres IAs (Claude · ChatGPT · Gemini) con el clasificado por consenso. Las tres coinciden en 14 de 16; las únicas divididas son Países Bajos–Marruecos y Australia–Egipto, donde Gemini se separa por su submodelo de penaltis.','The 16 official ties after all 12 groups closed. Each tie compares the three AIs (Claude · ChatGPT · Gemini) with the consensus qualifier. All three agree on 14 of 16; the only splits are Netherlands–Morocco and Australia–Egypt, where Gemini diverges via its penalty submodel.')}</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">${KR.map(card).join('')}</div></div>`;
+}
+function bkR16RealHTML(){
+  const KR=(DATA.ko_real||[]).filter(s=>s.phase==='R16'); if(!KR.length) return '';
+  const tbd=`<span style="color:var(--muted);font-style:italic">${tx('Por definir','TBD')}</span>`;
+  const base='background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;';
+  const meta=s=>(s.fecha||s.venue)?`<div style="font-size:10.5px;color:var(--muted);margin-top:4px">📅 ${s.fecha||''}${s.venue?' · 📍 '+s.venue:''}</div>`:'';
+  const card=s=>{
+    if(s.status==='formed'&&s.pred){
+      const ps=[['Claude','var(--c-claude)',s.pred],['ChatGPT','var(--c-chatgpt)',s.cg],['Gemini','var(--c-gemini)',s.gm]].filter(x=>x[2]);
+      const ex=q=>(q&&(q.et==='Sí'||q.et==='Yes')?' '+tx('+pró','+ET'):'')+(q&&(q.pens==='Sí'||q.pens==='Yes')?' '+tx('+pen','+pk'):'');
+      const lines=ps.map(([lbl,col,q])=>`<div style="font-size:12px;margin-top:2px"><span style="color:${col};font-weight:800">${lbl}</span> ${q.sc90} → <b>${tf(q.winner)}</b> <span style="color:var(--muted)">${q.conf}%${ex(q)}</span></div>`).join('');
+      const cnt={}; ps.forEach(x=>cnt[x[2].winner]=(cnt[x[2].winner]||0)+1);
+      const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0], unan=top[1]===ps.length;
+      const badge=`<span style="font-size:10px;font-weight:700;color:${unan?'#1a9e5c':'#b58900'}">${unan?'✓ '+tx('los 3 coinciden','all 3 agree'):top[1]+'-'+(ps.length-top[1])+' '+tf(top[0])}</span>`;
+      const cc=s.cons;
+      const consLine=cc?`<div style="font-size:12px;margin-top:5px;padding-top:5px;border-top:1px dashed var(--border)"><span style="color:var(--purple);font-weight:800">${tx('Consenso','Consensus')}</span> ${cc.sc90} → <b>${tf(cc.winner)}</b> <span style="color:var(--muted)">${cc.conf}%${ex(cc)}</span></div>`:'';
+      return `<div style="${base}border-left:4px solid #1a9e5c">
+        <div style="font-size:11px;color:#1a9e5c;font-weight:800;margin-bottom:4px;display:flex;justify-content:space-between;gap:6px">${s.code} · ${tx('CONFIRMADO','CONFIRMED')} ${badge}</div>
+        <div style="font-weight:700;margin-bottom:2px"><b>${tf(s.a)}</b> <span style="color:var(--muted);font-weight:400">vs</span> <b>${tf(s.b)}</b></div>
+        ${lines}${consLine}${meta(s)}</div>`;
+    }
+    if(s.status==='formed'){
+      return `<div style="${base}border-left:4px solid var(--vibrant-blue)">
+        <div style="font-size:11px;color:var(--vibrant-blue);font-weight:800;margin-bottom:4px">${s.code} · ${tx('CONFIRMADO · pronóstico en curso','CONFIRMED · forecast pending')}</div>
+        <div style="font-weight:700"><b>${tf(s.a)}</b> <span style="color:var(--muted);font-weight:400">vs</span> <b>${tf(s.b)}</b></div>${meta(s)}</div>`;
+    }
+    const fdr=x=>x?`<span style="font-size:11px;color:var(--muted)">(${tx('ganador','winner')} ${x.replace('G-','')})</span>`:'';
+    const side=(t,sl)=>t?`<b>${tf(t)}</b>`:`${tbd} ${fdr(sl)}`;
+    return `<div style="${base}opacity:${s.status==='pending'?0.6:1}">
+      <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:4px">${s.code}</div>
+      <div>${side(s.a,s.sa)} <span style="color:var(--muted)">vs</span> ${side(s.b,s.sb)}</div>${meta(s)}</div>`;
+  };
+  const nF=KR.filter(s=>s.status==='formed').length;
+  const nP=KR.filter(s=>s.status==='formed'&&s.pred).length;
+  return `<div style="margin-bottom:20px">
+    <h3 style="margin:0 0 4px">⚽ ${tx('Octavos de final · cuadro temporal','Round of 16 · provisional bracket')} <span style="font-size:13px;color:var(--muted);font-weight:600">(${nF}/8 ${tx('confirmados','confirmed')})</span></h3>
+    <p style="margin:0 0 10px;font-size:13px;color:var(--muted)">${tx('El cuadro de octavos se arma con cada dieciseisavo que termina. Los '+nP+' cruces ya confirmados incluyen el <b>nuevo pronóstico oficial de las tres IAs</b>, emitido el 1 de julio con la información real del torneo; los demás se completan al definirse. El consenso combina las tres (mayoría para el clasificado, mediana para el marcador).','The Round-of-16 bracket fills in as each Round-of-32 tie ends. The '+nP+' confirmed ties include the <b>three AIs\' new official forecast</b>, issued July 1 with real tournament information; the rest are added as they are set. The consensus combines all three (majority qualifier, median score).')}</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">${KR.map(card).join('')}</div></div>`;
 }
 function bkR16HTML(){
@@ -1598,7 +1644,7 @@ function bkR16HTML(){
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">${cards}</div></div>`;
 }
 function bkLiveHTML(){
-  const KR=DATA.ko_real||[]; if(!KR.length) return '';
+  const KR=(DATA.ko_real||[]).filter(s=>(s.phase||'R32')==='R32'); if(!KR.length) return '';
   const RES=(typeof KO_RESULTS!=='undefined'&&KO_RESULTS!=null)?KO_RESULTS:(DATA.ko_results||[]);
   const rByC={}; RES.forEach(r=>{rByC[r.code]=r;});
   const win={}, teams={};
@@ -1775,7 +1821,7 @@ function renderBracket(){
   const note='<p class="bk-note"><b>'+tx('Es una proyección, no el bracket oficial.','It is a projection, not the official bracket.')+'</b> '+
     tx('La asignación de los terceros sigue una matriz oficial FIFA de 495 combinaciones; aquí se usa una asignación válida que respeta los grupos elegibles de cada casilla y puede diferir de la oficial en algún caso.',
        'The third-placed allocation follows an official FIFA matrix of 495 combinations; here a valid assignment is used that respects each slot\'s eligible groups and may differ from the official one in some cases.')+'</p>';
-  host.innerHTML=bkLiveHTML()+bkR32RealHTML()+bkR16HTML()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
+  host.innerHTML=bkLiveHTML()+bkR16RealHTML()+bkR32RealHTML()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
   const sel=host.querySelector('.bk-seltabs');
   if(sel) sel.addEventListener('click',e=>{const b=e.target.closest('[data-bk]'); if(!b)return; BK_CUR=b.dataset.bk; renderBracket(); gaEvent('bracket_model',{model:BK_CUR});});
   const mt=host.querySelector('.bk-metric');
