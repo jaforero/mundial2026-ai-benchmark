@@ -84,5 +84,13 @@
   "venue": "Seattle",
   "via": "et",
   "xsc": "3-2"
+ },
+ {
+  "code": "M84",
+  "ga": 3,
+  "gb": 0,
+  "winner": "España",
+  "fecha": "2 Jul",
+  "venue": "Los Angeles (Inglewood)"
  }
 ]
