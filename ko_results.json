@@ -86,6 +86,14 @@
   "xsc": "3-2"
  },
  {
+  "code": "M83",
+  "ga": 2,
+  "gb": 1,
+  "winner": "Portugal",
+  "fecha": "2 Jul",
+  "venue": "Toronto"
+ },
+ {
   "code": "M84",
   "ga": 3,
   "gb": 0,
