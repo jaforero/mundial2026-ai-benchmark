@@ -100,5 +100,13 @@
   "winner": "España",
   "fecha": "2 Jul",
   "venue": "Los Angeles (Inglewood)"
+ },
+ {
+  "code": "M85",
+  "ga": 2,
+  "gb": 0,
+  "winner": "Suiza",
+  "fecha": "2 Jul",
+  "venue": "Vancouver"
  }
 ]
