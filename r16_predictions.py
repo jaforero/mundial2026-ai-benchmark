@@ -144,8 +144,9 @@ def _consensus(preds):
     if sc_votes == 1:  # sin moda: mediana de goles por lado entre quienes votaron al ganador del consenso
         import statistics
         cands = [p for p in preds.values() if p["winner"] == winner] or list(preds.values())
-        ga = round(statistics.median(int(p["sc90"].split("-")[0]) for p in cands))
-        gb = round(statistics.median(int(p["sc90"].split("-")[1]) for p in cands))
+        _hup = lambda x: int(x + 0.5)   # half-up: evita que el redondeo banker infle el margen con 2 votantes
+        ga = _hup(statistics.median([int(p["sc90"].split("-")[0]) for p in cands]))
+        gb = _hup(statistics.median([int(p["sc90"].split("-")[1]) for p in cands]))
         sc90 = f"{ga}-{gb}"
     ga, gb = map(int, sc90.split("-"))
     tie = ga == gb
