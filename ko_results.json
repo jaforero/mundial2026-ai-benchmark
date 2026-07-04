@@ -110,6 +110,24 @@
   "venue": "Vancouver"
  },
  {
+  "code": "M86",
+  "ga": 1,
+  "gb": 1,
+  "winner": "Argentina",
+  "fecha": "3 Jul",
+  "venue": "Miami (Miami Gardens)",
+  "via": "et",
+  "xsc": "3-2"
+ },
+ {
+  "code": "M87",
+  "ga": 1,
+  "gb": 0,
+  "winner": "Colombia",
+  "fecha": "3 Jul",
+  "venue": "Kansas City"
+ },
+ {
   "code": "M88",
   "ga": 1,
   "gb": 1,
