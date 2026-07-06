@@ -160,5 +160,13 @@
   "winner": "Noruega",
   "fecha": "5 Jul",
   "venue": "New York/New Jersey (East Rutherford)"
+ },
+ {
+  "code": "M92",
+  "ga": 2,
+  "gb": 3,
+  "winner": "Inglaterra",
+  "fecha": "5 Jul",
+  "venue": "Mexico City"
  }
 ]
