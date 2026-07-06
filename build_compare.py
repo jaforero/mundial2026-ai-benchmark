@@ -435,6 +435,19 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 .bk-livechamp{background:linear-gradient(135deg,#1a9e5c,#0d6b3c);color:#fff;border-radius:10px;padding:8px 14px;font-size:15px;margin-bottom:10px;font-weight:700;}
 .bk-tbd{color:var(--muted);font-style:italic;}
 .bk-live-leg{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.7;}
+.bk-alive{display:flex;flex-wrap:wrap;gap:12px 14px;margin:0 0 14px;padding:12px 14px;background:linear-gradient(135deg,rgba(78,0,255,.07),rgba(0,72,255,.05));border:1px solid var(--border);border-radius:14px;align-items:flex-end;}
+.bk-alive-h{width:100%;font-size:11px;font-weight:800;color:var(--purple);letter-spacing:.6px;margin-bottom:2px;}
+.bk-alive-t{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:54px;}
+.bk-alive-f{font-size:32px;line-height:1;filter:drop-shadow(0 2px 5px rgba(4,28,89,.3));transition:transform .15s;}
+.bk-alive-t:hover .bk-alive-f{transform:scale(1.18);}
+.bk-alive-n{font-size:9.5px;font-weight:700;color:var(--deep-blue);text-align:center;white-space:nowrap;}
+.bk-alive-r{font-size:8.5px;color:var(--muted);font-weight:600;}
+.bk-trophy{display:flex;flex-direction:column;align-items:center;gap:5px;margin-bottom:8px;}
+.bk-trophy svg{animation:trGlow 3.2s ease-in-out infinite;}
+@keyframes trGlow{0%,100%{filter:drop-shadow(0 4px 10px rgba(255,180,0,.35))}50%{filter:drop-shadow(0 7px 22px rgba(255,200,40,.7))}}
+.bk-trophy-cap{font-size:10.5px;font-weight:800;color:var(--deep-blue);letter-spacing:.5px;text-align:center;line-height:1.5;}
+.bk-team.l{opacity:.42;}
+.bk-team.w{font-size:13.5px;}
 .bk-scroll{overflow-x:auto;padding-bottom:14px;-webkit-overflow-scrolling:touch;}
 .bk-board{display:flex;gap:14px;align-items:stretch;min-width:1080px;}
 .bk-side{display:flex;gap:14px;flex:1;}
@@ -1074,10 +1087,12 @@ function koPredHTML(field,color){
   const KR=DATA.ko_real||[]; if(!KR.length) return '';
   const ex=q=>(q&&(q.et==='Sí'||q.et==='Yes')?' <span style="color:var(--muted);font-size:11px">'+tx('+pró','+ET')+'</span>':'')+(q&&(q.pens==='Sí'||q.pens==='Yes')?' <span style="color:var(--muted);font-size:11px">'+tx('+pen','+pk')+'</span>':'');
   let _kph=null;
+  const _RK={'F':5,'SF':4,'QF':3,'R16':2,'R32':1};
+  KR.sort((x,y)=>(_RK[y.phase||'R32']||0)-(_RK[x.phase||'R32']||0)||(+x.code.slice(1))-(+y.code.slice(1)));
   const rows=KR.map(s=>{const p=s[field]; if(!p)return '';
     let div='';
     const ph=s.phase||'R32';
-    if(ph!==_kph){_kph=ph;const nm=ph==='R16'?tx('Octavos','Round of 16'):(ph==='R32'?tx('Dieciseisavos','Round of 32'):ph);div=`<tr><td colspan="5" style="padding:9px 8px 3px;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--purple)">${nm}</td></tr>`;}
+    if(ph!==_kph){_kph=ph;const _PN={'R16':['Octavos','Round of 16'],'R32':['Dieciseisavos','Round of 32'],'QF':['Cuartos','Quarterfinals'],'SF':['Semifinales','Semifinals'],'F':['Final','Final']};const nm=_PN[ph]?tx(_PN[ph][0],_PN[ph][1]):ph;div=`<tr><td colspan="5" style="padding:9px 8px 3px;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--purple)">${nm}</td></tr>`;}
     return div+`<tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px;font-weight:700;color:var(--muted)">${s.code}</td><td style="padding:6px 8px">${tf(s.a)} <span style="color:var(--muted)">vs</span> ${tf(s.b)}</td><td style="padding:6px 8px;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap">${p.sc90}${ex(p)}</td><td style="padding:6px 8px;font-weight:700;color:${color}">${tf(p.winner)}</td><td style="padding:6px 8px;text-align:right;color:var(--muted)">${p.conf}%</td></tr>`;}).join('');
   return `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px">
     <thead><tr style="text-align:left;color:var(--muted);font-size:11px;font-weight:600"><th style="padding:4px 8px">#</th><th style="padding:4px 8px">${tx('Cruce','Tie')}</th><th style="padding:4px 8px;text-align:center">90′</th><th style="padding:4px 8px">${tx('Clasifica','Advances')}</th><th style="padding:4px 8px;text-align:right">${tx('Conf.','Conf.')}</th></tr></thead>
@@ -1085,7 +1100,7 @@ function koPredHTML(field,color){
 }
 function koSection(field,color,label){
   if(!(DATA.ko_real||[]).length) return '';
-  return `<div class="section-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px">⚽ ${tx('Dieciseisavos de final · '+label,'Round of 32 · '+label)} <span style="font-size:10px;font-weight:800;color:#fff;background:var(--purple);padding:2px 9px;border-radius:10px;letter-spacing:.03em">${tx('FASE ACTUAL','LIVE PHASE')}</span></div>
+  return `<div class="section-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px">⚽ ${tx('Fase eliminatoria · '+label,'Knockout stage · '+label)} <span style="font-size:10px;font-weight:800;color:#fff;background:var(--purple);padding:2px 9px;border-radius:10px;letter-spacing:.03em">${tx('OCTAVOS Y CUARTOS','R16 & QUARTERS')}</span></div>
   <p class="note">${tx('La predicción más reciente — '+label+' para los 16 cruces oficiales de la fase eliminatoria en curso: marcador a 90′, prórroga o penaltis si aplica, clasificado y confianza.','The most recent prediction — '+label+' for the 16 official knockout ties underway: 90-minute score, extra time or penalties if applicable, qualifier and confidence.')}</p>
   <div class="card">${koPredHTML(field,color)}</div>`;
 }
@@ -1361,20 +1376,27 @@ function koScoreHTML(){
       <div class="preds-head"><div style="color:${COL.Claude}">Claude</div><div style="color:${COL.ChatGPT}">ChatGPT</div><div style="color:${COL.Gemini}">Gemini</div><div style="color:${COL.Consenso}">Consenso</div></div>
     </div>`;
   const PHN={'R32':[ 'Dieciseisavos','Round of 32'],'R16':['Octavos','Round of 16'],'QF':['Cuartos','Quarterfinals'],'SF':['Semifinales','Semifinals'],'F':['Final','Final']};
-  let _ph=null;
-  const koRows=rows.map(r=>{const ven=r.venue?`<div class="venue">📍 ${r.venue}</div>`:'';
-    let div='';
-    if(r.ph!==_ph){_ph=r.ph;const nm=PHN[r.ph]?PHN[r.ph][LANG==='en'?1:0]:r.ph;div=`<div style="font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--purple);padding:10px 12px 4px">${nm}</div>`;}
-    return div+`<div class="h2h-row-compact played">
+  const RANK={'F':5,'SF':4,'QF':3,'R16':2,'R32':1};
+  const mkRow=r=>{const ven=r.venue?`<div class="venue">📍 ${r.venue}</div>`:'';
+    return `<div class="h2h-row-compact played">
       <div class="date">${r.fecha||''}${ven}</div>
       <div class="teams"><b>${tf(r.a)}</b> vs <b>${tf(r.b)}</b></div>
       <div class="score">${r.real}${r.via?`<div style="font-size:9.5px;color:var(--muted);font-weight:600">${r.via==='pen'?tx('pen','pk'):tx('pró','aet')} ${r.xsc||''}</div>`:''}</div>
       <div class="preds">${cell(r,'claude','Claude')}${cell(r,'chatgpt','ChatGPT')}${cell(r,'gemini','Gemini')}${cell(r,'consenso','Consenso')}</div>
-    </div>`;}).join('');
+    </div>`;};
+  const sepOf=ph=>{const nm=PHN[ph]?PHN[ph][LANG==='en'?1:0]:ph;return `<div style="font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--purple);padding:10px 12px 4px">${nm}</div>`;};
+  // rondas superiores arriba (más avanzada primero); dieciseisavos comprimidos como referencia
+  const hi=rows.filter(r=>r.ph!=='R32').sort((a,b)=>(RANK[b.ph]||0)-(RANK[a.ph]||0)||(+a.code.slice(1))-(+b.code.slice(1)));
+  const lo=rows.filter(r=>r.ph==='R32');
+  let _ph=null, hiRows='';
+  hi.forEach(r=>{if(r.ph!==_ph){_ph=r.ph;hiRows+=sepOf(r.ph);}hiRows+=mkRow(r);});
+  const loPts=ACC_MODELS.map(m=>{let p=0;lo.forEach(r=>{const c=r[m.key];if(c)p+=c.tot;});return `${m.name} ${p}`;}).join(' · ');
+  const loRows=lo.map(mkRow).join('');
+  const loBlock=lo.length?`<details class="phase-closed-d" style="margin-top:12px"><summary style="cursor:pointer;font-weight:800;font-size:12.5px">📁 ${tx('Dieciseisavos de final · fase cerrada','Round of 32 · closed phase')} (${lo.length}/16) — ${tx('puntos de la ronda','round points')}: ${loPts}</summary><div class="h2h-table" style="margin-top:8px">${loRows}</div></details>`:'';
   return head+`<div class="acc-progress"><div class="track"><div class="fill" style="width:${Math.round(100*played/total)}%"></div></div><div class="lbl">${played}/${total} ${tx('llaves jugadas','ties played')}</div></div>
     <div class="lb-grid">${cards}</div>
     <div class="acc-legend"><span>★ <b style="color:#1a9e5c">${tx('clasificado + marcador exacto','qualifier + exact')}</b> (5)</span><span>✓ <b style="color:#1a9e5c">${tx('clasificado + resultado','qualifier + outcome')}</b> (4)</span><span>◓ <b style="color:#b58900">${tx('solo clasificado','qualifier only')}</b> (3)</span><span>◐ <b style="color:#b58900">${tx('solo marcador','score only')}</b></span><span>✗ <b style="color:#c0392b">${tx('fallo','miss')}</b></span></div>
-    ${koHead}<div class="h2h-table">${koRows}</div>`;
+    ${koHead}<div class="h2h-table">${hiRows}</div>${loBlock}`;
 }
 function renderAccuracy(){
   const host=document.getElementById('precision'); if(!host) return;
@@ -1658,22 +1680,45 @@ function bkLiveHTML(){
   const tbd=`<span class="bk-tbd">${tx('Por definir','TBD')}</span>`;
   const card=(code,isFinal)=>{
     const p=teams[code]||[null,null], a=p[0], b=p[1], w=win[code], r=rByC[code];
-    const trow=(t,on)=>`<div class="bk-team${on?' w':''}"${on?' style="background:rgba(26,158,92,.15);color:#128a4f"':''}><span class="bk-nm">${t?tf(t):tbd}</span></div>`;
+    const trow=(t,on,out)=>`<div class="bk-team${on?' w':''}${out?' l':''}"${on?' style="background:rgba(26,158,92,.15);color:#128a4f"':''}><span class="bk-nm">${t?tf(t):tbd}</span></div>`;
     const via=r&&r.via?(r.via==='pen'?' <small>'+tx('pen','pk')+' '+(r.xsc||'')+'</small>':' <small>'+tx('pró','aet')+' '+(r.xsc||'')+'</small>'):'';
     const sc=r?`<span class="bk-livesc">${r.ga}-${r.gb}${via}</span>`:'';
     const cs=isFinal?'':(w?'style="background:#1a9e5c"':(a&&b?'style="background:var(--vibrant-blue)"':'style="background:var(--muted)"'));
-    return `<div class="bk-match${isFinal?' bk-fmatch':''}" title="${code}"><div class="bk-code" ${cs}>${code}${sc}</div>${trow(a,!!w&&w===a)}${trow(b,!!w&&w===b)}</div>`;
+    return `<div class="bk-match${isFinal?' bk-fmatch':''}" title="${code}"><div class="bk-code" ${cs}>${code}${sc}</div>${trow(a,!!w&&w===a,!!w&&w!==a)}${trow(b,!!w&&w===b,!!w&&w!==b)}</div>`;
   };
   const cols=side=>{let h='';for(const [key,codes] of BK_LAYOUT[side]){const name=BK_RNAME[key][LANG==='en'?1:0];let cc='';for(const code of codes)cc+=card(code,false);h+=`<div class="bk-col"><div class="bk-rhead" style="color:var(--deep-blue)">${name}</div>${cc}</div>`;}return h;};
   const champLine = win['M104'] ? `<div class="bk-livechamp">🏆 ${tx('Campeón','Champion')}: ${tf(win['M104'])}</div>` : '';
+  // supervivientes: aparecen en el cuadro y no han perdido ninguna llave jugada
+  const losers=new Set(); Object.keys(win).forEach(c=>{const p=teams[c]||[];p.forEach(t=>{if(t&&t!==win[c])losers.add(t);});});
+  const RND=c=>{const n=+c.slice(1);return n>=104?5:(n>=101?4:(n>=97?3:(n>=89?2:1)));};
+  const RLBL=[,['16avos','R32'],['octavos','R16'],['cuartos','QF'],['semis','SF'],['final','F']];
+  const best={};
+  Object.entries(teams).forEach(([c,p])=>{(p||[]).forEach(t=>{if(t&&!losers.has(t)){const r=RND(c);if(!best[t]||r>best[t])best[t]=r;}});});
+  const alive=Object.entries(best).sort((x,y)=>y[1]-x[1]||x[0].localeCompare(y[0]));
+  const aliveHTML=alive.length?`<div class="bk-alive"><div class="bk-alive-h">🔥 ${tx('SIGUEN VIVOS','STILL ALIVE')} (${alive.length})</div>${alive.map(([t,r])=>`<div class="bk-alive-t" title="${tn(t)}"><span class="bk-alive-f">${FLAG[t]||'🏳️'}</span><span class="bk-alive-n">${tn(t)}</span><span class="bk-alive-r">${tx('en '+RLBL[r][0],'in '+RLBL[r][1])}</span></div>`).join('')}</div>`:'';
+  const trophySVG=`<svg width="58" height="88" viewBox="0 0 58 88" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="au" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe98a"/><stop offset=".5" stop-color="#f2c23e"/><stop offset="1" stop-color="#b8811a"/></linearGradient><linearGradient id="au2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a8760f"/><stop offset=".5" stop-color="#ffeda0"/><stop offset="1" stop-color="#a8760f"/></linearGradient><radialGradient id="gl" cx=".38" cy=".32" r=".95"><stop offset="0" stop-color="#ffefad"/><stop offset=".6" stop-color="#f0bd35"/><stop offset="1" stop-color="#c08a18"/></radialGradient><linearGradient id="mal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#12684a"/><stop offset="1" stop-color="#083d2b"/></linearGradient></defs>
+<circle cx="29" cy="16" r="13" fill="url(#gl)" stroke="#a8760f" stroke-width="1.2"/>
+<ellipse cx="29" cy="16" rx="13" ry="5" fill="none" stroke="#a8760f" stroke-width=".9" opacity=".75"/>
+<ellipse cx="29" cy="16" rx="5" ry="13" fill="none" stroke="#a8760f" stroke-width=".9" opacity=".75"/>
+<path d="M16.5 16h25" stroke="#a8760f" stroke-width=".8" opacity=".6"/>
+<circle cx="24" cy="11" r="3.2" fill="#fff" opacity=".5"/>
+<path d="M15 30 C11 40 15 47 21 52 C25 55 25 60 24 64 h10 C33 60 33 55 37 52 C43 47 47 40 43 30 C39 25 34 27 29 27 C24 27 19 25 15 30Z" fill="url(#au)" stroke="#a8760f" stroke-width="1.1"/>
+<path d="M20 33 C17 40 20 46 25 50" fill="none" stroke="#a8760f" stroke-width="1" opacity=".55"/>
+<path d="M38 33 C41 40 38 46 33 50" fill="none" stroke="#a8760f" stroke-width="1" opacity=".55"/>
+<path d="M21 64h16l2 5H19Z" fill="url(#au)" stroke="#a8760f" stroke-width="1"/>
+<rect x="13" y="69" width="32" height="13" rx="2.5" fill="url(#mal)" stroke="#06301f" stroke-width="1"/>
+<rect x="13" y="71.5" width="32" height="2.2" fill="url(#au2)" opacity=".9"/>
+<rect x="13" y="77.5" width="32" height="2.2" fill="url(#au2)" opacity=".9"/>
+</svg>`;
+  const trophyHTML=`<div class="bk-trophy">${trophySVG}<div class="bk-trophy-cap">${tx('LA GRAN FINAL','THE GRAND FINAL')}<br><span style="color:var(--muted);font-weight:700">19 Jul · New York/NJ</span></div></div>`;
   return `<div class="bk-live">
     <div class="bk-live-head"><span class="phase-tag live">⚡ ${tx('En vivo','Live')}</span><h3>🗺️ ${tx('Cuadro actual · se arma con los resultados reales','Current bracket · built from real results')}</h3></div>
     <p class="bk-live-desc">${tx('A medida que se juegan los <b>dieciseisavos</b>, cada clasificado avanza por el cuadro oficial hacia la final. Un cruce se <b>forma</b> cuando sus dos equipos ya están definidos; los demás quedan «por definir». <b>Este cuadro será la base del nuevo pronóstico</b> que pediremos a las tres IAs al cerrar los 16avos.','As the <b>Round of 32</b> is played, each qualifier advances through the official bracket toward the final. A tie is <b>formed</b> once both its teams are known; the rest stay «TBD». <b>This bracket will be the base for the new forecast</b> we\'ll request from the three AIs when the Round of 32 ends.')}</p>
     <p class="bk-live-stat">${tx('Dieciseisavos jugados','Round-of-32 played')}: <b>${R32played}/16</b> · ${tx('octavos formados','Round-of-16 ties formed')}: <b>${r16formed}/8</b></p>
-    ${champLine}
+    ${aliveHTML}${champLine}
     <div class="bk-scroll"><div class="bk-board">
       <div class="bk-side">${cols('left')}</div>
-      <div class="bk-final"><div class="bk-rhead" style="color:var(--deep-blue)">${tx('Final','Final')}</div>${card('M104',true)}</div>
+      <div class="bk-final">${trophyHTML}<div class="bk-rhead" style="color:var(--deep-blue)">${tx('Final','Final')}</div>${card('M104',true)}</div>
       <div class="bk-side" style="flex-direction:row-reverse">${cols('right')}</div>
     </div></div>
     <div class="bk-live-leg">${tx('<b style="color:#1a9e5c">■</b> avanzó (resultado real) &nbsp; <b style="color:var(--vibrant-blue)">■</b> cruce formado, aún por jugar &nbsp; <b style="color:var(--muted)">■</b> por definir &nbsp; · &nbsp; «pró» = definido en prórroga (marcador a 120′) · «pen» = definido por penales','<b style="color:#1a9e5c">■</b> advanced (real result) &nbsp; <b style="color:var(--vibrant-blue)">■</b> formed tie, not yet played &nbsp; <b style="color:var(--muted)">■</b> TBD &nbsp; · &nbsp; «aet» = decided in extra time (120′ score) · «pk» = decided on penalties')}</div>
