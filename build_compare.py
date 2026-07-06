@@ -1572,8 +1572,8 @@ function bkR32RealHTML(){
     <p style="margin:0 0 10px;font-size:13px;color:var(--muted)">${tx('Los 16 cruces oficiales tras el cierre de los 12 grupos. Cada llave compara el pronóstico de las tres IAs (Claude · ChatGPT · Gemini) con el clasificado por consenso. Las tres coinciden en 14 de 16; las únicas divididas son Países Bajos–Marruecos y Australia–Egipto, donde Gemini se separa por su submodelo de penaltis.','The 16 official ties after all 12 groups closed. Each tie compares the three AIs (Claude · ChatGPT · Gemini) with the consensus qualifier. All three agree on 14 of 16; the only splits are Netherlands–Morocco and Australia–Egypt, where Gemini diverges via its penalty submodel.')}</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">${KR.map(card).join('')}</div></div>`;
 }
-function bkR16RealHTML(){
-  const KR=(DATA.ko_real||[]).filter(s=>s.phase==='R16'); if(!KR.length) return '';
+function bkKORealHTML(ph,tES,tEN,tot,intro){
+  const KR=(DATA.ko_real||[]).filter(s=>s.phase===ph); if(!KR.length) return '';
   const tbd=`<span style="color:var(--muted);font-style:italic">${tx('Por definir','TBD')}</span>`;
   const base='background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;';
   const meta=s=>(s.fecha||s.venue)?`<div style="font-size:10.5px;color:var(--muted);margin-top:4px">📅 ${s.fecha||''}${s.venue?' · 📍 '+s.venue:''}</div>`:'';
@@ -1606,10 +1606,12 @@ function bkR16RealHTML(){
   const nF=KR.filter(s=>s.status==='formed').length;
   const nP=KR.filter(s=>s.status==='formed'&&s.pred).length;
   return `<div style="margin-bottom:20px">
-    <h3 style="margin:0 0 4px">⚽ ${tx('Octavos de final · cuadro temporal','Round of 16 · provisional bracket')} <span style="font-size:13px;color:var(--muted);font-weight:600">(${nF}/8 ${tx('confirmados','confirmed')})</span></h3>
-    <p style="margin:0 0 10px;font-size:13px;color:var(--muted)">${tx('El cuadro de octavos se arma con cada dieciseisavo que termina. Los '+nP+' cruces ya confirmados incluyen el <b>nuevo pronóstico oficial de las tres IAs</b>, emitido el 1 de julio con la información real del torneo; los demás se completan al definirse. El consenso combina las tres (mayoría para el clasificado, mediana para el marcador).','The Round-of-16 bracket fills in as each Round-of-32 tie ends. The '+nP+' confirmed ties include the <b>three AIs\' new official forecast</b>, issued July 1 with real tournament information; the rest are added as they are set. The consensus combines all three (majority qualifier, median score).')}</p>
+    <h3 style="margin:0 0 4px">⚽ ${tx(tES,tEN)} <span style="font-size:13px;color:var(--muted);font-weight:600">(${nF}/${tot} ${tx('confirmados','confirmed')})</span></h3>
+    <p style="margin:0 0 10px;font-size:13px;color:var(--muted)">${intro||tx('El cuadro se arma con cada ronda que termina. Los cruces confirmados incluyen el <b>pronóstico oficial de las tres IAs</b> emitido con la información real del torneo; los demás se completan al definirse. El consenso combina las tres (mayoría para el clasificado, mediana para el marcador).','The bracket fills in as each round ends. Confirmed ties include the <b>three AIs\' official forecast</b> issued with real tournament information; the rest are added as they are set. The consensus combines all three (majority qualifier, median score).')}</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">${KR.map(card).join('')}</div></div>`;
 }
+function bkR16RealHTML(){return bkKORealHTML('R16','Octavos de final · cuadro temporal','Round of 16 · provisional bracket',8);}
+function bkQFRealHTML(){return bkKORealHTML('QF','Cuartos de final · cuadro temporal','Quarter-finals · provisional bracket',4);}
 function bkR16HTML(){
   const W=DATA.ko_r32_win||{}; if(!Object.keys(W).length) return '';
   const base='background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;';
@@ -1822,7 +1824,7 @@ function renderBracket(){
   const note='<p class="bk-note"><b>'+tx('Es una proyección, no el bracket oficial.','It is a projection, not the official bracket.')+'</b> '+
     tx('La asignación de los terceros sigue una matriz oficial FIFA de 495 combinaciones; aquí se usa una asignación válida que respeta los grupos elegibles de cada casilla y puede diferir de la oficial en algún caso.',
        'The third-placed allocation follows an official FIFA matrix of 495 combinations; here a valid assignment is used that respects each slot\'s eligible groups and may differ from the official one in some cases.')+'</p>';
-  host.innerHTML=bkLiveHTML()+bkR16RealHTML()+bkR32RealHTML()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
+  host.innerHTML=bkLiveHTML()+bkQFRealHTML()+bkR16RealHTML()+(function(){const h=bkR32RealHTML();return h?`<details class="phase-closed-d" style="margin-bottom:20px"><summary style="cursor:pointer;font-weight:800">📁 ${tx('Dieciseisavos de final · fase cerrada (16/16) — abrir como referencia','Round of 32 · closed phase (16/16) — open for reference')}</summary>${h}</details>`:''})()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
   const sel=host.querySelector('.bk-seltabs');
   if(sel) sel.addEventListener('click',e=>{const b=e.target.closest('[data-bk]'); if(!b)return; BK_CUR=b.dataset.bk; renderBracket(); gaEvent('bracket_model',{model:BK_CUR});});
   const mt=host.querySelector('.bk-metric');

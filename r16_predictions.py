@@ -32,7 +32,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 CONSOLIDATED = os.path.join(ROOT, "data", "consolidated.json")
 KO_RESULTS = os.path.join(ROOT, "ko_results.json")
-R16_CODES = ["M89", "M90", "M91", "M92", "M93", "M94", "M95", "M96"]
+R16_CODES = [f"M{i}" for i in range(89, 105)]  # octavos→final (M89-M104); el cuadro real (ko_real) valida qué llaves existen
 FIELD = {"claude": "pred", "chatgpt": "cg", "gemini": "gm"}
 
 def load_state():
@@ -45,10 +45,12 @@ def load_state():
         res = {r["code"]: r for r in D.get("ko_results", [])}
     win = {c: r["winner"] for c, r in res.items() if r.get("winner")}
     feeders = {"M89": ("M74", "M77"), "M90": ("M73", "M75"), "M91": ("M76", "M78"), "M92": ("M79", "M80"),
-               "M93": ("M83", "M84"), "M94": ("M81", "M82"), "M95": ("M86", "M88"), "M96": ("M85", "M87")}
+               "M93": ("M83", "M84"), "M94": ("M81", "M82"), "M95": ("M86", "M88"), "M96": ("M85", "M87"),
+               "M97": ("M89", "M90"), "M98": ("M93", "M94"), "M99": ("M91", "M92"), "M100": ("M95", "M96"),
+               "M101": ("M97", "M98"), "M102": ("M99", "M100"), "M103": ("M101", "M102"), "M104": ("M101", "M102")}
     for c in R16_CODES:
         s = kr.get(c)
-        if not s:
+        if not s or c not in feeders:
             continue
         f1, f2 = feeders[c]
         s["a"] = s.get("a") or win.get(f1)
@@ -60,7 +62,9 @@ def cmd_prompt():
     D, kr = load_state()
     ties, missing = [], []
     for c in R16_CODES:
-        s = kr[c]
+        s = kr.get(c)
+        if not s:
+            continue
         if s["status"] == "formed":
             ties.append(f'  {c}: {s["a"]} vs {s["b"]}')
         else:
