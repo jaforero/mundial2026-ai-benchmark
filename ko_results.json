@@ -192,5 +192,15 @@
   "winner": "Argentina",
   "fecha": "7 Jul",
   "venue": "Atlanta"
+ },
+ {
+  "code": "M96",
+  "ga": 0,
+  "gb": 0,
+  "winner": "Suiza",
+  "fecha": "7 Jul",
+  "venue": "Vancouver",
+  "via": "pen",
+  "xsc": "4-3"
  }
 ]
