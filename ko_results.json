@@ -176,5 +176,13 @@
   "winner": "España",
   "fecha": "6 Jul",
   "venue": "Dallas (Arlington)"
+ },
+ {
+  "code": "M94",
+  "ga": 1,
+  "gb": 4,
+  "winner": "Bélgica",
+  "fecha": "6 Jul",
+  "venue": "Seattle"
  }
 ]
