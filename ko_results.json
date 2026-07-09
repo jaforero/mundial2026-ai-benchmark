@@ -202,5 +202,13 @@
   "venue": "Vancouver",
   "via": "pen",
   "xsc": "4-3"
+ },
+ {
+  "code": "M97",
+  "ga": 2,
+  "gb": 0,
+  "winner": "Francia",
+  "fecha": "9 Jul",
+  "venue": "Boston (Foxborough)"
  }
 ]
