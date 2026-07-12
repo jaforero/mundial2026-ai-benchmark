@@ -209,7 +209,7 @@
   "gb": 0,
   "winner": "Francia",
   "fecha": "9 Jul",
-  "venue": "Boston (Foxborough)"
+  "venue": "Boston"
  },
  {
   "code": "M98",
@@ -217,7 +217,7 @@
   "gb": 1,
   "winner": "España",
   "fecha": "10 Jul",
-  "venue": "Los Angeles (Inglewood)"
+  "venue": "Los Ángeles"
  },
  {
   "code": "M99",
@@ -225,8 +225,18 @@
   "gb": 1,
   "winner": "Inglaterra",
   "fecha": "11 Jul",
-  "venue": "Miami (Miami Gardens)",
+  "venue": "Miami",
   "via": "et",
-  "xsc": "1-2"
+  "xsc": "2-1"
+ },
+ {
+  "code": "M100",
+  "ga": 1,
+  "gb": 1,
+  "winner": "Argentina",
+  "fecha": "11 Jul",
+  "venue": "Kansas City",
+  "via": "et",
+  "xsc": "3-1"
  }
 ]

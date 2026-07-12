@@ -1634,6 +1634,7 @@ function bkKORealHTML(ph,tES,tEN,tot,intro){
 }
 function bkR16RealHTML(){return bkKORealHTML('R16','Octavos de final · cuadro temporal','Round of 16 · provisional bracket',8);}
 function bkQFRealHTML(){return bkKORealHTML('QF','Cuartos de final · cuadro temporal','Quarter-finals · provisional bracket',4);}
+function bkSFRealHTML(){return bkKORealHTML('SF','Semifinales · cuadro temporal','Semifinals · provisional bracket',2,tx('Los dos cruces de semifinales están confirmados. Ya están cargados los pronósticos de <b>Claude (v4.4)</b> y <b>ChatGPT (v13.1)</b>; el de Gemini está pendiente de re-emisión, por lo que el consenso definitivo se calculará cuando estén las tres IAs.','Both semifinal ties are confirmed. <b>Claude (v4.4)</b> and <b>ChatGPT (v13.1)</b> forecasts are loaded; Gemini\\u2019s is pending re-issue, so the final consensus will be computed once all three are in.'));}
 function bkR16HTML(){
   const W=DATA.ko_r32_win||{}; if(!Object.keys(W).length) return '';
   const base='background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;';
@@ -1869,7 +1870,7 @@ function renderBracket(){
   const note='<p class="bk-note"><b>'+tx('Es una proyección, no el bracket oficial.','It is a projection, not the official bracket.')+'</b> '+
     tx('La asignación de los terceros sigue una matriz oficial FIFA de 495 combinaciones; aquí se usa una asignación válida que respeta los grupos elegibles de cada casilla y puede diferir de la oficial en algún caso.',
        'The third-placed allocation follows an official FIFA matrix of 495 combinations; here a valid assignment is used that respects each slot\'s eligible groups and may differ from the official one in some cases.')+'</p>';
-  host.innerHTML=bkLiveHTML()+bkQFRealHTML()+bkR16RealHTML()+(function(){const h=bkR32RealHTML();return h?`<details class="phase-closed-d" style="margin-bottom:20px"><summary style="cursor:pointer;font-weight:800">📁 ${tx('Dieciseisavos de final · fase cerrada (16/16) — abrir como referencia','Round of 32 · closed phase (16/16) — open for reference')}</summary>${h}</details>`:''})()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
+  host.innerHTML=bkLiveHTML()+bkSFRealHTML()+bkQFRealHTML()+bkR16RealHTML()+(function(){const h=bkR32RealHTML();return h?`<details class="phase-closed-d" style="margin-bottom:20px"><summary style="cursor:pointer;font-weight:800">📁 ${tx('Dieciseisavos de final · fase cerrada (16/16) — abrir como referencia','Round of 32 · closed phase (16/16) — open for reference')}</summary>${h}</details>`:''})()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
   const sel=host.querySelector('.bk-seltabs');
   if(sel) sel.addEventListener('click',e=>{const b=e.target.closest('[data-bk]'); if(!b)return; BK_CUR=b.dataset.bk; renderBracket(); gaEvent('bracket_model',{model:BK_CUR});});
   const mt=host.querySelector('.bk-metric');
