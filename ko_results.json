@@ -218,5 +218,15 @@
   "winner": "España",
   "fecha": "10 Jul",
   "venue": "Los Angeles (Inglewood)"
+ },
+ {
+  "code": "M99",
+  "ga": 1,
+  "gb": 1,
+  "winner": "Inglaterra",
+  "fecha": "11 Jul",
+  "venue": "Miami (Miami Gardens)",
+  "via": "et",
+  "xsc": "1-2"
  }
 ]
