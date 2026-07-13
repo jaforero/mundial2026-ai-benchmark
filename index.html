@@ -425,6 +425,31 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 .bk-tbd{color:var(--muted);font-style:italic;}
 .bk-live-leg{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.7;}
 .bk-alive{display:flex;flex-wrap:wrap;gap:12px 14px;margin:0 0 14px;padding:12px 14px;background:linear-gradient(135deg,rgba(78,0,255,.07),rgba(0,72,255,.05));border:1px solid var(--border);border-radius:14px;align-items:flex-end;}
+.hl-badge{margin:0 0 22px;padding:0;border-radius:18px;overflow:hidden;border:1px solid rgba(78,0,255,.25);box-shadow:0 8px 30px rgba(78,0,255,.13);background:var(--card);}
+.hl-head{background:linear-gradient(120deg,#4e00ff,#0048ff 55%,#041c59);padding:16px 20px;color:#fff;position:relative;overflow:hidden;}
+.hl-head::after{content:'';position:absolute;top:-40%;right:-6%;width:180px;height:180px;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 70%);}
+.hl-tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;background:rgba(255,255,255,.18);padding:3px 11px;border-radius:20px;margin-bottom:9px;}
+.hl-title{font-size:19px;font-weight:900;line-height:1.25;margin:0;letter-spacing:-.2px;}
+.hl-sub{font-size:12.5px;opacity:.92;margin-top:5px;line-height:1.5;font-weight:500;max-width:640px;}
+.hl-body{padding:16px 20px 18px;}
+.hl-flags{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:16px;}
+.hl-flag{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:82px;padding:11px 8px 9px;background:linear-gradient(160deg,rgba(78,0,255,.07),rgba(0,72,255,.04));border:1px solid var(--border);border-radius:13px;transition:transform .15s;}
+.hl-flag:hover{transform:translateY(-3px);}
+.hl-flag-e{font-size:40px;line-height:1;filter:drop-shadow(0 3px 7px rgba(4,28,89,.32));}
+.hl-flag-n{font-size:12px;font-weight:800;color:var(--deep-blue);}
+.hl-flag-r{font-size:9.5px;font-weight:700;color:var(--purple);letter-spacing:.3px;}
+.hl-tbl{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:4px;}
+.hl-tbl th{text-align:center;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:6px 8px;border-bottom:1.5px solid var(--border);}
+.hl-tbl th:first-child{text-align:left;}
+.hl-tbl td{padding:7px 8px;text-align:center;border-bottom:1px solid rgba(0,0,0,.05);}
+.hl-tbl td:first-child{text-align:left;font-weight:800;color:var(--deep-blue);}
+.hl-tbl tr:last-child td{border-bottom:none;}
+.hl-pos{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:20px;border-radius:6px;font-weight:800;font-size:11px;}
+.hl-pos.top4{background:rgba(26,158,92,.16);color:#128a4f;}
+.hl-pos.out{background:rgba(180,140,0,.14);color:#9a7500;}
+.hl-note{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6;padding-top:11px;border-top:1px dashed var(--border);}
+.hl-note b{color:var(--deep-blue);}
+@media(max-width:560px){.hl-title{font-size:16px;}.hl-flag{min-width:68px;}.hl-flag-e{font-size:32px;}.hl-tbl{font-size:10.5px;}}
 .bk-alive-h{width:100%;font-size:11px;font-weight:800;color:var(--purple);letter-spacing:.6px;margin-bottom:2px;}
 .bk-alive-t{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:54px;}
 .bk-alive-f{font-size:32px;line-height:1;filter:drop-shadow(0 2px 5px rgba(4,28,89,.3));transition:transform .15s;}
@@ -1621,6 +1646,40 @@ function bkKORealHTML(ph,tES,tEN,tot,intro){
     <p style="margin:0 0 10px;font-size:13px;color:var(--muted)">${intro||tx('El cuadro se arma con cada ronda que termina. Los cruces confirmados incluyen el <b>pronóstico oficial de las tres IAs</b> emitido con la información real del torneo; los demás se completan al definirse. El consenso combina las tres (mayoría para el clasificado, mediana para el marcador).','The bracket fills in as each round ends. Confirmed ties include the <b>three AIs\' official forecast</b> issued with real tournament information; the rest are added as they are set. The consensus combines all three (majority qualifier, median score).')}</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">${KR.map(card).join('')}</div></div>`;
 }
+function bkHighlightHTML(){
+  // Hallazgo: los 4 semifinalistas reales estaban en el top de las proyecciones pre-Mundial de las 3 IAs.
+  // Datos EXACTOS verificados (prob. de campeón pre-Mundial + posición en el ranking de cada IA).
+  const sfR=(DATA.ko_real||[]).filter(s=>s.phase==='SF');
+  if(sfR.length<2) return '';
+  const teams=['España','Francia','Argentina','Inglaterra'];
+  const FL={'España':'🇪🇸','Francia':'🇫🇷','Argentina':'🇦🇷','Inglaterra':'🏴󠁧󠁢󠁥󠁮󠁧󠁿'};
+  const champ={}; // ia -> ranking array
+  ['claude','chatgpt','gemini'].forEach(ia=>{
+    const c=((DATA[ia]||{}).reach||{}).CAMPEON||{};
+    champ[ia]=Object.entries(c).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+  });
+  const pos=(ia,t)=>{const i=(champ[ia]||[]).indexOf(t);return i<0?'—':i+1;};
+  const flagCards=teams.map(t=>`<div class="hl-flag" title="${tn(t)}"><span class="hl-flag-e">${FL[t]}</span><span class="hl-flag-n">${tn(t)}</span><span class="hl-flag-r">${tx('semifinalista','semifinalist')}</span></div>`).join('');
+  const rows=teams.map(t=>{
+    const cell=ia=>{const p=pos(ia,t);const cls=(typeof p==='number'&&p<=4)?'top4':'out';return `<td><span class="hl-pos ${cls}">${p}º</span></td>`;};
+    return `<tr><td>${FL[t]} ${tn(t)}</td>${cell('claude')}${cell('chatgpt')}${cell('gemini')}</tr>`;
+  }).join('');
+  return `<div class="hl-badge">
+    <div class="hl-head">
+      <span class="hl-tag">🎯 ${tx('Hallazgo clave','Key finding')}</span>
+      <h3 class="hl-title">${tx('Las tres IAs anticiparon a los 4 semifinalistas','All three AIs foresaw the 4 semifinalists')}</h3>
+      <p class="hl-sub">${tx('Antes de que rodara el balón, España, Francia, Argentina e Inglaterra ya figuraban en lo más alto de las proyecciones de título de las tres IAs. La realidad del torneo confirmó ese cuarteto en semifinales.','Before a ball was kicked, Spain, France, Argentina and England already sat at the top of all three AIs\\u2019 title projections. The tournament confirmed that quartet in the semifinals.')}</p>
+    </div>
+    <div class="hl-body">
+      <div class="hl-flags">${flagCards}</div>
+      <table class="hl-tbl">
+        <thead><tr><th>${tx('Selección','Team')}</th><th>Claude</th><th>ChatGPT</th><th>Gemini</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p class="hl-note">${tx('Posición en el ranking de <b>probabilidad de ser campeón</b> emitido por cada IA antes del Mundial. <b>ChatGPT y Gemini</b> situaron a los cuatro exactamente en su top 4; <b>Claude</b> los tuvo a los cuatro en su top 5, con Brasil colándose 4º por décimas — y Brasil fue justamente la gran sorpresa, eliminado por Noruega en octavos. Ninguna otra selección del top 4 de las tres coincidió fuera de este cuarteto.','Ranking by <b>title probability</b> issued by each AI before the World Cup. <b>ChatGPT and Gemini</b> placed all four exactly in their top 4; <b>Claude</b> had all four in its top 5, with Brazil sneaking into 4th by decimals — and Brazil was precisely the big upset, knocked out by Norway in the round of 16. No other top-4 team across the three fell outside this quartet.')}</p>
+    </div>
+  </div>`;
+}
 function bkR16RealHTML(){return bkKORealHTML('R16','Octavos de final · cuadro temporal','Round of 16 · provisional bracket',8);}
 function bkQFRealHTML(){return bkKORealHTML('QF','Cuartos de final · cuadro temporal','Quarter-finals · provisional bracket',4);}
 function bkSFRealHTML(){return bkKORealHTML('SF','Semifinales · cuadro temporal','Semifinals · provisional bracket',2,tx('Pronósticos definitivos de las tres IAs con el <b>ranking FIFA en vivo</b> post-cuartos (Francia 1ª, Argentina 2ª, España 3ª, Inglaterra 4ª). Claude v4.6, ChatGPT v14 y Gemini (HMM). Divergencia cruzada: en M101 Claude sostiene España en solitario (2/3 dan Francia); en M102 Gemini apuesta por Inglaterra en solitario (2/3 dan Argentina). El consenso refleja la mayoría 2/3.','Final forecasts from all three AIs using the <b>live FIFA ranking</b> after the quarterfinals (France 1st, Argentina 2nd, Spain 3rd, England 4th). Claude v4.6, ChatGPT v14 and Gemini (HMM). Split disagreement: in M101 Claude alone holds Spain (2/3 pick France); in M102 Gemini alone backs England (2/3 pick Argentina). The consensus reflects the 2/3 majority.'));}
@@ -1859,7 +1918,7 @@ function renderBracket(){
   const note='<p class="bk-note"><b>'+tx('Es una proyección, no el bracket oficial.','It is a projection, not the official bracket.')+'</b> '+
     tx('La asignación de los terceros sigue una matriz oficial FIFA de 495 combinaciones; aquí se usa una asignación válida que respeta los grupos elegibles de cada casilla y puede diferir de la oficial en algún caso.',
        'The third-placed allocation follows an official FIFA matrix of 495 combinations; here a valid assignment is used that respects each slot\'s eligible groups and may differ from the official one in some cases.')+'</p>';
-  host.innerHTML=bkLiveHTML()+bkSFRealHTML()+bkQFRealHTML()+bkR16RealHTML()+(function(){const h=bkR32RealHTML();return h?`<details class="phase-closed-d" style="margin-bottom:20px"><summary style="cursor:pointer;font-weight:800">📁 ${tx('Dieciseisavos de final · fase cerrada (16/16) — abrir como referencia','Round of 32 · closed phase (16/16) — open for reference')}</summary>${h}</details>`:''})()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
+  host.innerHTML=bkLiveHTML()+bkHighlightHTML()+bkSFRealHTML()+bkQFRealHTML()+bkR16RealHTML()+(function(){const h=bkR32RealHTML();return h?`<details class="phase-closed-d" style="margin-bottom:20px"><summary style="cursor:pointer;font-weight:800">📁 ${tx('Dieciseisavos de final · fase cerrada (16/16) — abrir como referencia','Round of 32 · closed phase (16/16) — open for reference')}</summary>${h}</details>`:''})()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
   const sel=host.querySelector('.bk-seltabs');
   if(sel) sel.addEventListener('click',e=>{const b=e.target.closest('[data-bk]'); if(!b)return; BK_CUR=b.dataset.bk; renderBracket(); gaEvent('bracket_model',{model:BK_CUR});});
   const mt=host.querySelector('.bk-metric');
