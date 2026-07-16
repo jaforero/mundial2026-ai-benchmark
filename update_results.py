@@ -150,7 +150,9 @@ def update_knockouts(feed, canon):
                 if via: x1, x2 = x2, x1
         else:
             a, b, ga, gb = t1, t2, g1, g2
-        row = {"code": code, "ga": ga, "gb": gb, "winner": win,
+        # Se escriben a/b explícitamente: sin ellos el consumidor no puede saber a qué
+        # orientación corresponde ga/gb y el marcador acaba invertido (feed vs cuadro canónico).
+        row = {"code": code, "a": a, "b": b, "ga": ga, "gb": gb, "winner": win,
                "fecha": fmt_date(mm.get("date", "")), "venue": mm.get("ground", "")}
         if via:
             row["via"] = via

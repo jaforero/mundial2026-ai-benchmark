@@ -1127,7 +1127,7 @@ function koPredHTML(field,color){
   const KR=DATA.ko_real||[]; if(!KR.length) return '';
   const ex=q=>(q&&(q.et==='Sí'||q.et==='Yes')?' <span style="color:var(--muted);font-size:11px">'+tx('+pró','+ET')+'</span>':'')+(q&&(q.pens==='Sí'||q.pens==='Yes')?' <span style="color:var(--muted);font-size:11px">'+tx('+pen','+pk')+'</span>':'');
   let _kph=null;
-  const _RK={'F':5,'SF':4,'QF':3,'R16':2,'R32':1};
+  const _RK={'F':5,'3P':4.5,'SF':4,'QF':3,'R16':2,'R32':1};
   KR.sort((x,y)=>(_RK[y.phase||'R32']||0)-(_RK[x.phase||'R32']||0)||(+x.code.slice(1))-(+y.code.slice(1)));
   const rows=KR.map(s=>{const p=s[field]; if(!p)return '';
     let div='';
@@ -1139,9 +1139,10 @@ function koPredHTML(field,color){
     <tbody>${rows}</tbody></table></div>`;
 }
 function koSection(field,color,label){
-  if(!(DATA.ko_real||[]).length) return '';
-  return `<div class="section-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px">⚽ ${tx('Fase eliminatoria · '+label,'Knockout stage · '+label)} <span style="font-size:10px;font-weight:800;color:#fff;background:var(--purple);padding:2px 9px;border-radius:10px;letter-spacing:.03em">${tx('OCTAVOS Y CUARTOS','R16 & QUARTERS')}</span></div>
-  <p class="note">${tx('La predicción más reciente — '+label+' para los 16 cruces oficiales de la fase eliminatoria en curso: marcador a 90′, prórroga o penaltis si aplica, clasificado y confianza.','The most recent prediction — '+label+' for the 16 official knockout ties underway: 90-minute score, extra time or penalties if applicable, qualifier and confidence.')}</p>
+  const KR=(DATA.ko_real||[]); if(!KR.length) return '';
+  const n=KR.filter(s=>s[field]).length;
+  return `<div class="section-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px">⚽ ${tx('Fase eliminatoria · '+label,'Knockout stage · '+label)} <span style="font-size:10px;font-weight:800;color:#fff;background:var(--purple);padding:2px 9px;border-radius:10px;letter-spacing:.03em">${tx('CUADRO COMPLETO','FULL BRACKET')}</span></div>
+  <p class="note">${tx('La predicción más reciente — '+label+' para los '+n+' cruces oficiales de la fase eliminatoria, de la final a los dieciseisavos: marcador a 90′, prórroga o penaltis si aplica, clasificado y confianza.','The most recent prediction — '+label+' for all '+n+' official knockout ties, from the final down to the round of 32: 90-minute score, extra time or penalties if applicable, qualifier and confidence.')}</p>
   <div class="card">${koPredHTML(field,color)}</div>`;
 }
 // destacado compacto: top 3 al título (pronóstico PRE-Mundial de cada IA)
@@ -1373,13 +1374,42 @@ function computeStandings(){
 }
 // === ELIMINATORIAS: clasificado (3) + marcador 90' exacto (2) / resultado (1) — máx 5/llave ===
 const KO_FIELD={consenso:'cons',claude:'pred',chatgpt:'cg',gemini:'gm'};
+// Alinea un resultado de ko_results.json a la orientación canónica a/b del cruce.
+// Necesario porque el feed (openfootball) usa su propio orden local/visitante: p.ej. publica
+// "France 0-2 Spain" mientras el cuadro define M101 como a=España, b=Francia. Si no se
+// normaliza, el marcador se muestra invertido Y computeKO pierde el punto de resultado.
+// Estrategia: usar a/b si el registro los trae; si no, deducir la orientación por el ganador.
+function normKO(r,s){
+  if(!r||!s) return r;
+  let inv=false;
+  const A=s.a||'', B=s.b||'';
+  if(r.a&&r.b&&A&&B){
+    if(r.a===B&&r.b===A) inv=true;                                  // trae equipos: comparación directa
+  } else if(r.winner&&r.ga!==r.gb){
+    if(r.winner===A&&r.ga<r.gb) inv=true;                           // sin equipos: el ganador delata el orden
+    else if(r.winner===B&&r.ga>r.gb) inv=true;
+  } else if(r.winner&&r.ga===r.gb&&r.xsc){                          // empate: orientar por el marcador del desempate
+    const p=String(r.xsc).split('-');
+    if(p.length===2){
+      const d=parseInt(p[0],10)-parseInt(p[1],10);
+      if(r.winner===A&&d<0) inv=true;
+      else if(r.winner===B&&d>0) inv=true;
+    }
+  }
+  if(!inv) return r;
+  const x=Object.assign({},r);
+  x.ga=r.gb; x.gb=r.ga;
+  if(r.a&&r.b){ x.a=r.b; x.b=r.a; }
+  if(r.xsc){ const p=String(r.xsc).split('-'); if(p.length===2) x.xsc=p[1]+'-'+p[0]; }
+  return x;
+}
 function computeKO(){
   const KR=DATA.ko_real||[], RES=((typeof KO_RESULTS!=='undefined'&&KO_RESULTS!=null)?KO_RESULTS:(DATA.ko_results||[]));
   const real={}; RES.forEach(r=>{ if(r&&r.code&&r.ga!=null&&r.gb!=null) real[r.code]=r; });
   const agg={}; ACC_MODELS.forEach(m=>agg[m.key]={pts:0,qual:0,exact:0,res:0,n:0});
   const rows=[];
   KR.forEach(s=>{
-    const r=real[s.code]; if(!r) return;
+    const r=normKO(real[s.code],s); if(!r) return;
     const realSc=r.ga+'-'+r.gb, realSign=Math.sign(r.ga-r.gb), rw=r.winner;
     const row={code:s.code,ph:s.phase||'R32',a:s.a,b:s.b,real:realSc,rw,via:r.via||null,xsc:r.xsc||null,fecha:r.fecha||'',venue:r.venue||''};
     ACC_MODELS.forEach(m=>{
@@ -1649,7 +1679,7 @@ function bkKORealHTML(ph,tES,tEN,tot,intro){
       const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0], unan=top[1]===ps.length;
       const vt=unan?('✓ '+tx('las '+ps.length+' coinciden','all '+ps.length+' agree')):(top[1]+'/'+ps.length+' '+tx('IAs','AIs')+' → '+tf(top[0]));
       const badge=`<span style="font-size:10px;font-weight:700;color:${unan?'#1a9e5c':'#b58900'}">${vt}</span>`;
-      const RR=RES.find(r=>r.code===s.code);
+      const RR=normKO(RES.find(r=>r.code===s.code),s);
       const realLine=RR?`<div style="font-size:12.5px;margin-top:6px;padding-top:6px;border-top:2px solid #1a9e5c"><span style="color:#1a9e5c;font-weight:800">🏁 ${tx('RESULTADO REAL','ACTUAL RESULT')}</span> <b>${RR.ga}-${RR.gb}</b>${RR.via?' <span style="color:var(--muted);font-size:11px">'+(RR.via==='pen'?tx('pen','pk'):tx('pró','aet'))+' '+(RR.xsc||'')+'</span>':''} → <b>${tf(RR.winner)}</b></div>`:'';
       const cc=s.cons;
       const consLine=cc?`<div style="font-size:12px;margin-top:5px;padding-top:5px;border-top:1px dashed var(--border)"><span style="color:var(--purple);font-weight:800">${tx('Consenso','Consensus')}</span> ${cc.sc90} → <b>${tf(cc.winner)}</b> <span style="color:var(--muted)">${cc.conf}%${ex(cc)}</span></div>`:'';
@@ -1794,7 +1824,7 @@ function bkLiveHTML(){
   const r16formed=r16.filter(c=>{const p=teams[c]||[];return p[0]&&p[1];}).length;
   const tbd=`<span class="bk-tbd">${tx('Por definir','TBD')}</span>`;
   const card=(code,isFinal)=>{
-    const p=teams[code]||[null,null], a=p[0], b=p[1], w=win[code], r=rByC[code];
+    const p=teams[code]||[null,null], a=p[0], b=p[1], w=win[code], r=normKO(rByC[code],{a:a,b:b});
     const trow=(t,on,out)=>`<div class="bk-team${on?' w':''}${out?' l':''}"${on?' style="background:rgba(26,158,92,.15);color:#128a4f"':''}><span class="bk-nm">${t?tf(t):tbd}</span></div>`;
     const via=r&&r.via?(r.via==='pen'?' <small>'+tx('pen','pk')+' '+(r.xsc||'')+'</small>':' <small>'+tx('pró','aet')+' '+(r.xsc||'')+'</small>'):'';
     const sc=r?`<span class="bk-livesc">${r.ga}-${r.gb}${via}</span>`:'';
