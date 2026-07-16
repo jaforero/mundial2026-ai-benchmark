@@ -460,6 +460,21 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 .hl-pos.out{background:rgba(180,140,0,.14);color:#9a7500;}
 .hl-note{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6;padding-top:11px;border-top:1px dashed var(--border);}
 .hl-note b{color:var(--deep-blue);}
+.fx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:4px;}
+.fx-card{border:1px solid var(--border);border-radius:12px;padding:11px 11px 9px;background:linear-gradient(165deg,rgba(78,0,255,.05),rgba(0,72,255,.02));}
+.fx-h{font-size:12.5px;font-weight:900;margin-bottom:8px;letter-spacing:-.1px;}
+.fx-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05);}
+.fx-row:last-of-type{border-bottom:none;}
+.fx-t{flex:1;font-size:11.5px;font-weight:700;color:var(--deep-blue);white-space:nowrap;}
+.fx-p{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:19px;border-radius:5px;font-size:10.5px;font-weight:800;}
+.fx-p.top2{background:rgba(26,158,92,.18);color:#128a4f;}
+.fx-p.top4{background:rgba(180,140,0,.15);color:#9a7500;}
+.fx-p.out{background:rgba(150,150,150,.15);color:#666;}
+.fx-pct{font-size:10.5px;color:var(--muted);font-weight:700;min-width:42px;text-align:right;}
+.fx-verdict{margin-top:8px;padding-top:7px;border-top:1px dashed var(--border);font-size:10px;font-weight:800;line-height:1.35;}
+.fx-verdict.hit{color:#128a4f;}
+.fx-verdict.near{color:var(--muted);}
+@media(max-width:560px){.fx-grid{grid-template-columns:1fr;}.fx-t{font-size:12px;}}
 @media(max-width:560px){.hl-title{font-size:16px;}.hl-flag{min-width:68px;}.hl-flag-e{font-size:32px;}.hl-tbl{font-size:10.5px;}}
 .bk-alive-h{width:100%;font-size:11px;font-weight:800;color:var(--purple);letter-spacing:.6px;margin-bottom:2px;}
 .bk-alive-t{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:54px;}
@@ -1621,6 +1636,7 @@ function bkR32RealHTML(){
 }
 function bkKORealHTML(ph,tES,tEN,tot,intro){
   const KR=(DATA.ko_real||[]).filter(s=>s.phase===ph); if(!KR.length) return '';
+  const RES=(typeof KO_RESULTS!=='undefined'&&KO_RESULTS!=null)?KO_RESULTS:(DATA.ko_results||[]);
   const tbd=`<span style="color:var(--muted);font-style:italic">${tx('Por definir','TBD')}</span>`;
   const base='background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;';
   const meta=s=>(s.fecha||s.venue)?`<div style="font-size:10.5px;color:var(--muted);margin-top:4px">📅 ${s.fecha||''}${s.venue?' · 📍 '+s.venue:''}</div>`:'';
@@ -1631,17 +1647,20 @@ function bkKORealHTML(ph,tES,tEN,tot,intro){
       const lines=ps.map(([lbl,col,q])=>`<div style="font-size:12px;margin-top:2px"><span style="color:${col};font-weight:800">${lbl}</span> ${q.sc90} → <b>${tf(q.winner)}</b> <span style="color:var(--muted)">${q.conf}%${ex(q)}</span></div>`).join('');
       const cnt={}; ps.forEach(x=>cnt[x[2].winner]=(cnt[x[2].winner]||0)+1);
       const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0], unan=top[1]===ps.length;
-      const badge=`<span style="font-size:10px;font-weight:700;color:${unan?'#1a9e5c':'#b58900'}">${unan?'✓ '+tx('los 3 coinciden','all 3 agree'):top[1]+'-'+(ps.length-top[1])+' '+tf(top[0])}</span>`;
+      const vt=unan?('✓ '+tx('las '+ps.length+' coinciden','all '+ps.length+' agree')):(top[1]+'/'+ps.length+' '+tx('IAs','AIs')+' → '+tf(top[0]));
+      const badge=`<span style="font-size:10px;font-weight:700;color:${unan?'#1a9e5c':'#b58900'}">${vt}</span>`;
+      const RR=RES.find(r=>r.code===s.code);
+      const realLine=RR?`<div style="font-size:12.5px;margin-top:6px;padding-top:6px;border-top:2px solid #1a9e5c"><span style="color:#1a9e5c;font-weight:800">🏁 ${tx('RESULTADO REAL','ACTUAL RESULT')}</span> <b>${RR.ga}-${RR.gb}</b>${RR.via?' <span style="color:var(--muted);font-size:11px">'+(RR.via==='pen'?tx('pen','pk'):tx('pró','aet'))+' '+(RR.xsc||'')+'</span>':''} → <b>${tf(RR.winner)}</b></div>`:'';
       const cc=s.cons;
       const consLine=cc?`<div style="font-size:12px;margin-top:5px;padding-top:5px;border-top:1px dashed var(--border)"><span style="color:var(--purple);font-weight:800">${tx('Consenso','Consensus')}</span> ${cc.sc90} → <b>${tf(cc.winner)}</b> <span style="color:var(--muted)">${cc.conf}%${ex(cc)}</span></div>`:'';
       return `<div style="${base}border-left:4px solid #1a9e5c">
-        <div style="font-size:11px;color:#1a9e5c;font-weight:800;margin-bottom:4px;display:flex;justify-content:space-between;gap:6px">${s.code} · ${tx('CONFIRMADO','CONFIRMED')} ${badge}</div>
+        <div style="font-size:11px;color:#1a9e5c;font-weight:800;margin-bottom:4px;display:flex;justify-content:space-between;gap:6px">${s.code} · ${RR?tx('JUGADO','PLAYED'):tx('CRUCE CONFIRMADO','MATCHUP SET')} ${badge}</div>
         <div style="font-weight:700;margin-bottom:2px"><b>${tf(s.a)}</b> <span style="color:var(--muted);font-weight:400">vs</span> <b>${tf(s.b)}</b></div>
-        ${lines}${consLine}${meta(s)}</div>`;
+        ${lines}${consLine}${realLine}${meta(s)}</div>`;
     }
     if(s.status==='formed'){
       return `<div style="${base}border-left:4px solid var(--vibrant-blue)">
-        <div style="font-size:11px;color:var(--vibrant-blue);font-weight:800;margin-bottom:4px">${s.code} · ${tx('CONFIRMADO · pronóstico en curso','CONFIRMED · forecast pending')}</div>
+        <div style="font-size:11px;color:var(--vibrant-blue);font-weight:800;margin-bottom:4px">${s.code} · ${tx('CRUCE CONFIRMADO · pronóstico en curso','MATCHUP SET · forecast pending')}</div>
         <div style="font-weight:700"><b>${tf(s.a)}</b> <span style="color:var(--muted);font-weight:400">vs</span> <b>${tf(s.b)}</b></div>${meta(s)}</div>`;
     }
     const fdr=x=>x?`<span style="font-size:11px;color:var(--muted)">(${tx('ganador','winner')} ${x.replace('G-','')})</span>`:'';
@@ -1688,6 +1707,40 @@ function bkHighlightHTML(){
         <tbody>${rows}</tbody>
       </table>
       <p class="hl-note">${tx('Posición en el ranking de <b>probabilidad de ser campeón</b> emitido por cada IA antes del Mundial. <b>ChatGPT y Gemini</b> situaron a los cuatro exactamente en su top 4; <b>Claude</b> los tuvo a los cuatro en su top 5, con Brasil colándose 4º por décimas — y Brasil fue justamente la gran sorpresa, eliminado por Noruega en octavos. Ninguna otra selección del top 4 de las tres coincidió fuera de este cuarteto.','Ranking by <b>title probability</b> issued by each AI before the World Cup. <b>ChatGPT and Gemini</b> placed all four exactly in their top 4; <b>Claude</b> had all four in its top 5, with Brazil sneaking into 4th by decimals — and Brazil was precisely the big upset, knocked out by Norway in the round of 16. No other top-4 team across the three fell outside this quartet.')}</p>
+    </div>
+  </div>`;
+}
+function bkFinalistsHTML(){
+  // Hallazgo: qué dijeron las 3 IAs, ANTES del Mundial, sobre los dos equipos que llegaron a la final.
+  const F=(DATA.ko_real||[]).find(s=>s.phase==='F'); if(!F||!F.a||!F.b) return '';
+  const fin=[F.a,F.b];
+  const FL={'España':'🇪🇸','Argentina':'🇦🇷','Francia':'🇫🇷','Inglaterra':'🏴󠁧󠁢󠁥󠁮󠁧󠁿'};
+  const IAS=[['claude','Claude','var(--c-claude)'],['chatgpt','ChatGPT','var(--c-chatgpt)'],['gemini','Gemini','var(--c-gemini)']];
+  const rk={};
+  IAS.forEach(([k])=>{const c=((DATA[k]||{}).reach||{}).CAMPEON||{};rk[k]=Object.entries(c).sort((a,b)=>b[1]-a[1]);});
+  const posOf=(k,t)=>{const i=rk[k].findIndex(x=>x[0]===t);return i<0?null:i+1;};
+  const probOf=(k,t)=>{const e=rk[k].find(x=>x[0]===t);return e?e[1]:null;};
+  const cards=IAS.map(([k,lbl,col])=>{
+    const rows=fin.map(t=>{
+      const p=posOf(k,t), pr=probOf(k,t);
+      const cls=p<=2?'top2':(p<=4?'top4':'out');
+      return `<div class="fx-row"><span class="fx-t">${FL[t]||''} ${tn(t)}</span><span class="fx-p ${cls}">${p}º</span><span class="fx-pct">${pr!=null?pr.toFixed(2)+'%':'—'}</span></div>`;
+    }).join('');
+    const p1=posOf(k,fin[0]), p2=posOf(k,fin[1]);
+    const exact=(Math.max(p1,p2)<=2);
+    const verdict=exact
+      ? `<div class="fx-verdict hit">🎯 ${tx('Su top 2 = la final exacta','Its top 2 = the exact final')}</div>`
+      : `<div class="fx-verdict near">${tx('Ambos en su top '+Math.max(p1,p2),'Both inside its top '+Math.max(p1,p2))}</div>`;
+    return `<div class="fx-card"><div class="fx-h" style="color:${col}">${lbl}</div>${rows}${verdict}</div>`;
+  }).join('');
+  return `<div class="hl-badge" style="margin-bottom:22px">
+    <div class="hl-head" style="background:linear-gradient(120deg,#041c59,#4e00ff 55%,#0048ff)">
+      <span class="hl-tag">🔮 ${tx('Hallazgo clave · la final','Key finding · the final')}</span>
+      <h3 class="hl-title">${tx('Los dos finalistas ya estaban en el podio de las tres IAs','Both finalists were already on all three AIs podium')}</h3>
+      <p class="hl-sub">${tx('Lo que cada IA dijo <b>antes de que rodara el balón</b> sobre España y Argentina, en su ranking de probabilidad de ser campeón. Las tres tuvieron a los dos finalistas dentro de su top 4; <b>Claude fue la única que los situó 1º y 2º</b>, es decir, anticipó el cruce exacto de la final.','What each AI said <b>before a ball was kicked</b> about Spain and Argentina, in its title-probability ranking. All three had both finalists inside their top 4; <b>Claude was the only one to place them 1st and 2nd</b> — the exact final matchup.')}</p>
+    </div>
+    <div class="hl-body"><div class="fx-grid">${cards}</div>
+      <p class="hl-note">${tx('Posición y probabilidad de <b>ser campeón</b> emitidas antes del torneo. Verde = top 2 · ámbar = top 4. El acierto es del <b>emparejamiento</b>, no del campeón: quién levanta la copa se decide el 19 de julio.','Position and <b>title probability</b> issued before the tournament. Green = top 2 · amber = top 4. The hit is on the <b>matchup</b>, not the winner: who lifts the trophy is decided on 19 July.')}</p>
     </div>
   </div>`;
 }
@@ -1931,7 +1984,13 @@ function renderBracket(){
   const note='<p class="bk-note"><b>'+tx('Es una proyección, no el bracket oficial.','It is a projection, not the official bracket.')+'</b> '+
     tx('La asignación de los terceros sigue una matriz oficial FIFA de 495 combinaciones; aquí se usa una asignación válida que respeta los grupos elegibles de cada casilla y puede diferir de la oficial en algún caso.',
        'The third-placed allocation follows an official FIFA matrix of 495 combinations; here a valid assignment is used that respects each slot\'s eligible groups and may differ from the official one in some cases.')+'</p>';
-  host.innerHTML=bkLiveHTML()+bkFinalRealHTML()+bk3PRealHTML()+bkHighlightHTML()+(function(){const h=bkSFRealHTML();return h?`<details class="phase-closed-d" style="margin-bottom:20px"><summary style="cursor:pointer;font-weight:800">📁 ${tx('Semifinales · fase cerrada (2/2) — abrir como referencia','Semifinals · closed phase (2/2) — open for reference')}</summary>${h}</details>`:''})()+bkQFRealHTML()+bkR16RealHTML()+(function(){const h=bkR32RealHTML();return h?`<details class="phase-closed-d" style="margin-bottom:20px"><summary style="cursor:pointer;font-weight:800">📁 ${tx('Dieciseisavos de final · fase cerrada (16/16) — abrir como referencia','Round of 32 · closed phase (16/16) — open for reference')}</summary>${h}</details>`:''})()+bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
+  const fold=(h,t)=>h?`<details class="phase-closed-d" style="margin-bottom:20px"><summary style="cursor:pointer;font-weight:800">📁 ${t}</summary>${h}</details>`:'';
+  host.innerHTML=bkLiveHTML()+bkFinalRealHTML()+bk3PRealHTML()+bkFinalistsHTML()+bkHighlightHTML()
+    +fold(bkSFRealHTML(),tx('Semifinales · fase cerrada (2/2) — abrir como referencia','Semifinals · closed phase (2/2) — open for reference'))
+    +fold(bkQFRealHTML(),tx('Cuartos de final · fase cerrada (4/4) — abrir como referencia','Quarter-finals · closed phase (4/4) — open for reference'))
+    +fold(bkR16RealHTML(),tx('Octavos de final · fase cerrada (8/8) — abrir como referencia','Round of 16 · closed phase (8/8) — open for reference'))
+    +fold(bkR32RealHTML(),tx('Dieciseisavos de final · fase cerrada (16/16) — abrir como referencia','Round of 32 · closed phase (16/16) — open for reference'))
+    +bkStructuralHTML()+tabs+mtoggle+champ+elobox+board+legend+note;
   const sel=host.querySelector('.bk-seltabs');
   if(sel) sel.addEventListener('click',e=>{const b=e.target.closest('[data-bk]'); if(!b)return; BK_CUR=b.dataset.bk; renderBracket(); gaEvent('bracket_model',{model:BK_CUR});});
   const mt=host.querySelector('.bk-metric');
