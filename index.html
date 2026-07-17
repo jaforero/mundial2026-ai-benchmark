@@ -211,6 +211,8 @@ details.phase-closed-d[open]{padding-bottom:14px;}
 details.phase-closed-d .h2h-table,details.phase-closed-d .h2h-table-head{margin-left:12px;margin-right:12px;}
 .lb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px;}
 .lb-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;position:relative;overflow:hidden;}
+.lb-card.refcard{border-style:dashed;border-color:var(--muted);opacity:.96;background:linear-gradient(165deg,rgba(120,120,140,.05),transparent);}
+.ref-pill{font-size:8px;font-weight:800;letter-spacing:.06em;color:var(--muted);border:1px dashed currentColor;border-radius:8px;padding:2px 6px;white-space:nowrap;}
 .lb-card.lead{border-color:var(--purple);box-shadow:0 6px 22px rgba(78,0,255,.18);}
 .lb-card .rank{position:absolute;top:12px;right:14px;font-size:22px;}
 .lb-card .who{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;color:var(--deep-blue);}
@@ -1416,6 +1418,10 @@ function computeKO(){
   });
   return {agg,rows,played:Object.keys(real).length,total:KR.length};
 }
+// Las 3 IAs compiten por las medallas; el Consenso (combinación de las tres) se muestra
+// como referencia al final de cada tablero, sin medalla. Desempate general: marcadores exactos.
+function refSplit(board){return board.filter(x=>x.key!=='consenso').concat(board.filter(x=>x.key==='consenso'));}
+function lbCard(x,i,ref,inner){return `<div class="lb-card ${!ref&&i===0?'lead':''}${ref?' refcard':''}"><div class="rank">${ref?`<span class="ref-pill">${tx('REFERENCIA','BENCHMARK')}</span>`:(['🥇','🥈','🥉'][i]||'')}</div>${inner}</div>`;}
 function koScoreHTML(){
   const {agg,rows,played,total}=computeKO();
   const head=`<div class="acc-hero ko-live" style="margin-top:0"><span class="phase-tag live">⚡ ${tx('Fase actual','Live round')}</span><h2>🥊 ${tx('Eliminatorias · predicción vs realidad','Knockouts · prediction vs reality')}</h2>
@@ -1424,8 +1430,8 @@ function koScoreHTML(){
     return head+`<div class="acc-empty"><div class="big">⚽</div>${tx('Aún no se juegan los dieciseisavos. Este tablero se activa solo con el primer resultado oficial, comparando las predicciones ya congeladas de las cuatro contendientes (las 3 IAs y el consenso).','The Round of 32 has not started. This board activates with the first official result, comparing the already-frozen predictions of the four contenders (the 3 AIs and the consensus).')}</div>`;
   }
   const medals=['🥇','🥈','🥉',''];
-  const board=ACC_MODELS.map(m=>({...m,...agg[m.key]})).filter(x=>x.n>0).sort((a,b)=>b.pts-a.pts||b.qual-a.qual||b.exact-a.exact);
-  const cards=board.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}"><div class="rank">${medals[i]||''}</div><div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.pts}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.qual}/${x.n}</b>${tx('clasificados','qualifiers')}</span><span><b>${x.exact}</b>${tx('exactos','exact')}</span></div></div>`).join('');
+  const board=ACC_MODELS.map(m=>({...m,...agg[m.key]})).filter(x=>x.n>0).sort((a,b)=>b.pts-a.pts||b.exact-a.exact||b.qual-a.qual);
+  const cards=refSplit(board).map((x,i)=>lbCard(x,i,x.key==='consenso',`<div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.pts}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.qual}/${x.n}</b>${tx('clasificados','qualifiers')}</span><span><b>${x.exact}</b>${tx('exactos','exact')}</span></div>`)).join('');
   const cell=(r,k,label)=>{const c=r[k];if(!c)return `<div class="pred"><span class="plabel">${label}</span>—</div>`;
     const ic=c.qp===3?(c.sp===2?'★':(c.sp===1?'✓':'◓')):(c.sp>=1?'◐':'✗');
     const cls=c.tot>=4?'exact':(c.tot>=1?'out':'miss');
@@ -1477,17 +1483,16 @@ function renderAccuracy(){
   // leaderboard ordenado por puntos, desempate por RPS
   const board=ACC_MODELS.map(m=>{const A=agg[m.key];return{...m,...A,
       accPct:A.n?100*A.out/A.n:0, exPct:A.n?100*A.exact/A.n:0, avgRps:A.n?A.rps/A.n:0};})
-    .filter(x=>x.n>0).sort((a,b)=> b.pts-a.pts || a.avgRps-b.avgRps);
+    .filter(x=>x.n>0).sort((a,b)=> b.pts-a.pts || b.exact-a.exact || a.avgRps-b.avgRps);
   const medals=['🥇','🥈','🥉',''];
-  const cards=board.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}">
-      <div class="rank">${medals[i]||''}</div>
+  const cards=refSplit(board).map((x,i)=>lbCard(x,i,x.key==='consenso',`
       <div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div>
       <div class="pts">${x.pts}<small> ${tx('pts','pts')}</small></div>
       <div class="mini">
         <span><b>${x.accPct.toFixed(0)}%</b>${tx('resultado','outcome')}</span>
         <span><b>${x.exPct.toFixed(0)}%</b>${tx('marcador','exact')}</span>
         <span><b>${x.avgRps.toFixed(3)}</b>RPS</span>
-      </div></div>`).join('');
+      </div>`)).join('');
   const pctPlayed=100*played.length/Math.max(total,1);
   // tabla compacta — solo partidos finalizados, con semáforo por IA
   const cellFor=(cells,key,label)=>{ const ev=cells[key]; if(!ev) return `<div class="pred"><span class="plabel">${label}</span>—</div>`;
@@ -1520,17 +1525,19 @@ function renderAccuracy(){
   let standingsBlock='', combinedBlock='';
   if(nClosed>0){
     const sBoard=ACC_MODELS.map(m=>({...m,...sAgg[m.key]})).sort((a,b)=>b.pts-a.pts||b.win-a.win);
-    const sCards=sBoard.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}"><div class="rank">${medals[i]||''}</div><div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.pts}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.win}/${x.groups}</b>${tx('1ºs de grupo','group winners')}</span><span><b>${x.pos}/${x.groups*4}</b>${tx('posiciones','positions')}</span></div></div>`).join('');
+    const sCards=refSplit(sBoard).map((x,i)=>lbCard(x,i,x.key==='consenso',`<div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.pts}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.win}/${x.groups}</b>${tx('1ºs de grupo','group winners')}</span><span><b>${x.pos}/${x.groups*4}</b>${tx('posiciones','positions')}</span></div>`)).join('');
     standingsBlock=`<div class="acc-hero" style="margin-top:18px"><h2>📊 ${tx('Aciertos de posiciones de grupo','Group standings accuracy')}</h2><p>${tx('El orden 1º-2º-3º-4º que cada IA pronosticó <b>originalmente</b> se compara con la tabla final real: 3 pts por cada clasificado (1º/2º) en posición exacta y 1 pt por cada no-clasificado. <b>'+nClosed+' grupos cerrados.</b>','The order each AI predicted <b>originally</b> is compared with the real final table: 3 pts per qualifier (1st/2nd) in exact position, 1 pt per non-qualifier. <b>'+nClosed+' groups closed.</b>')}</p></div><div class="lb-grid">${sCards}</div>`;
     const KOA=computeKO(), koAgg=KOA.agg, koPend=KOA.total-KOA.played;
-    const cBoard=ACC_MODELS.map(m=>({...m,kpts:(koAgg[m.key]||{pts:0}).pts,mpts:agg[m.key].pts,spts:sAgg[m.key].pts}))
+    const cBoard=ACC_MODELS.map(m=>({...m,kpts:(koAgg[m.key]||{pts:0}).pts,mpts:agg[m.key].pts,spts:sAgg[m.key].pts,
+        exTot:((koAgg[m.key]||{exact:0}).exact)+(agg[m.key].exact||0)}))
       .map(x=>({...x,tot:x.kpts+x.mpts+x.spts}))
-      .sort((a,b)=>b.tot-a.tot||b.kpts-a.kpts||b.mpts-a.mpts);   // desempate: 1º eliminatorias, 2º partidos de grupos
-    const tieTop=cBoard.length>1&&cBoard[0].tot===cBoard[1].tot;
-    const tieTxt=tieTop?tx(' <b>Empate en la cima ('+cBoard[0].tot+' pts)</b>, resuelto por puntos de eliminatorias.',' <b>Tied at the top ('+cBoard[0].tot+' pts)</b>, broken by knockout points.'):'';
-    const cCards=cBoard.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}"><div class="rank">${medals[i]||''}</div><div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.tot}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.kpts}</b>${tx('eliminatorias','knockouts')}</span><span><b>${x.mpts}</b>${tx('partidos grupos','group matches')}</span><span><b>${x.spts}</b>${tx('posiciones','standings')}</span></div></div>`).join('');
+      .sort((a,b)=>b.tot-a.tot||b.exTot-a.exTot);                 // desempate: marcadores exactos (grupos + eliminatorias)
+    const ias=cBoard.filter(x=>x.key!=='consenso');
+    const tieTop=ias.length>1&&ias[0].tot===ias[1].tot;
+    const tieTxt=tieTop?tx(' <b>Empate en la cima ('+ias[0].tot+' pts)</b>, resuelto por marcadores exactos ('+ias[0].exTot+' vs '+ias[1].exTot+').',' <b>Tied at the top ('+ias[0].tot+' pts)</b>, broken by exact scores ('+ias[0].exTot+' vs '+ias[1].exTot+').'):'';
+    const cCards=refSplit(cBoard).map((x,i)=>lbCard(x,i,x.key==='consenso',`<div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.tot}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.kpts}</b>${tx('eliminatorias','knockouts')}</span><span><b>${x.mpts}</b>${tx('partidos grupos','group matches')}</span><span><b>${x.spts}</b>${tx('posiciones','standings')}</span><span><b>${x.exTot}</b>${tx('exactos','exact')}</span></div>`)).join('');
     const pendTxt=koPend>0?tx(' A falta de <b>'+koPend+' llaves</b> por jugarse (tercer puesto y final).',' With <b>'+koPend+' ties</b> still to play (third place and final).'):tx(' <b>Torneo completo.</b>',' <b>Tournament complete.</b>');
-    combinedBlock=`<div class="acc-hero" style="margin-top:14px;border:1.5px solid rgba(255,196,0,.55)"><h2>🏆 ${tx('Ranking consolidado · gran total','Combined ranking · grand total')}</h2><p>${tx('La clasificación definitiva del Mundial de las IAs: <b>eliminatorias</b> + <b>partidos de la fase de grupos</b> + <b>posiciones finales de grupo</b>, todo en un solo marcador.','The definitive AI World Cup standings: <b>knockouts</b> + <b>group-stage matches</b> + <b>final group standings</b>, in a single tally.')}${tieTxt}${pendTxt}</p></div><div class="lb-grid">${cCards}</div>`;
+    combinedBlock=`<div class="acc-hero" style="margin-top:14px;border:1.5px solid rgba(255,196,0,.55)"><h2>🏆 ${tx('Ranking consolidado · gran total','Combined ranking · grand total')}</h2><p>${tx('La clasificación definitiva del Mundial de las IAs: <b>eliminatorias</b> + <b>partidos de la fase de grupos</b> + <b>posiciones finales de grupo</b>, todo en un solo marcador. Compiten los tres modelos individuales; el <b>Consenso</b> (la combinación de los tres) se muestra solo como referencia. Desempate: <b>marcadores exactos</b>.','The definitive AI World Cup standings: <b>knockouts</b> + <b>group-stage matches</b> + <b>final group standings</b>, in a single tally. The three individual models compete; the <b>Consensus</b> (their combination) is shown for reference only. Tiebreaker: <b>exact scores</b>.')}${tieTxt}${pendTxt}</p></div><div class="lb-grid">${cCards}</div>`;
   }
   host.innerHTML=`
     <div class="acc-hero">
