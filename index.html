@@ -1444,18 +1444,25 @@ function koScoreHTML(){
       <div class="preds">${cell(r,'claude','Claude')}${cell(r,'chatgpt','ChatGPT')}${cell(r,'gemini','Gemini')}${cell(r,'consenso','Consenso')}</div>
     </div>`;};
   const sepOf=ph=>{const nm=PHN[ph]?PHN[ph][LANG==='en'?1:0]:ph;return `<div style="font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--purple);padding:10px 12px 4px">${nm}</div>`;};
-  // rondas superiores arriba (más avanzada primero); dieciseisavos comprimidos como referencia
-  const hi=rows.filter(r=>r.ph!=='R32').sort((a,b)=>(RANK[b.ph]||0)-(RANK[a.ph]||0)||(+a.code.slice(1))-(+b.code.slice(1)));
-  const lo=rows.filter(r=>r.ph==='R32');
+  // Fases en juego (final y 3er puesto) expandidas arriba; todas las fases cerradas plegadas en <details>,
+  // cada una con el resumen de puntos de su ronda — mismo patrón que ya usaban los dieciseisavos.
+  const OPEN=['F','3P'];
+  const hi=rows.filter(r=>OPEN.includes(r.ph)).sort((a,b)=>(RANK[b.ph]||0)-(RANK[a.ph]||0)||(+a.code.slice(1))-(+b.code.slice(1)));
   let _ph=null, hiRows='';
   hi.forEach(r=>{if(r.ph!==_ph){_ph=r.ph;hiRows+=sepOf(r.ph);}hiRows+=mkRow(r);});
-  const loPts=ACC_MODELS.map(m=>{let p=0;lo.forEach(r=>{const c=r[m.key];if(c)p+=c.tot;});return `${m.name} ${p}`;}).join(' · ');
-  const loRows=lo.map(mkRow).join('');
-  const loBlock=lo.length?`<details class="phase-closed-d" style="margin-top:12px"><summary style="cursor:pointer;font-weight:800;font-size:12.5px">📁 ${tx('Dieciseisavos de final · fase cerrada','Round of 32 · closed phase')} (${lo.length}/16) — ${tx('puntos de la ronda','round points')}: ${loPts}</summary><div class="h2h-table" style="margin-top:8px">${loRows}</div></details>`:'';
+  const foldPhase=(ph,tot)=>{
+    const fr=rows.filter(r=>r.ph===ph).sort((a,b)=>(+a.code.slice(1))-(+b.code.slice(1)));
+    if(!fr.length) return '';
+    const pts=ACC_MODELS.map(m=>{let p=0;fr.forEach(r=>{const c=r[m.key];if(c)p+=c.tot;});return `${m.name} ${p}`;}).join(' · ');
+    const nm=PHN[ph]?PHN[ph][LANG==='en'?1:0]:ph;
+    return `<details class="phase-closed-d" style="margin-top:12px"><summary style="cursor:pointer;font-weight:800;font-size:12.5px">📁 ${nm} · ${tx('fase cerrada','closed phase')} (${fr.length}/${tot}) — ${tx('puntos de la ronda','round points')}: ${pts}</summary><div class="h2h-table" style="margin-top:8px">${fr.map(mkRow).join('')}</div></details>`;
+  };
+  const folded=[['SF',2],['QF',4],['R16',8],['R32',16]].map(x=>foldPhase(x[0],x[1])).join('');
+  const hiBlock=hiRows?`${koHead}<div class="h2h-table">${hiRows}</div>`:'';
   return head+`<div class="acc-progress"><div class="track"><div class="fill" style="width:${Math.round(100*played/total)}%"></div></div><div class="lbl">${played}/${total} ${tx('llaves jugadas','ties played')}</div></div>
     <div class="lb-grid">${cards}</div>
     <div class="acc-legend"><span>★ <b style="color:#1a9e5c">${tx('clasificado + marcador exacto','qualifier + exact')}</b> (5)</span><span>✓ <b style="color:#1a9e5c">${tx('clasificado + resultado','qualifier + outcome')}</b> (4)</span><span>◓ <b style="color:#b58900">${tx('solo clasificado','qualifier only')}</b> (3)</span><span>◐ <b style="color:#b58900">${tx('solo marcador','score only')}</b></span><span>✗ <b style="color:#c0392b">${tx('fallo','miss')}</b></span></div>
-    ${koHead}<div class="h2h-table">${hiRows}</div>${loBlock}`;
+    ${hiBlock}${folded}`;
 }
 function renderAccuracy(){
   const host=document.getElementById('precision'); if(!host) return;
@@ -1515,15 +1522,22 @@ function renderAccuracy(){
     const sBoard=ACC_MODELS.map(m=>({...m,...sAgg[m.key]})).sort((a,b)=>b.pts-a.pts||b.win-a.win);
     const sCards=sBoard.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}"><div class="rank">${medals[i]||''}</div><div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.pts}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.win}/${x.groups}</b>${tx('1ºs de grupo','group winners')}</span><span><b>${x.pos}/${x.groups*4}</b>${tx('posiciones','positions')}</span></div></div>`).join('');
     standingsBlock=`<div class="acc-hero" style="margin-top:18px"><h2>📊 ${tx('Aciertos de posiciones de grupo','Group standings accuracy')}</h2><p>${tx('El orden 1º-2º-3º-4º que cada IA pronosticó <b>originalmente</b> se compara con la tabla final real: 3 pts por cada clasificado (1º/2º) en posición exacta y 1 pt por cada no-clasificado. <b>'+nClosed+' grupos cerrados.</b>','The order each AI predicted <b>originally</b> is compared with the real final table: 3 pts per qualifier (1st/2nd) in exact position, 1 pt per non-qualifier. <b>'+nClosed+' groups closed.</b>')}</p></div><div class="lb-grid">${sCards}</div>`;
-    const cBoard=ACC_MODELS.map(m=>({...m,mpts:agg[m.key].pts,spts:sAgg[m.key].pts,tot:agg[m.key].pts+sAgg[m.key].pts})).sort((a,b)=>b.tot-a.tot);
-    const cCards=cBoard.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}"><div class="rank">${medals[i]||''}</div><div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.tot}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.mpts}</b>${tx('partidos','matches')}</span><span><b>${x.spts}</b>${tx('posiciones','positions')}</span></div></div>`).join('');
-    combinedBlock=`<div class="acc-hero" style="margin-top:18px"><h2>🏆 ${tx('Ranking consolidado · gran total','Combined ranking · grand total')}</h2><p>${tx('Suma de los puntos por <b>acertar partidos</b> más los puntos por <b>predecir las posiciones de grupo</b>.','Sum of <b>match accuracy</b> points plus <b>group standings</b> points.')}</p></div><div class="lb-grid">${cCards}</div>`;
+    const KOA=computeKO(), koAgg=KOA.agg, koPend=KOA.total-KOA.played;
+    const cBoard=ACC_MODELS.map(m=>({...m,kpts:(koAgg[m.key]||{pts:0}).pts,mpts:agg[m.key].pts,spts:sAgg[m.key].pts}))
+      .map(x=>({...x,tot:x.kpts+x.mpts+x.spts}))
+      .sort((a,b)=>b.tot-a.tot||b.kpts-a.kpts||b.mpts-a.mpts);   // desempate: 1º eliminatorias, 2º partidos de grupos
+    const tieTop=cBoard.length>1&&cBoard[0].tot===cBoard[1].tot;
+    const tieTxt=tieTop?tx(' <b>Empate en la cima ('+cBoard[0].tot+' pts)</b>, resuelto por puntos de eliminatorias.',' <b>Tied at the top ('+cBoard[0].tot+' pts)</b>, broken by knockout points.'):'';
+    const cCards=cBoard.map((x,i)=>`<div class="lb-card ${i===0?'lead':''}"><div class="rank">${medals[i]||''}</div><div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.tot}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.kpts}</b>${tx('eliminatorias','knockouts')}</span><span><b>${x.mpts}</b>${tx('partidos grupos','group matches')}</span><span><b>${x.spts}</b>${tx('posiciones','standings')}</span></div></div>`).join('');
+    const pendTxt=koPend>0?tx(' A falta de <b>'+koPend+' llaves</b> por jugarse (tercer puesto y final).',' With <b>'+koPend+' ties</b> still to play (third place and final).'):tx(' <b>Torneo completo.</b>',' <b>Tournament complete.</b>');
+    combinedBlock=`<div class="acc-hero" style="margin-top:14px;border:1.5px solid rgba(255,196,0,.55)"><h2>🏆 ${tx('Ranking consolidado · gran total','Combined ranking · grand total')}</h2><p>${tx('La clasificación definitiva del Mundial de las IAs: <b>eliminatorias</b> + <b>partidos de la fase de grupos</b> + <b>posiciones finales de grupo</b>, todo en un solo marcador.','The definitive AI World Cup standings: <b>knockouts</b> + <b>group-stage matches</b> + <b>final group standings</b>, in a single tally.')}${tieTxt}${pendTxt}</p></div><div class="lb-grid">${cCards}</div>`;
   }
   host.innerHTML=`
     <div class="acc-hero">
       <h2>🏆 ${tx('Mundial de las IAs · predicción vs realidad','AI World Cup · prediction vs reality')}</h2>
       <p>${tx('Cada modelo y el consenso se comparan con el resultado oficial de la FIFA. Se premia tanto acertar el <b>marcador exacto</b> (3 pts) como acertar solo el <b>resultado</b> —ganar, empatar o perder— aunque falle el marcador (1 pt).','Each model and the consensus are compared against the official FIFA result. Points reward both the <b>exact score</b> (3 pts) and getting just the <b>outcome</b> —win, draw or loss— even if the score is wrong (1 pt).')}</p>
     </div>
+    ${combinedBlock}
     ${koScoreHTML()}
     <div class="phase-sep"><span class="phase-tag closed">📋 ${tx('Fase de grupos · cerrada','Group stage · closed')}</span></div>
     <div class="acc-hero" style="padding:15px 20px;background:linear-gradient(135deg,#5b4a9e,#2a2350)">
@@ -1538,7 +1552,7 @@ function renderAccuracy(){
       <span>✗ <b style="color:#c0392b">${tx('fallo','miss')}</b> (0)</span>
       <span>RPS = ${tx('error probabilístico (menor es mejor)','probabilistic error (lower is better)')}</span>
     </div>
-    ${standingsBlock}${combinedBlock}
+    ${standingsBlock}
     <details class="phase-closed-d"><summary>📅 ${tx('Ver los 72 partidos de la fase de grupos','View all 72 group-stage matches')} · ${played.length}/${total}</summary>${matchHtml}</details>`;
 }
 const RESULTS_FALLBACK = {"results":[]};
