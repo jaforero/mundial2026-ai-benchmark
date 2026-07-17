@@ -460,6 +460,7 @@ table{font-size:12px;} .reachscroll{max-height:440px;}}
 .hl-pos{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:20px;border-radius:6px;font-weight:800;font-size:11px;}
 .hl-pos.top4{background:rgba(26,158,92,.16);color:#128a4f;}
 .hl-pos.out{background:rgba(180,140,0,.14);color:#9a7500;}
+.hl-pos.off{background:rgba(150,150,150,.15);color:#777;}
 .hl-note{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6;padding-top:11px;border-top:1px dashed var(--border);}
 .hl-note b{color:var(--deep-blue);}
 .fx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:4px;}
@@ -1431,6 +1432,37 @@ function computeKO(){
 }
 // Las 3 IAs compiten por las medallas; el Consenso (combinación de las tres) se muestra
 // como referencia al final de cada tablero, sin medalla. Desempate general: marcadores exactos.
+function gbHTML(){
+  // Bota de Oro: top-5 oficial FIFA vs la posición que cada IA le dio en su top-10 pre-torneo.
+  // Comparación aparte: NO suma al gran total (premio individual, clasificación aún abierta).
+  const GB=DATA.golden_boot; if(!GB||!GB.players||!GB.players.length) return '';
+  const nrm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const IAS=[['claude','Claude'],['chatgpt','ChatGPT'],['gemini','Gemini']];
+  const lists={}; IAS.forEach(x=>{lists[x[0]]=((DATA[x[0]]||{}).scorers||[]).map(s=>nrm(s.player));});
+  const posOf=(k,p)=>{const i=lists[k].indexOf(nrm(p));return i<0?null:i+1;};
+  const top5=GB.players.slice(0,5);
+  const rows=top5.map(pl=>{
+    const cells=IAS.map(x=>{const p=posOf(x[0],pl.player);
+      const cls=p==null?'off':(p<=5?'top4':'out');
+      return `<td><span class="hl-pos ${cls}">${p==null?'—':p+'º'}</span></td>`;}).join('');
+    return `<tr><td>${pl.flag||''} <b>${pl.player}</b> <span style="color:var(--muted);font-size:10px">${pl.pos||''}</span></td><td style="text-align:center;font-weight:800">${pl.g}</td><td style="text-align:center;color:var(--muted)">${pl.a}</td>${cells}</tr>`;
+  }).join('');
+  const cov=IAS.map(x=>{const c=top5.filter(pl=>{const p=posOf(x[0],pl.player);return p!=null&&p<=5;}).length;return `${x[1]} <b>${c}/5</b>`;}).join(' · ');
+  return `<div class="hl-badge" style="margin:18px 0 22px">
+    <div class="hl-head" style="background:linear-gradient(120deg,#7a5c00,#b8940a 55%,#041c59)">
+      <span class="hl-tag">👟 ${tx('Bota de Oro · predicho vs real','Golden Boot · predicted vs actual')}</span>
+      <h3 class="hl-title">${tx('Messi lidera una Bota de Oro que ninguna IA le dio','Messi leads a Golden Boot that no AI predicted for him')}</h3>
+      <p class="hl-sub">${tx('Clasificación oficial FIFA al 16 de julio (criterio: goles, luego asistencias, luego menos minutos), a falta del tercer puesto y la final — Messi, Mbappé, Kane, Bellingham y Oyarzabal siguen en juego. Cada columna muestra la posición que esa IA dio al jugador en su top-10 de goleadores antes del torneo. Esta comparación no suma al gran total: es el premio individual, medido aparte.','Official FIFA standings as of 16 July (criteria: goals, then assists, then fewer minutes), with the third-place match and the final still to play — Messi, Mbappé, Kane, Bellingham and Oyarzabal remain active. Each column shows the position each AI gave the player in its pre-tournament top-10. This comparison does not count toward the grand total: it is the individual award, measured separately.')}</p>
+    </div>
+    <div class="hl-body">
+      <table class="hl-tbl">
+        <thead><tr><th>${tx('Jugador','Player')}</th><th style="text-align:center">G</th><th style="text-align:center">A</th><th>Claude</th><th>ChatGPT</th><th>Gemini</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p class="hl-note">${tx('Cobertura del top-5 real dentro del top-5 predicho: '+cov+'. Nadie anticipó a <b>Bellingham</b> (mediocampista, 6 goles) ni puso 1º a <b>Messi</b>, que a los 39 años lidera con 8 goles y 4 asistencias; ChatGPT fue quien más cerca lo tuvo (4º) y Gemini lo dejó fuera de su top-10. Verde = top 5 · ámbar = 6º a 10º · gris = fuera del top-10.','Real top-5 covered within each predicted top-5: '+cov+'. Nobody foresaw <b>Bellingham</b> (midfielder, 6 goals) or ranked <b>Messi</b> 1st — at 39 he leads with 8 goals and 4 assists; ChatGPT came closest (4th) and Gemini left him out of its top-10. Green = top 5 · amber = 6th to 10th · grey = outside the top-10.')}</p>
+    </div>
+  </div>`;
+}
 function refSplit(board){return board.filter(x=>x.key!=='consenso').concat(board.filter(x=>x.key==='consenso'));}
 function lbCard(x,i,ref,inner){return `<div class="lb-card ${!ref&&i===0?'lead':''}${ref?' refcard':''}"><div class="rank">${ref?`<span class="ref-pill">${tx('REFERENCIA','BENCHMARK')}</span>`:(['🥇','🥈','🥉'][i]||'')}</div>${inner}</div>`;}
 function koScoreHTML(){
@@ -1556,6 +1588,7 @@ function renderAccuracy(){
       <p>${tx('Cada modelo y el consenso se comparan con el resultado oficial de la FIFA. Se premia tanto acertar el <b>marcador exacto</b> (3 pts) como acertar solo el <b>resultado</b> —ganar, empatar o perder— aunque falle el marcador (1 pt).','Each model and the consensus are compared against the official FIFA result. Points reward both the <b>exact score</b> (3 pts) and getting just the <b>outcome</b> —win, draw or loss— even if the score is wrong (1 pt).')}</p>
     </div>
     ${combinedBlock}
+    ${gbHTML()}
     ${koScoreHTML()}
     <div class="phase-sep"><span class="phase-tag closed">📋 ${tx('Fase de grupos · cerrada','Group stage · closed')}</span></div>
     <div class="acc-hero" style="padding:15px 20px;background:linear-gradient(135deg,#5b4a9e,#2a2350)">
