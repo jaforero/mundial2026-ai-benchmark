@@ -262,5 +262,15 @@
   "winner": "Inglaterra",
   "fecha": "18 Jul",
   "venue": "Miami (Miami Gardens)"
+ },
+ {
+  "code": "M104",
+  "ga": 0,
+  "gb": 0,
+  "winner": "España",
+  "fecha": "19 Jul",
+  "venue": "New York/New Jersey (East Rutherford)",
+  "via": "et",
+  "xsc": "1-0"
  }
 ]
