@@ -209,7 +209,7 @@
   "gb": 0,
   "winner": "Francia",
   "fecha": "9 Jul",
-  "venue": "Boston"
+  "venue": "Boston (Foxborough)"
  },
  {
   "code": "M98",
@@ -217,7 +217,7 @@
   "gb": 1,
   "winner": "España",
   "fecha": "10 Jul",
-  "venue": "Los Ángeles"
+  "venue": "Los Angeles (Inglewood)"
  },
  {
   "code": "M99",
@@ -225,9 +225,9 @@
   "gb": 1,
   "winner": "Inglaterra",
   "fecha": "11 Jul",
-  "venue": "Miami",
+  "venue": "Miami (Miami Gardens)",
   "via": "et",
-  "xsc": "2-1"
+  "xsc": "1-2"
  },
  {
   "code": "M100",
@@ -241,18 +241,14 @@
  },
  {
   "code": "M101",
-  "a": "España",
-  "b": "Francia",
-  "ga": 2,
-  "gb": 0,
+  "ga": 0,
+  "gb": 2,
   "winner": "España",
   "fecha": "14 Jul",
   "venue": "Dallas (Arlington)"
  },
  {
   "code": "M102",
-  "a": "Inglaterra",
-  "b": "Argentina",
   "ga": 1,
   "gb": 2,
   "winner": "Argentina",
@@ -261,23 +257,19 @@
  },
  {
   "code": "M103",
-  "a": "Francia",
-  "b": "Inglaterra",
   "ga": 4,
   "gb": 6,
   "winner": "Inglaterra",
   "fecha": "18 Jul",
-  "venue": "Miami Gardens"
+  "venue": "Miami (Miami Gardens)"
  },
  {
   "code": "M104",
-  "a": "España",
-  "b": "Argentina",
   "ga": 0,
   "gb": 0,
   "winner": "España",
   "fecha": "19 Jul",
-  "venue": "New York/NJ · MetLife",
+  "venue": "New York/New Jersey (East Rutherford)",
   "via": "et",
   "xsc": "1-0"
  }
