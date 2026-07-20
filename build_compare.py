@@ -1432,34 +1432,53 @@ function computeKO(){
 }
 // Las 3 IAs compiten por las medallas; el Consenso (combinación de las tres) se muestra
 // como referencia al final de cada tablero, sin medalla. Desempate general: marcadores exactos.
+function gbScore(){
+  // Puntuación de la Bota de Oro (torneo cerrado). Esquema declarado en la página:
+  // 1 pt por cada jugador del top-5 real presente en el top-5 predicho por la IA,
+  // + bonus por el ganador real: 1º exacto +3 · en su top-5 +2 · en su top-10 +1.
+  const GB=DATA.golden_boot; if(!GB||!GB.players||!GB.players.length) return null;
+  const nrm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const top5=GB.players.slice(0,5).map(p=>nrm(p.player));
+  const winner=nrm(GB.winner||GB.players[0].player);
+  const out={};
+  [['claude'],['chatgpt'],['gemini']].forEach(x=>{
+    const lst=((DATA[x[0]]||{}).scorers||[]).map(s2=>nrm(s2.player));
+    const cover=top5.filter(p=>lst.slice(0,5).includes(p)).length;
+    const wi=lst.indexOf(winner);
+    const bonus=wi===0?3:(wi>=0&&wi<5?2:(wi>=0?1:0));
+    out[x[0]]={cover:cover,bonus:bonus,pts:cover+bonus,wpos:wi<0?null:wi+1};
+  });
+  out.consenso={cover:0,bonus:0,pts:0,wpos:null,na:true};   // el Consenso nunca emitió lista de goleadores
+  return out;
+}
 function gbHTML(){
-  // Bota de Oro: top-5 oficial FIFA vs la posición que cada IA le dio en su top-10 pre-torneo.
-  // Comparación aparte: NO suma al gran total (premio individual, clasificación aún abierta).
   const GB=DATA.golden_boot; if(!GB||!GB.players||!GB.players.length) return '';
+  const SC=gbScore();
   const nrm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   const IAS=[['claude','Claude'],['chatgpt','ChatGPT'],['gemini','Gemini']];
-  const lists={}; IAS.forEach(x=>{lists[x[0]]=((DATA[x[0]]||{}).scorers||[]).map(s=>nrm(s.player));});
-  const posOf=(k,p)=>{const i=lists[k].indexOf(nrm(p));return i<0?null:i+1;};
+  const lists={}; IAS.forEach(x=>{lists[x[0]]=((DATA[x[0]]||{}).scorers||[]).map(s2=>nrm(s2.player));});
+  const posOf=(k,p)=>{const i2=lists[k].indexOf(nrm(p));return i2<0?null:i2+1;};
   const top5=GB.players.slice(0,5);
   const rows=top5.map(pl=>{
     const cells=IAS.map(x=>{const p=posOf(x[0],pl.player);
       const cls=p==null?'off':(p<=5?'top4':'out');
       return `<td><span class="hl-pos ${cls}">${p==null?'—':p+'º'}</span></td>`;}).join('');
-    return `<tr><td>${pl.flag||''} <b>${pl.player}</b> <span style="color:var(--muted);font-size:10px">${pl.pos||''}</span></td><td style="text-align:center;font-weight:800">${pl.g}</td><td style="text-align:center;color:var(--muted)">${pl.a}</td>${cells}</tr>`;
+    const crown=pl.rank===1?' 👑':'';
+    return `<tr><td>${pl.flag||''} <b>${pl.player}</b>${crown} <span style="color:var(--muted);font-size:10px">${pl.pos||''}</span></td><td style="text-align:center;font-weight:800">${pl.g}</td><td style="text-align:center;color:var(--muted)">${pl.a}</td>${cells}</tr>`;
   }).join('');
-  const cov=IAS.map(x=>{const c=top5.filter(pl=>{const p=posOf(x[0],pl.player);return p!=null&&p<=5;}).length;return `${x[1]} <b>${c}/5</b>`;}).join(' · ');
+  const ptsRow=`<tr style="background:linear-gradient(90deg,rgba(184,148,10,.10),transparent)"><td style="font-weight:900">${tx('PUNTOS BOTA DE ORO','GOLDEN BOOT POINTS')}</td><td></td><td></td>${IAS.map(x=>`<td style="text-align:center;font-weight:900;color:var(--deep-blue)">${SC[x[0]].pts}</td>`).join('')}</tr>`;
   return `<div class="hl-badge" style="margin:18px 0 22px">
     <div class="hl-head" style="background:linear-gradient(120deg,#7a5c00,#b8940a 55%,#041c59)">
-      <span class="hl-tag">👟 ${tx('Bota de Oro · predicho vs real','Golden Boot · predicted vs actual')}</span>
-      <h3 class="hl-title">${tx('Messi lidera una Bota de Oro que ninguna IA le dio','Messi leads a Golden Boot that no AI predicted for him')}</h3>
-      <p class="hl-sub">${tx('Clasificación oficial FIFA al 16 de julio (criterio: goles, luego asistencias, luego menos minutos), a falta del tercer puesto y la final — Messi, Mbappé, Kane, Bellingham y Oyarzabal siguen en juego. Cada columna muestra la posición que esa IA dio al jugador en su top-10 de goleadores antes del torneo. Esta comparación no suma al gran total: es el premio individual, medido aparte.','Official FIFA standings as of 16 July (criteria: goals, then assists, then fewer minutes), with the third-place match and the final still to play — Messi, Mbappé, Kane, Bellingham and Oyarzabal remain active. Each column shows the position each AI gave the player in its pre-tournament top-10. This comparison does not count toward the grand total: it is the individual award, measured separately.')}</p>
+      <span class="hl-tag">👟 ${tx('Bota de Oro · resultado final','Golden Boot · final result')}</span>
+      <h3 class="hl-title">${tx('Mbappé le arrebató la Bota a Messi en el último acto — y solo ChatGPT lo tenía 1º','Mbappé snatched the Boot from Messi at the last — and only ChatGPT had him 1st')}</h3>
+      <p class="hl-sub">${tx('Messi lideró la tabla casi todo el torneo, pero el doblete de Mbappé en el tercer puesto (10 goles, 4 asistencias) decidió el premio: Messi no marcó en la final y quedó en 8. Cada columna muestra la posición que esa IA dio al jugador en su top-10 pre-torneo. Puntuación (sumada al gran total): 1 pt por cada jugador del top-5 real presente en el top-5 predicho, más bonus por el ganador — 1º exacto +3, en su top-5 +2, en su top-10 +1. El Consenso no emitió lista de goleadores y no recibe puntos en esta componente.','Messi led the table nearly all tournament, but Mbappé s brace in the third-place match (10 goals, 4 assists) settled the award: Messi did not score in the final and stayed on 8. Each column shows the position each AI gave the player in its pre-tournament top-10. Scoring (added to the grand total): 1 pt per real top-5 player present in the predicted top-5, plus a winner bonus — exact 1st +3, in its top-5 +2, in its top-10 +1. The Consensus issued no scorer list and takes no points here.')}</p>
     </div>
     <div class="hl-body">
       <table class="hl-tbl">
         <thead><tr><th>${tx('Jugador','Player')}</th><th style="text-align:center">G</th><th style="text-align:center">A</th><th>Claude</th><th>ChatGPT</th><th>Gemini</th></tr></thead>
-        <tbody>${rows}</tbody>
+        <tbody>${rows}${ptsRow}</tbody>
       </table>
-      <p class="hl-note">${tx('Cobertura del top-5 real dentro del top-5 predicho: '+cov+'. Nadie anticipó a <b>Bellingham</b> (mediocampista, 6 goles) ni puso 1º a <b>Messi</b>, que a los 39 años lidera con 8 goles y 4 asistencias; ChatGPT fue quien más cerca lo tuvo (4º) y Gemini lo dejó fuera de su top-10. Verde = top 5 · ámbar = 6º a 10º · gris = fuera del top-10.','Real top-5 covered within each predicted top-5: '+cov+'. Nobody foresaw <b>Bellingham</b> (midfielder, 6 goals) or ranked <b>Messi</b> 1st — at 39 he leads with 8 goals and 4 assists; ChatGPT came closest (4th) and Gemini left him out of its top-10. Green = top 5 · amber = 6th to 10th · grey = outside the top-10.')}</p>
+      <p class="hl-note">${tx('Desglose: cobertura del top-5 real — Claude '+SC.claude.cover+'/5 · ChatGPT '+SC.chatgpt.cover+'/5 · Gemini '+SC.gemini.cover+'/5; bonus por Mbappé — ChatGPT +3 (lo puso 1º), Claude +2 (2º) y Gemini +2 (3º). Nadie anticipó a <b>Bellingham</b> (mediocampista, 7 goles) ni a <b>Dembélé</b> en el top-5, y <b>Messi</b> — 2º con 8 y máximo asistente — estaba 5º para Claude, 4º para ChatGPT y fuera del top-10 de Gemini. Verde = top 5 · ámbar = 6º a 10º · gris = fuera del top-10.','Breakdown: real top-5 coverage — Claude '+SC.claude.cover+'/5 · ChatGPT '+SC.chatgpt.cover+'/5 · Gemini '+SC.gemini.cover+'/5; Mbappé bonus — ChatGPT +3 (ranked him 1st), Claude +2 (2nd) and Gemini +2 (3rd). Nobody foresaw <b>Bellingham</b> (midfielder, 7 goals) or <b>Dembélé</b> in the top 5, and <b>Messi</b> — 2nd with 8 and top assister — sat 5th for Claude, 4th for ChatGPT and outside Gemini s top-10. Green = top 5 · amber = 6th to 10th · grey = outside the top-10.')}</p>
     </div>
   </div>`;
 }
@@ -1571,16 +1590,18 @@ function renderAccuracy(){
     const sCards=refSplit(sBoard).map((x,i)=>lbCard(x,i,x.key==='consenso',`<div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.pts}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.win}/${x.groups}</b>${tx('1ºs de grupo','group winners')}</span><span><b>${x.pos}/${x.groups*4}</b>${tx('posiciones','positions')}</span></div>`)).join('');
     standingsBlock=`<div class="acc-hero" style="margin-top:18px"><h2>📊 ${tx('Aciertos de posiciones de grupo','Group standings accuracy')}</h2><p>${tx('El orden 1º-2º-3º-4º que cada IA pronosticó <b>originalmente</b> se compara con la tabla final real: 3 pts por cada clasificado (1º/2º) en posición exacta y 1 pt por cada no-clasificado. <b>'+nClosed+' grupos cerrados.</b>','The order each AI predicted <b>originally</b> is compared with the real final table: 3 pts per qualifier (1st/2nd) in exact position, 1 pt per non-qualifier. <b>'+nClosed+' groups closed.</b>')}</p></div><div class="lb-grid">${sCards}</div>`;
     const KOA=computeKO(), koAgg=KOA.agg, koPend=KOA.total-KOA.played;
+    const GBS=gbScore()||{};
     const cBoard=ACC_MODELS.map(m=>({...m,kpts:(koAgg[m.key]||{pts:0}).pts,mpts:agg[m.key].pts,spts:sAgg[m.key].pts,
+        bpts:(GBS[m.key]||{pts:0}).pts,bna:!!(GBS[m.key]||{}).na,
         exTot:((koAgg[m.key]||{exact:0}).exact)+(agg[m.key].exact||0)}))
-      .map(x=>({...x,tot:x.kpts+x.mpts+x.spts}))
+      .map(x=>({...x,tot:x.kpts+x.mpts+x.spts+x.bpts}))
       .sort((a,b)=>b.tot-a.tot||b.exTot-a.exTot);                 // desempate: marcadores exactos (grupos + eliminatorias)
     const ias=cBoard.filter(x=>x.key!=='consenso');
     const tieTop=ias.length>1&&ias[0].tot===ias[1].tot;
     const tieTxt=tieTop?tx(' <b>Empate en la cima ('+ias[0].tot+' pts)</b>, resuelto por marcadores exactos ('+ias[0].exTot+' vs '+ias[1].exTot+').',' <b>Tied at the top ('+ias[0].tot+' pts)</b>, broken by exact scores ('+ias[0].exTot+' vs '+ias[1].exTot+').'):'';
-    const cCards=refSplit(cBoard).map((x,i)=>lbCard(x,i,x.key==='consenso',`<div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.tot}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.kpts}</b>${tx('eliminatorias','knockouts')}</span><span><b>${x.mpts}</b>${tx('partidos grupos','group matches')}</span><span><b>${x.spts}</b>${tx('posiciones','standings')}</span><span><b>${x.exTot}</b>${tx('exactos','exact')}</span></div>`)).join('');
+    const cCards=refSplit(cBoard).map((x,i)=>lbCard(x,i,x.key==='consenso',`<div class="who"><span class="dotc" style="background:${x.color}"></span>${x.name}</div><div class="pts">${x.tot}<small> ${tx('pts','pts')}</small></div><div class="mini"><span><b>${x.kpts}</b>${tx('eliminatorias','knockouts')}</span><span><b>${x.mpts}</b>${tx('partidos grupos','group matches')}</span><span><b>${x.spts}</b>${tx('posiciones','standings')}</span><span><b>${x.bna?'—':x.bpts}</b>${tx('bota de oro','golden boot')}</span><span><b>${x.exTot}</b>${tx('exactos','exact')}</span></div>`)).join('');
     const pendTxt=koPend>0?tx(' A falta de <b>'+koPend+' llaves</b> por jugarse (tercer puesto y final).',' With <b>'+koPend+' ties</b> still to play (third place and final).'):tx(' <b>Torneo completo.</b>',' <b>Tournament complete.</b>');
-    combinedBlock=`<div class="acc-hero" style="margin-top:14px;border:1.5px solid rgba(255,196,0,.55)"><h2>🏆 ${tx('Ranking consolidado · gran total','Combined ranking · grand total')}</h2><p>${tx('La clasificación definitiva del Mundial de las IAs: <b>eliminatorias</b> + <b>partidos de la fase de grupos</b> + <b>posiciones finales de grupo</b>, todo en un solo marcador. Compiten los tres modelos individuales; el <b>Consenso</b> (la combinación de los tres) se muestra solo como referencia. Desempate: <b>marcadores exactos</b>.','The definitive AI World Cup standings: <b>knockouts</b> + <b>group-stage matches</b> + <b>final group standings</b>, in a single tally. The three individual models compete; the <b>Consensus</b> (their combination) is shown for reference only. Tiebreaker: <b>exact scores</b>.')}${tieTxt}${pendTxt}</p></div><div class="lb-grid">${cCards}</div>`;
+    combinedBlock=`<div class="acc-hero" style="margin-top:14px;border:1.5px solid rgba(255,196,0,.55)"><h2>🏆 ${tx('Ranking consolidado · gran total','Combined ranking · grand total')}</h2><p>${tx('La clasificación definitiva del Mundial de las IAs: <b>eliminatorias</b> + <b>partidos de la fase de grupos</b> + <b>posiciones finales de grupo</b> + <b>Bota de Oro</b>, todo en un solo marcador. Compiten los tres modelos individuales; el <b>Consenso</b> (la combinación de los tres) se muestra solo como referencia y no emitió lista de goleadores. Desempate: <b>marcadores exactos</b>.','The definitive AI World Cup standings: <b>knockouts</b> + <b>group-stage matches</b> + <b>final group standings</b> + <b>Golden Boot</b>, in a single tally. The three individual models compete; the <b>Consensus</b> (their combination) is shown for reference only and issued no scorer list. Tiebreaker: <b>exact scores</b>.')}${tieTxt}${pendTxt}</p></div><div class="lb-grid">${cCards}</div>`;
   }
   host.innerHTML=`
     <div class="acc-hero">
@@ -1808,28 +1829,29 @@ function bkFinalistsHTML(){
     const rows=fin.map(t=>{
       const p=posOf(k,t), pr=probOf(k,t);
       const cls=p<=2?'top2':(p<=4?'top4':'out');
-      return `<div class="fx-row"><span class="fx-t">${FL[t]||''} ${tn(t)}</span><span class="fx-p ${cls}">${p}º</span><span class="fx-pct">${pr!=null?pr.toFixed(2)+'%':'—'}</span></div>`;
+      return `<div class="fx-row"><span class="fx-t">${FL[t]||''} ${tn(t)}${t==='España'?' 👑':''}</span><span class="fx-p ${cls}">${p}º</span><span class="fx-pct">${pr!=null?pr.toFixed(2)+'%':'—'}</span></div>`;
     }).join('');
     const p1=posOf(k,fin[0]), p2=posOf(k,fin[1]);
+    const pc=posOf(k,'España');                                  // España: campeona del mundo 2026
     const exact=(Math.max(p1,p2)<=2);
-    const verdict=exact
-      ? `<div class="fx-verdict hit">🎯 ${tx('Su top 2 = la final exacta','Its top 2 = the exact final')}</div>`
-      : `<div class="fx-verdict near">${tx('Ambos en su top '+Math.max(p1,p2),'Both inside its top '+Math.max(p1,p2))}</div>`;
+    const verdict=pc===1
+      ? `<div class="fx-verdict hit">👑 ${tx('Campeona en su nº 1 pre-torneo','Champion at its pre-tournament No. 1')}${exact?' · 🎯 '+tx('y la final exacta (top 2)','and the exact final (top 2)'):''}</div>`
+      : `<div class="fx-verdict near">${tx('Campeona en su top '+pc,'Champion in its top '+pc)}</div>`;
     return `<div class="fx-card"><div class="fx-h" style="color:${col}">${lbl}</div>${rows}${verdict}</div>`;
   }).join('');
   return `<div class="hl-badge" style="margin-bottom:22px">
     <div class="hl-head" style="background:linear-gradient(120deg,#041c59,#4e00ff 55%,#0048ff)">
-      <span class="hl-tag">🔮 ${tx('Hallazgo clave · la final','Key finding · the final')}</span>
-      <h3 class="hl-title">${tx('Los dos finalistas ya estaban en el podio de las tres IAs','Both finalists were already on all three AIs podium')}</h3>
-      <p class="hl-sub">${tx('Lo que cada IA dijo <b>antes de que rodara el balón</b> sobre España y Argentina, en su ranking de probabilidad de ser campeón. Las tres tuvieron a los dos finalistas dentro de su top 4; <b>Claude fue la única que los situó 1º y 2º</b>, es decir, anticipó el cruce exacto de la final.','What each AI said <b>before a ball was kicked</b> about Spain and Argentina, in its title-probability ranking. All three had both finalists inside their top 4; <b>Claude was the only one to place them 1st and 2nd</b> — the exact final matchup.')}</p>
+      <span class="hl-tag">🔮 ${tx('Hallazgo clave · el campeón','Key finding · the champion')}</span>
+      <h3 class="hl-title">${tx('España campeona: dos de las tres IAs la tenían como nº 1 antes del torneo','Spain champions: two of the three AIs had them No. 1 before the tournament')}</h3>
+      <p class="hl-sub">${tx('Lo que cada IA dijo <b>antes de que rodara el balón</b> en su ranking de probabilidad de campeón: <b>Claude</b> y <b>ChatGPT</b> pusieron a España 1ª; Gemini la tuvo 2ª. Y <b>Claude fue la única que además situó a Argentina 2ª</b> — es decir, anticipó el cruce exacto de la final y a su campeona. La realidad: España 1-0 en la prórroga.','What each AI said <b>before a ball was kicked</b> in its title-probability ranking: <b>Claude</b> and <b>ChatGPT</b> put Spain 1st; Gemini had them 2nd. And <b>Claude was the only one to also place Argentina 2nd</b> — the exact final matchup and its champion. Reality: Spain 1-0 in extra time.')}</p>
     </div>
     <div class="hl-body"><div class="fx-grid">${cards}</div>
       <p class="hl-note">${tx('Posición y probabilidad de <b>ser campeón</b> emitidas antes del torneo. Verde = top 2 · ámbar = top 4. El acierto es del <b>emparejamiento</b>, no del campeón: quién levanta la copa se decide el 19 de julio.','Position and <b>title probability</b> issued before the tournament. Green = top 2 · amber = top 4. The hit is on the <b>matchup</b>, not the winner: who lifts the trophy is decided on 19 July.')}</p>
     </div>
   </div>`;
 }
-function bkFinalRealHTML(){return bkKORealHTML('F','🏆 LA FINAL · España vs Argentina','🏆 THE FINAL · Spain vs Argentina',1,tx('Domingo 19 de julio · MetLife Stadium (New York/NJ). Primera vez en la historia que el campeón europeo y el sudamericano vigentes se cruzan en una final del Mundial. Pronósticos definitivos de las tres IAs: <b>Claude v4.7</b> y <b>ChatGPT v15</b> coinciden en España (59% y 60%), <b>Gemini</b> apuesta en solitario por Argentina en la prórroga. El consenso 2/3 da campeona a España.','Sunday 19 July · MetLife Stadium (New York/NJ). The first time the reigning European and South American champions meet in a World Cup final. Final forecasts from all three AIs: <b>Claude v4.7</b> and <b>ChatGPT v15</b> agree on Spain (59% and 60%), <b>Gemini</b> alone backs Argentina in extra time. The 2/3 consensus makes Spain champion.'));}
-function bk3PRealHTML(){return bkKORealHTML('3P','🥉 Tercer puesto · Francia vs Inglaterra','🥉 Third place · France vs England',1,tx('Sábado 18 de julio · Miami Gardens. Último partido de Deschamps al frente de Francia. <b>Unanimidad: las tres IAs dan tercera a Francia</b>, aunque discrepan en el marcador (1-0, 2-1 y 3-2) — los partidos por el tercer puesto suelen ser más abiertos y con más rotaciones.','Saturday 18 July · Miami Gardens. Deschamps last match in charge of France. <b>Unanimous: all three AIs pick France for third</b>, though they differ on the scoreline (1-0, 2-1 and 3-2) — third-place matches tend to be more open, with heavier rotation.'));}
+function bkFinalRealHTML(){return bkKORealHTML('F','🏆 LA FINAL · España campeona del mundo','🏆 THE FINAL · Spain world champions',1,tx('19 de julio · MetLife Stadium. <b>España 1-0 Argentina en la prórroga</b>: 0-0 tras 90 minutos de asedio (20 remates a 2, Dibu Martínez récord con 11 atajadas) y gol de Ferran Torres al 106. España campeona concediendo <b>un solo gol en todo el torneo</b>. Claude y ChatGPT acertaron a la campeona; Gemini apostó por Argentina en la prórroga — hubo prórroga, pero la ganó España.','19 July · MetLife Stadium. <b>Spain 1-0 Argentina in extra time</b>: 0-0 after 90 minutes of siege (20 shots to 2, Dibu Martínez a record 11 saves) and a Ferran Torres goal on 106. Spain champions conceding <b>a single goal all tournament</b>. Claude and ChatGPT called the champion; Gemini backed Argentina in extra time — extra time came, but Spain won it.'));}
+function bk3PRealHTML(){return bkKORealHTML('3P','🥉 Tercer puesto · Inglaterra de bronce','🥉 Third place · England take bronze',1,tx('18 de julio · Miami Gardens. <b>Francia 4-6 Inglaterra</b>, el tercer puesto con más goles de la historia: 4-0 inglés al descanso, remontada francesa hasta el 4-3 con doblete de Mbappé (que le arrebató la Bota de Oro a Messi), hat-trick de Saka y cierre de Bellingham. <b>Unanimidad fallida</b>: las tres IAs dieron a Francia y ninguna sumó — el clásico partido sin presión que rompe cualquier modelo.','18 July · Miami Gardens. <b>France 4-6 England</b>, the highest-scoring third-place match ever: England 4-0 at the break, a French comeback to 4-3 with a Mbappé brace (snatching the Golden Boot from Messi), a Saka hat-trick and a Bellingham clincher. <b>Unanimity failed</b>: all three AIs picked France and none scored — the classic no-pressure match that breaks any model.'));}
 function bkR16RealHTML(){return bkKORealHTML('R16','Octavos de final · cuadro temporal','Round of 16 · provisional bracket',8);}
 function bkQFRealHTML(){return bkKORealHTML('QF','Cuartos de final · cuadro temporal','Quarter-finals · provisional bracket',4);}
 function bkSFRealHTML(){return bkKORealHTML('SF','Semifinales · cuadro cerrado','Semifinals · closed bracket',2,tx('Fase resuelta: <b>España 2-0 Francia</b> y <b>Argentina 2-1 Inglaterra</b>. Claude fue la <b>única IA que acertó las dos llaves</b>: sostuvo a España en solitario cuando 2 de 3 IAs daban Francia, apoyado en el xG del torneo frente al ranking FIFA que situaba a Francia 1ª. Gemini falló ambas.','Phase resolved: <b>Spain 2-0 France</b> and <b>Argentina 2-1 England</b>. Claude was the <b>only AI to get both ties right</b>: it backed Spain alone while 2 of 3 AIs picked France, relying on tournament xG over the FIFA ranking that had France 1st. Gemini missed both.'));}
